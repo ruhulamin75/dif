@@ -12,6 +12,7 @@
         body { font-family: 'Poppins', 'Hind Siliguri', sans-serif; background-color: var(--bg-color); color: var(--text-dark); display: flex; }
         .en-text { font-family: 'Poppins', sans-serif; }
         
+        /* সাইডবার */
         .sidebar { width: var(--sidebar-width); background-color: var(--white); height: 100vh; position: fixed; left: 0; top: 0; box-shadow: 2px 0 10px rgba(0,0,0,0.05); display: flex; flex-direction: column; z-index: 1000; transition: transform 0.3s ease;}
         .sidebar-header { padding: 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border-color); }
         .sidebar-header img { width: 45px; }
@@ -22,8 +23,17 @@
         .logout-btn { margin: 20px; padding: 12px; background-color: #ffeaea; color: #d32f2f; text-align: center; border-radius: 8px; text-decoration: none; font-weight: 600; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.3s; cursor: pointer; border: none; font-family: inherit; font-size: 16px; width: calc(100% - 40px);}
         .logout-btn:hover { background-color: #d32f2f; color: var(--white); }
 
-        .main-content { flex: 1; margin-left: var(--sidebar-width); padding: 20px 30px; }
-        .topbar { display: flex; justify-content: space-between; background: var(--white); padding: 15px 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); margin-bottom: 30px; }
+        /* মোবাইল ওভারলে */
+        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 999; opacity: 0; transition: opacity 0.3s ease; }
+        .sidebar-overlay.show { display: block; opacity: 1; }
+
+        /* মূল কন্টেন্ট */
+        .main-content { flex: 1; margin-left: var(--sidebar-width); padding: 20px 30px; overflow-x: hidden; }
+        .topbar { display: flex; justify-content: space-between; align-items: center; background: var(--white); padding: 15px 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); margin-bottom: 30px; }
+        .menu-toggle { display: none; font-size: 24px; color: var(--primary-green); cursor: pointer; }
+        .admin-profile { display: flex; align-items: center; gap: 12px; }
+        .admin-profile div h4 { font-size: 16px; color: var(--dark-green); margin: 0; }
+        .admin-icon { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--primary-green); background-color: var(--light-green); color: var(--primary-green); display: flex; justify-content: center; align-items: center; font-size: 20px; }
         
         .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; align-items: start;}
         .form-container { background: var(--white); border-radius: 12px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border-top: 4px solid var(--primary-green); margin-bottom: 25px;}
@@ -33,10 +43,12 @@
         .form-group input, .form-group textarea { width: 100%; padding: 10px 15px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 14px; font-family: inherit; outline: none; background: #fafafa;}
         .form-group input:focus, .form-group textarea:focus { border-color: var(--primary-green); background: var(--white);}
         .action-buttons { display: flex; gap: 10px; margin-top: 20px; }
-        .save-btn { flex: 1; background: var(--primary-green); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s;}
+        .save-btn { flex: 1; background: var(--primary-green); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; font-family: inherit; font-size: 15px;}
         .save-btn:hover { background: var(--dark-green); }
-        .cancel-btn { flex: 1; background: #ffeaea; color: #d32f2f; border: none; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer; display: none;}
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px;}
+        .cancel-btn { flex: 1; background: #ffeaea; color: #d32f2f; border: none; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer; display: none; font-family: inherit; font-size: 15px;}
+        
+        .table-wrapper { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; min-width: 400px;}
         table th, table td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border-color); }
         table th { background: var(--light-green); color: var(--dark-green); }
         .btn-edit { color: var(--primary-green); background: none; border: none; cursor: pointer; font-size: 16px; margin-right: 10px;}
@@ -47,7 +59,15 @@
         .danger-btn { flex: 1; min-width: 250px; background: #fffafafa; color: #d32f2f; border: 2px solid #ffcdd2; padding: 15px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; font-size: 16px; font-family: inherit;}
         .danger-btn:hover { background: #d32f2f; color: white; border-color: #d32f2f; }
 
-        @media (max-width: 992px) { .settings-grid { grid-template-columns: 1fr; } .sidebar { transform: translateX(-100%); } }
+        /* মোবাইল রেসপন্সিভনেস */
+        @media (max-width: 992px) { 
+            .settings-grid { grid-template-columns: 1fr; } 
+            .sidebar { transform: translateX(-100%); } 
+            .sidebar.show { transform: translateX(0); }
+            .main-content { margin-left: 0; width: 100%; padding: 15px; } 
+            .menu-toggle { display: block; }
+            .admin-profile div { display: none; }
+        }
     </style>
 </head>
 <body>
@@ -60,7 +80,9 @@
         }
     </script>
 
-    <aside class="sidebar">
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <img src="1000123161.png" alt="Logo">
             <h2 class="en-text">DARUL ITTIHAD<br>FOUNDATION</h2>
@@ -76,12 +98,17 @@
             <li><a href="reports.html"><i class="fa-solid fa-file-invoice"></i> রিপোর্টস</a></li>
             <li><a href="settings.html" class="active"><i class="fa-solid fa-gear"></i> সেটিংস</a></li>
         </ul>
-        <button class="logout-btn" onclick="logout(event)"><i class="fa-solid fa-arrow-right-from-bracket"></i> লগআউট</button>
+        <button class="logout-btn" onclick="window.logout(event)"><i class="fa-solid fa-arrow-right-from-bracket"></i> লগআউট</button>
     </aside>
 
     <main class="main-content">
         <header class="topbar">
-            <h2 style="color: var(--dark-green);">সিস্টেম সেটিংস</h2>
+            <div class="menu-toggle" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></div>
+            <div><h2 style="color: var(--dark-green); font-size: 22px;">সিস্টেম সেটিংস</h2></div>
+            <div class="admin-profile">
+                <div style="text-align: right;"><h4>অ্যাডমিন</h4></div>
+                <div class="admin-icon"><i class="fa-solid fa-user-shield"></i></div>
+            </div>
         </header>
 
         <div class="settings-grid">
@@ -91,7 +118,7 @@
                 <div class="form-container" style="border-top-color: #ff9800; margin-bottom: 0;">
                     <h3 style="color: #f57c00; border-bottom-color: #ffe0b2;"><i class="fa-solid fa-user-shield"></i> অ্যাডমিন পাসওয়ার্ড পরিবর্তন</h3>
                     <form id="adminPassForm">
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
                             <div class="form-group"><label>বর্তমান পাসওয়ার্ড</label><input type="password" id="currentPass" class="en-text" required></div>
                             <div class="form-group"><label>নতুন পাসওয়ার্ড</label><input type="password" id="newPass" class="en-text" minlength="6" required></div>
                         </div>
@@ -116,10 +143,12 @@
                 </div>
                 <div class="form-container" style="border-top: none;">
                     <h3>নোটিশের তালিকা</h3>
-                    <table>
-                        <thead><tr><th>তারিখ ও বিষয়</th><th style="text-align: right;">অ্যাকশন</th></tr></thead>
-                        <tbody id="noticeTableBody"></tbody>
-                    </table>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead><tr><th>তারিখ ও বিষয়</th><th style="text-align: right;">অ্যাকশন</th></tr></thead>
+                            <tbody id="noticeTableBody"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
@@ -141,10 +170,12 @@
                 </div>
                 <div class="form-container" style="border-top: none;">
                     <h3>ব্যাংক একাউন্টস তালিকা</h3>
-                    <table>
-                        <thead><tr><th>একাউন্টের বিবরণ</th><th style="text-align: right;">অ্যাকশন</th></tr></thead>
-                        <tbody id="bankTableBody"></tbody>
-                    </table>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead><tr><th>একাউন্টের বিবরণ</th><th style="text-align: right;">অ্যাকশন</th></tr></thead>
+                            <tbody id="bankTableBody"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
@@ -156,10 +187,10 @@
                         <strong>সতর্কতা:</strong> নিচের বাটনগুলোতে ক্লিক করে ডেটা মুছে ফেললে তা আর পুনরায় ফিরিয়ে আনা সম্ভব নয়। 
                     </p>
                     <div style="display: flex; gap: 20px; flex-wrap: wrap;">
-                        <button class="danger-btn" onclick="eraseData('members')">
+                        <button class="danger-btn" onclick="window.eraseData('members')">
                             <i class="fa-solid fa-users-slash"></i> Erase All Members Data
                         </button>
-                        <button class="danger-btn" onclick="eraseData('transactions')">
+                        <button class="danger-btn" onclick="window.eraseData('transactions')">
                             <i class="fa-solid fa-money-bill-transfer"></i> Erase All Transactions
                         </button>
                     </div>
@@ -168,14 +199,11 @@
         </div>
     </main>
 
+    <!-- সাইডবার টগল করার ফাংশন -->
     <script>
-        function logout(e) {
-            e.preventDefault();
-            // Firebase Signout Call (Optional but good practice)
-            // auth.signOut();
-            localStorage.removeItem("userRole");
-            localStorage.removeItem("loggedInMemberId");
-            window.location.href = "login.html";
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('show');
+            document.getElementById('sidebarOverlay').classList.toggle('show');
         }
     </script>
 
@@ -183,11 +211,8 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getDatabase, ref, set, onValue, push, remove, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-        import { getAuth, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getAuth, updatePassword, EmailAuthProvider, reauthenticateWithCredential, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-        // ==========================================
-        // আপনার Firebase Config
-        // ==========================================
         const firebaseConfig = {
             apiKey: "AIzaSyDqSsaNPqrWQfSeGvh0IuPxGaOJ7S4y4Qo",
             authDomain: "darul-ittihad-foundation.firebaseapp.com",
@@ -199,6 +224,19 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const auth = getAuth(app);
+
+        // --- লগআউট লজিক ---
+        window.logout = async function(e) {
+            e.preventDefault();
+            try {
+                await signOut(auth); // Firebase সেশন ক্লিয়ার
+            } catch (error) {
+                console.error("Logout Error:", error);
+            }
+            localStorage.removeItem("userRole");
+            localStorage.removeItem("loggedInMemberId");
+            window.location.href = "login.html";
+        };
 
         // --- অ্যাডমিন পাসওয়ার্ড পরিবর্তন লজিক ---
         document.getElementById('adminPassForm').addEventListener('submit', async (e) => {
@@ -218,11 +256,8 @@
             btn.disabled = true;
 
             try {
-                // প্রথমে কারেন্ট পাসওয়ার্ড দিয়ে রি-অথেনটিকেট করতে হবে
                 const credential = EmailAuthProvider.credential(user.email, currentPass);
                 await reauthenticateWithCredential(user, credential);
-                
-                // রি-অথেনটিকেট সফল হলে নতুন পাসওয়ার্ড আপডেট করবে
                 await updatePassword(user, newPass);
                 alert("আলহামদুলিল্লাহ! অ্যাডমিন পাসওয়ার্ড সফলভাবে পরিবর্তন করা হয়েছে। পরবর্তী লগইনের সময় নতুন পাসওয়ার্ড ব্যবহার করুন।");
                 document.getElementById('adminPassForm').reset();
@@ -319,24 +354,30 @@
         // --- ডেঞ্জার জোন (Data Erase) লজিক ---
         window.eraseData = async (type) => {
             let typeName = type === 'members' ? 'সকল সদস্যের ডেটা' : 'সকল লেনদেনের ডেটা';
+            const user = auth.currentUser;
             
-            // প্রথম ধাপ: সতর্কীকরণ
             if (confirm(`সতর্কতা! আপনি কি নিশ্চিত যে ${typeName} মুছে ফেলতে চান? এটি আর ফিরিয়ে আনা সম্ভব নয়!`)) {
                 
-                // দ্বিতীয় ধাপ: অ্যাডমিন পাসওয়ার্ড ভেরিফিকেশন (এখানে আপনার ম্যানুয়াল পাসওয়ার্ড চেক করা হচ্ছে)
-                // যেহেতু আমরা Auth ব্যবহার করছি, চাইলে এই প্রম্পটটি বাদ দিয়ে শুধু confirm রাখতে পারেন।
-                // তবে ডাবল সিকিউরিটির জন্য এটি রাখা ভালো।
-                let adminPass = prompt("ডেটা মুছে ফেলতে সম্মতিস্বরূপ 'CONFIRM' লিখুন:");
+                let adminPass = prompt("নিশ্চিত করতে আপনার অ্যাডমিন পাসওয়ার্ড দিন:");
                 
-                if (adminPass === "CONFIRM") {
-                    try {
-                        await remove(ref(db, type));
-                        alert(`সফলভাবে ${typeName} মুছে ফেলা হয়েছে!`);
-                    } catch (error) {
-                        alert("সমস্যা হয়েছে! " + error.message);
+                if (adminPass) {
+                    if (user) {
+                        try {
+                            // অ্যাডমিন পাসওয়ার্ড ভেরিফাই করা হচ্ছে
+                            const credential = EmailAuthProvider.credential(user.email, adminPass);
+                            await reauthenticateWithCredential(user, credential);
+                            
+                            // ভেরিফাই হলে ডেটা ডিলিট
+                            await remove(ref(db, type));
+                            alert(`সফলভাবে ${typeName} মুছে ফেলা হয়েছে!`);
+                        } catch (error) {
+                            alert("পাসওয়ার্ড ভুল হয়েছে অথবা সমস্যা হয়েছে! (" + error.message + ")");
+                        }
+                    } else {
+                        alert("ইউজার সেশন পাওয়া যায়নি। দয়া করে পুনরায় লগইন করুন।");
                     }
-                } else if (adminPass !== null) {
-                    alert("সঠিকভাবে CONFIRM লেখা হয়নি! ডেটা মুছে ফেলা বাতিল করা হলো।");
+                } else {
+                    alert("পাসওয়ার্ড দেওয়া হয়নি! ডেটা মুছে ফেলা বাতিল করা হলো।");
                 }
             }
         };
