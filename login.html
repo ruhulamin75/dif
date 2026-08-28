@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>লগইন - Darul Ittihad Foundation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --primary-green: #0b9e4a; --dark-green: #077033; --light-green: #eaf6ee; --white: #ffffff; --bg-color: #f4f7f6; --text-dark: #2c3e50; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Hind Siliguri', sans-serif; background-color: var(--bg-color); display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .en-text { font-family: 'Poppins', sans-serif; }
+
+        .login-container { background: var(--white); width: 100%; max-width: 400px; padding: 40px 30px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center; }
+        .logo-box { margin-bottom: 20px; }
+        .logo-box img { width: 80px; margin-bottom: 10px;}
+        .logo-box h2 { font-size: 20px; color: var(--dark-green); margin: 0; font-family: 'Poppins', sans-serif; font-weight: 700; line-height: 1.2;}
+        .logo-box p { color: #777; font-size: 14px; margin-top: 5px; }
+
+        .form-group { margin-bottom: 20px; text-align: left;}
+        .form-group label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 8px; color: var(--text-dark);}
+        
+        .input-box { position: relative; }
+        .input-box i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #aaa; font-size: 18px;}
+        .input-box input { width: 100%; padding: 12px 15px 12px 45px; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; font-family: inherit; outline: none; transition: 0.3s; background: #fafafa;}
+        .input-box input:focus { border-color: var(--primary-green); background: var(--white); box-shadow: 0 0 0 3px rgba(11, 158, 74, 0.1);}
+
+        .toggle-password { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #aaa; left: auto !important;}
+        .toggle-password:hover { color: var(--primary-green); }
+
+        .login-btn { width: 100%; background: var(--primary-green); color: white; border: none; padding: 14px; border-radius: 8px; font-size: 16px; font-weight: 600; font-family: inherit; cursor: pointer; transition: 0.3s; margin-top: 10px; display: flex; justify-content: center; align-items: center; gap: 10px;}
+        .login-btn:hover { background: var(--dark-green); }
+        .login-btn:disabled { background: #9e9e9e; cursor: not-allowed; }
+
+        .footer-text { margin-top: 25px; font-size: 13px; color: #888; }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <div class="logo-box">
+            <img src="1000123161.png" alt="Logo">
+            <h2 class="en-text">DARUL ITTIHAD FOUNDATION</h2>
+            <p>সিস্টেমে প্রবেশ করতে আপনার তথ্য দিন</p>
+        </div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label>মোবাইল নম্বর</label>
+                <div class="input-box">
+                    <i class="fa-solid fa-phone"></i>
+                    <input type="tel" id="loginPhone" class="en-text" placeholder="017XXXXXXXX" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>পাসওয়ার্ড</label>
+                <div class="input-box">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" id="loginPassword" class="en-text" placeholder="আপনার পাসওয়ার্ড লিখুন" required>
+                    <i class="fa-solid fa-eye toggle-password" onclick="togglePassword()"></i>
+                </div>
+            </div>
+
+            <button type="submit" class="login-btn" id="loginBtn"><i class="fa-solid fa-right-to-bracket"></i> লগইন করুন</button>
+        </form>
+
+        <div class="footer-text">
+            পাসওয়ার্ড ভুলে গেলে অ্যাডমিনের সাথে যোগাযোগ করুন।
+        </div>
+    </div>
+
+    <script>
+        function togglePassword() {
+            const passInput = document.getElementById('loginPassword');
+            const icon = document.querySelector('.toggle-password');
+            if(passInput.type === 'password') {
+                passInput.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                passInput.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        }
+    </script>
+
+    <!-- Firebase Connection Script -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getDatabase, ref, query, orderByChild, equalTo, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+        // আপনার ফায়ারবেস কনফিগারেশন যুক্ত করা হলো
+        const firebaseConfig = {
+            apiKey: "AIzaSyDqSsaNPqrWQfSeGvh0IuPxGaOJ7S4y4Qo",
+            authDomain: "darul-ittihad-foundation.firebaseapp.com",
+            projectId: "darul-ittihad-foundation",
+            storageBucket: "darul-ittihad-foundation.firebasestorage.app",
+            messagingSenderId: "1068343055365",
+            appId: "1:1068343055365:web:a42b6545e7fcd449de786c"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const btn = document.getElementById('loginBtn');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> যাচাই করা হচ্ছে...';
+            btn.disabled = true;
+
+            const phone = document.getElementById('loginPhone').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
+
+            // ============================================
+            // ১. অ্যাডমিন লগইন চেক
+            // ============================================
+            if(phone === "01700000000" && password === "admin123") {
+                // সেশনে সেভ করে রাখছি যে তিনি অ্যাডমিন
+                localStorage.setItem("userRole", "admin");
+                // অ্যাডমিন ড্যাশবোর্ডে পাঠিয়ে দিচ্ছি
+                window.location.href = "admin_dashboard.html";
+                return;
+            }
+
+            // ============================================
+            // ২. মেম্বার লগইন চেক (ফায়ারবেস ডাটাবেস থেকে)
+            // ============================================
+            try {
+                // ডাটাবেস থেকে ফোন নম্বর দিয়ে মেম্বার খুঁজছি
+                const memberQuery = query(ref(db, 'members'), orderByChild('phone'), equalTo(phone));
+                const snapshot = await get(memberQuery);
+
+                if (snapshot.exists()) {
+                    let memberData = null;
+                    let memberKey = null;
+                    
+                    // স্ন্যাপশট থেকে ডেটা বের করে আনা
+                    snapshot.forEach(child => {
+                        memberData = child.val();
+                        memberKey = child.key;
+                    });
+
+                    // পাসওয়ার্ড মিলছে কি না চেক করা
+                    if (memberData.password === password) {
+                        
+                        // যদি একাউন্ট নিষ্ক্রিয় (Inactive) থাকে
+                        if(memberData.status === "inactive") {
+                            alert("আপনার একাউন্টটি নিষ্ক্রিয় করা হয়েছে। অ্যাডমিনের সাথে যোগাযোগ করুন।");
+                        } else {
+                            // সেশনে সেভ করে রাখছি যে তিনি মেম্বার এবং তার আইডি
+                            localStorage.setItem("userRole", "member");
+                            localStorage.setItem("loggedInMemberId", memberKey);
+                            
+                            // মেম্বার ড্যাশবোর্ডে পাঠিয়ে দিচ্ছি
+                            window.location.href = "member_dashboard.html";
+                        }
+                    } else {
+                        alert("দুঃখিত, আপনার পাসওয়ার্ড ভুল হয়েছে!");
+                    }
+                } else {
+                    alert("দুঃখিত, এই মোবাইল নম্বর দিয়ে কোনো সদস্য পাওয়া যায়নি!");
+                }
+            } catch(error) {
+                alert("লগইন করতে সমস্যা হচ্ছে। দয়া করে আপনার ইন্টারনেট কানেকশন চেক করুন।");
+                console.error(error);
+            } finally {
+                btn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> লগইন করুন';
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

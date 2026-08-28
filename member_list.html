@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>সদস্য তালিকা - Darul Ittihad Foundation</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-green: #0b9e4a; --dark-green: #077033; --light-green: #eaf6ee;
+            --white: #ffffff; --bg-color: #f4f7f6; --text-dark: #2c3e50;
+            --text-gray: #666666; --border-color: #e0e0e0; --sidebar-width: 250px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body { 
+            font-family: 'Poppins', 'Hind Siliguri', sans-serif; 
+            background-color: var(--bg-color); 
+            color: var(--text-dark); 
+            display: flex; 
+        }
+
+        .en-text { font-family: 'Poppins', sans-serif; }
+
+        /* সাইডবার */
+        .sidebar { width: var(--sidebar-width); background-color: var(--white); height: 100vh; position: fixed; left: 0; top: 0; box-shadow: 2px 0 10px rgba(0,0,0,0.05); display: flex; flex-direction: column; z-index: 1000; transition: transform 0.3s ease; }
+        .sidebar-header { padding: 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border-color); }
+        .sidebar-header img { width: 45px; }
+        .sidebar-header h2 { font-size: 15px; color: var(--primary-green); line-height: 1.3; font-weight: 700; font-family: 'Poppins', sans-serif; }
+        .sidebar-menu { list-style: none; padding: 20px 0; flex: 1; overflow-y: auto; }
+        .sidebar-menu li { padding: 5px 20px; }
+        .sidebar-menu li a { text-decoration: none; color: var(--text-gray); display: flex; align-items: center; gap: 12px; padding: 12px 15px; border-radius: 8px; font-size: 16px; font-weight: 500; transition: all 0.3s; }
+        .sidebar-menu li a:hover, .sidebar-menu li a.active { background-color: var(--light-green); color: var(--primary-green); }
+        .logout-btn { margin: 20px; padding: 12px; background-color: #ffeaea; color: #d32f2f; text-align: center; border-radius: 8px; text-decoration: none; font-weight: 600; display: flex; justify-content: center; gap: 8px; transition: 0.3s; }
+        .logout-btn:hover { background-color: #d32f2f; color: var(--white); }
+        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 999; opacity: 0; transition: opacity 0.3s ease; }
+
+        /* মূল কন্টেন্ট */
+        .main-content { flex: 1; margin-left: var(--sidebar-width); padding: 20px 30px; width: calc(100% - var(--sidebar-width)); }
+        .topbar { display: flex; justify-content: space-between; align-items: center; background: var(--white); padding: 15px 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); margin-bottom: 30px; }
+        .menu-toggle { display: none; font-size: 24px; color: var(--primary-green); cursor: pointer; }
+        .admin-profile { display: flex; align-items: center; gap: 12px; }
+        .admin-profile div h4 { font-size: 16px; color: var(--dark-green); margin: 0; }
+        .admin-icon { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--primary-green); background-color: var(--light-green); color: var(--primary-green); display: flex; justify-content: center; align-items: center; font-size: 20px; }
+
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 15px; }
+        .page-header h2 { font-size: 24px; color: var(--dark-green); margin: 0;}
+        .btn-add { background-color: var(--primary-green); color: var(--white); padding: 10px 20px; border-radius: 8px; text-decoration: none; font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: 0.3s; border: none; cursor: pointer; }
+        .btn-add:hover { background-color: var(--dark-green); box-shadow: 0 4px 10px rgba(11, 158, 74, 0.2); }
+
+        .filter-bar { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
+        .search-box { flex: 1; min-width: 250px; position: relative; }
+        .search-box i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-gray); }
+        .search-box input { width: 100%; padding: 10px 15px 10px 45px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 15px; font-family: inherit; outline: none; }
+        .search-box input:focus { border-color: var(--primary-green); }
+        .filter-select { padding: 10px 15px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 15px; font-family: inherit; outline: none; color: var(--text-dark); min-width: 150px; }
+
+        .table-container { background: var(--white); border-radius: 12px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; min-width: 900px; }
+        table th, table td { padding: 15px; text-align: left; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+        table th { background-color: var(--light-green); color: var(--dark-green); font-weight: 600; }
+        table tbody tr:hover { background-color: #f9fbf9; }
+
+        .member-info { display: flex; align-items: center; gap: 12px; }
+        .member-avatar { width: 45px; height: 45px; border-radius: 50%; background-color: #e0e0e0; display: flex; justify-content: center; align-items: center; color: var(--text-gray); font-size: 18px; overflow: hidden; border: 2px solid var(--border-color); }
+        .member-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .member-details h4 { margin: 0; font-size: 15px; color: var(--text-dark); }
+        .member-details span { font-size: 13px; color: var(--text-gray); }
+
+        .status { padding: 5px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; }
+        .status.active { background: #e8f5e9; color: #2e7d32; }
+        .status.inactive { background: #ffebee; color: #c62828; }
+
+        .action-icons { display: flex; gap: 8px; justify-content: center;}
+        .action-icons button { border: none; background: none; cursor: pointer; font-size: 16px; padding: 6px; border-radius: 4px; transition: 0.3s; display: flex; align-items: center; justify-content: center;}
+        
+        .btn-view { color: #1976d2; background: #f0f8ff; } .btn-view:hover { background: #e3f2fd; }
+        .btn-edit { color: var(--primary-green); background: #eaf6ee; } .btn-edit:hover { background: #d4f0df; }
+        .btn-delete { color: #d32f2f; background: #ffeaea; } .btn-delete:hover { background: #fbdada; }
+        .btn-order { color: #607d8b; background: #eceff1; } .btn-order:hover { background: #cfd8dc; color: #37474f; }
+        .btn-order:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .loading-data { text-align: center; padding: 30px; color: var(--text-gray); font-size: 16px; }
+
+        /* ====================================================
+           মোডাল (Modal) স্টাইল
+           ==================================================== */
+        .modal { 
+            display: none; 
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
+            background: rgba(0,0,0,0.6); 
+            z-index: 9999; 
+            overflow-y: auto; 
+            padding: 40px 20px; 
+            text-align: center;
+        }
+
+        .modal-content { 
+            background: var(--white); 
+            border-radius: 12px; 
+            width: 100%; 
+            position: relative; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3); 
+            text-align: left;
+            margin: 0 auto; 
+        }
+        
+        .close-btn { position: absolute; top: 15px; right: 20px; font-size: 26px; color: var(--white); cursor: pointer; transition: 0.3s; background: rgba(0,0,0,0.2); border: none; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 10;}
+        .close-btn:hover { background: #d32f2f; color: white;}
+        
+        .close-btn.dark { color: var(--text-gray); background: #f1f1f1; }
+        .close-btn.dark:hover { background: #d32f2f; color: white; }
+
+        /* ১. ভিউ মোডাল (Photocard Style) */
+        .view-modal-content { max-width: 450px; padding: 0; border-radius: 12px; }
+        .photocard-header { background: linear-gradient(135deg, var(--primary-green), var(--dark-green)); padding: 40px 20px 60px; text-align: center; color: white; position: relative; border-top-left-radius: 12px; border-top-right-radius: 12px;}
+        .photocard-header h3 { font-size: 24px; margin: 0; font-family: 'Hind Siliguri', sans-serif;}
+        .photocard-header p { margin: 5px 0 0; opacity: 0.9;}
+        
+        /* ছবি যেন কেটে না যায় সেজন্য position: relative এবং z-index: 2 যোগ করা হয়েছে */
+        .photocard-body { 
+            padding: 0 25px 30px; 
+            text-align: center; 
+            margin-top: -55px; 
+            position: relative; 
+            z-index: 2; 
+        }
+        .photocard-body img { width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 4px solid var(--white); background: var(--white); box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 10px;}
+        
+        .info-grid { display: grid; grid-template-columns: 1fr; gap: 12px; text-align: left; margin-top: 15px; background: #f9fbf9; padding: 20px; border-radius: 12px; border: 1px solid var(--border-color);}
+        .info-item { display: flex; flex-direction: column; font-size: 15px; border-bottom: 1px dashed #e0e0e0; padding-bottom: 8px;}
+        .info-item:last-child { border-bottom: none; padding-bottom: 0;}
+        .info-label { color: var(--text-gray); font-size: 13px; margin-bottom: 2px;}
+        .info-value { color: var(--text-dark); font-weight: 500;}
+
+        /* ২. এডিট মোডাল */
+        .edit-modal-content { max-width: 800px; padding: 30px; margin-bottom: 40px;}
+        .edit-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; }
+        .edit-modal-header h3 { color: var(--dark-green); font-size: 22px; margin: 0;}
+        
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .form-group { display: flex; flex-direction: column; margin-bottom: 10px;}
+        .form-group.full-width { grid-column: 1 / -1; }
+        .form-group label { font-size: 14px; color: var(--text-dark); font-weight: 500; margin-bottom: 5px; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 14px; font-family: inherit; outline: none;}
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--primary-green); }
+        
+        /* Edit Profile Pic */
+        .edit-pic-section { display: flex; flex-direction: column; align-items: center; margin-bottom: 20px; grid-column: 1 / -1;}
+        .edit-pic-wrapper { width: 100px; height: 100px; border-radius: 50%; border: 2px dashed var(--primary-green); display: flex; justify-content: center; align-items: center; cursor: pointer; position: relative; overflow: hidden; background: #f9fbf9; }
+        .edit-pic-wrapper img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; z-index: 2; }
+        .edit-pic-wrapper i { font-size: 30px; color: var(--primary-green); z-index: 1;}
+        
+        .save-btn { grid-column: 1 / -1; width: 100%; background: var(--primary-green); color: white; border: none; padding: 12px; border-radius: 8px; font-size: 16px; font-weight: 600; font-family: inherit; cursor: pointer; margin-top: 15px; display: flex; justify-content: center; align-items: center; gap: 8px;}
+        .save-btn:hover { background: var(--dark-green); }
+
+        /* ক্রপার মোডাল */
+        .cropper-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 10000; justify-content: center; align-items: center; padding:20px;}
+        .cropper-content { background: var(--white); padding: 20px; border-radius: 12px; width: 100%; max-width: 400px; text-align: center; }
+        .img-container { width: 100%; height: 300px; margin: 15px 0; background: #eee; }
+        .img-container img { max-width: 100%; }
+
+        @media (max-width: 992px) { .sidebar { transform: translateX(-100%); } .sidebar.show { transform: translateX(0); } .sidebar-overlay.show { display: block; opacity: 1; } .main-content { margin-left: 0; width: 100%; padding: 15px; } .menu-toggle { display: block; } .admin-profile div { display: none; } }
+        @media (max-width: 768px) { .form-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="1000123161.png" alt="DIF Logo">
+            <h2>DARUL ITTIHAD<br>FOUNDATION</h2>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="admin_dashboard.html"><i class="fa-solid fa-gauge"></i> ড্যাশবোর্ড</a></li>
+            <li><a href="member_list.html" class="active"><i class="fa-solid fa-users"></i> সদস্য তালিকা</a></li>
+            <li><a href="#"><i class="fa-solid fa-calendar-check"></i> মাসিক জমা</a></li>
+            <li><a href="#"><i class="fa-solid fa-chart-pie"></i> শেয়ার</a></li>
+            <li><a href="#"><i class="fa-solid fa-sack-dollar"></i> এককালীন/বাৎসরিক জমা</a></li>
+            <li><a href="#"><i class="fa-solid fa-scale-balanced"></i> আয়/ব্যয়</a></li>
+            <li><a href="#"><i class="fa-solid fa-file-invoice"></i> রিপোর্টস</a></li>
+            <li><a href="#"><i class="fa-solid fa-gear"></i> সেটিংস</a></li>
+        </ul>
+        <a href="login.html" class="logout-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i> লগআউট</a>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="menu-toggle" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></div>
+            <div><h2 style="color: var(--dark-green); font-size: 22px;">সদস্য পরিচালনা</h2></div>
+            <div class="admin-profile">
+                <div style="text-align: right;"><h4>অ্যাডমিন</h4></div>
+                <div class="admin-icon"><i class="fa-solid fa-user-shield"></i></div>
+            </div>
+        </header>
+
+        <div class="page-header">
+            <h2>সকল সদস্যের তালিকা</h2>
+            <a href="add_member.html" class="btn-add"><i class="fa-solid fa-user-plus"></i> নতুন সদস্য যুক্ত করুন</a>
+        </div>
+
+        <div class="filter-bar">
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" placeholder="আইডি, নাম বা মোবাইল নম্বর দিয়ে খুঁজুন...">
+            </div>
+            <select class="filter-select" id="statusFilter">
+                <option value="all">সব সদস্য</option>
+                <option value="active">সক্রিয় সদস্য</option>
+                <option value="inactive">নিষ্ক্রিয় সদস্য</option>
+            </select>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ক্রমিক</th>
+                        <th>সদস্যের নাম ও আইডি</th>
+                        <th>ফোন নম্বর</th>
+                        <th>সদস্যের ধরন</th>
+                        <th>স্ট্যাটাস</th>
+                        <th style="text-align: center;">অ্যাকশন</th>
+                    </tr>
+                </thead>
+                <tbody id="memberTableBody">
+                    <tr>
+                        <td colspan="6" class="loading-data">
+                            <i class="fa-solid fa-spinner fa-spin"></i> ডাটাবেস থেকে তথ্য লোড হচ্ছে...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- ১. ভিউ মোডাল (Photocard Style) -->
+    <div class="modal" id="viewModal">
+        <div class="modal-content view-modal-content">
+            <button class="close-btn" onclick="closeModal('viewModal')"><i class="fa-solid fa-xmark"></i></button>
+            
+            <div class="photocard-header">
+                <h3 id="vNameBn">সদস্যের নাম</h3>
+                <p id="vNameEn">Member Name (En)</p>
+            </div>
+            
+            <div class="photocard-body">
+                <img id="vPhoto" src="https://via.placeholder.com/150?text=No+Photo" alt="Member Photo">
+                
+                <div style="margin-top: -5px; margin-bottom: 10px;">
+                    <span id="vStatus" class="status active" style="font-size: 11px;">সক্রিয়</span>
+                </div>
+
+                <div class="info-grid">
+                    <div class="info-item"><span class="info-label">সদস্য নং</span><span class="info-value" id="vMemberId"></span></div>
+                    <div class="info-item"><span class="info-label">সদস্যের ধরণ</span><span class="info-value" id="vType"></span></div>
+                    <div class="info-item"><span class="info-label">পিতার নাম</span><span class="info-value" id="vFather"></span></div>
+                    <div class="info-item"><span class="info-label">মাতার নাম</span><span class="info-value" id="vMother"></span></div>
+                    <div class="info-item"><span class="info-label">মোবাইল নম্বর</span><span class="info-value" id="vPhone"></span></div>
+                    
+                    <div style="display: flex; gap: 10px; border-bottom: 1px dashed #e0e0e0; padding-bottom: 8px;">
+                        <div class="info-item" style="flex: 1; border:none; padding:0;"><span class="info-label">জন্মতারিখ</span><span class="info-value" id="vDob"></span></div>
+                        <div class="info-item" style="flex: 1; border:none; padding:0;"><span class="info-label">লিঙ্গ</span><span class="info-value" id="vGender"></span></div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px; border-bottom: 1px dashed #e0e0e0; padding-bottom: 8px;">
+                        <div class="info-item" style="flex: 1; border:none; padding:0;"><span class="info-label">পেশা</span><span class="info-value" id="vProfession"></span></div>
+                        <div class="info-item" style="flex: 1; border:none; padding:0;"><span class="info-label">ধর্ম</span><span class="info-value" id="vReligion"></span></div>
+                    </div>
+                    
+                    <div class="info-item"><span class="info-label">শিক্ষাগত যোগ্যতা</span><span class="info-value" id="vEducation"></span></div>
+                    <div class="info-item"><span class="info-label">রক্তের গ্রুপ</span><span class="info-value" id="vBlood"></span></div>
+                    <div class="info-item"><span class="info-label">জাতীয় পরিচয়পত্র/জন্মনিবন্ধন</span><span class="info-value" id="vNid"></span></div>
+                    <div class="info-item"><span class="info-label">পাসপোর্ট নম্বর</span><span class="info-value" id="vPassport"></span></div>
+                    <div class="info-item"><span class="info-label">বর্তমান ঠিকানা</span><span class="info-value" id="vPresentAdd"></span></div>
+                    <div class="info-item"><span class="info-label">স্থায়ী ঠিকানা</span><span class="info-value" id="vPermanentAdd"></span></div>
+                    <div class="info-item"><span class="info-label">যোগদানের তারিখ</span><span class="info-value" id="vJoinDate"></span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ২. এডিট মোডাল (A to Z Full Form) -->
+    <div class="modal" id="editModal">
+        <div class="modal-content edit-modal-content">
+            <div class="edit-modal-header">
+                <h3>তথ্য আপডেট করুন</h3>
+                <button class="close-btn dark" style="position: relative; top: 0; right: 0;" onclick="closeModal('editModal')"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <form id="editForm">
+                <input type="hidden" id="editMemberKey">
+                
+                <div class="form-grid">
+                    <div class="edit-pic-section">
+                        <label style="font-size: 14px; margin-bottom:5px;">সদস্যের ছবি পরিবর্তন করুন</label>
+                        <div class="edit-pic-wrapper" onclick="document.getElementById('editPicInput').click()">
+                            <i class="fa-solid fa-camera" id="editCameraIcon" style="display:none;"></i>
+                            <img id="editPicPreview" src="">
+                        </div>
+                        <input type="file" id="editPicInput" accept="image/*" style="display:none;">
+                    </div>
+
+                    <div class="form-group">
+                        <label>সদস্য নং</label>
+                        <input type="text" id="eMemberId" required>
+                    </div>
+                    <div class="form-group">
+                        <label>সদস্যের ধরণ</label>
+                        <select id="eMemberType" required>
+                            <option value="সাধারণ সদস্য">সাধারণ সদস্য</option>
+                            <option value="আজীবন সদস্য">আজীবন সদস্য</option>
+                            <option value="দাতা সদস্য">দাতা সদস্য</option>
+                            <option value="ব্যবসায়িক স্থায়ী সদস্য">ব্যবসায়িক স্থায়ী সদস্য</option>
+                            <option value="ব্যবসায়িক অস্থায়ী সদস্য">ব্যবসায়িক অস্থায়ী সদস্য</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>নাম (ইংরেজি)</label>
+                        <input type="text" id="eNameEn" required>
+                    </div>
+                    <div class="form-group">
+                        <label>নাম (বাংলা)</label>
+                        <input type="text" id="eNameBn">
+                    </div>
+                    <div class="form-group">
+                        <label>পিতার নাম</label>
+                        <input type="text" id="eFather">
+                    </div>
+                    <div class="form-group">
+                        <label>মাতার নাম</label>
+                        <input type="text" id="eMother">
+                    </div>
+                    <div class="form-group">
+                        <label>জন্মতারিখ</label>
+                        <input type="date" id="eDob">
+                    </div>
+                    <div class="form-group">
+                        <label>লিঙ্গ</label>
+                        <select id="eGender">
+                            <option value="পুরুষ">পুরুষ</option>
+                            <option value="নারী">নারী</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>পেশা</label>
+                        <input type="text" id="eProfession">
+                    </div>
+                    <div class="form-group">
+                        <label>শিক্ষাগত যোগ্যতা</label>
+                        <input type="text" id="eEducation">
+                    </div>
+                    <div class="form-group">
+                        <label>ধর্ম</label>
+                        <select id="eReligion">
+                            <option value="ইসলাম">ইসলাম</option>
+                            <option value="হিন্দু">হিন্দু</option>
+                            <option value="বৌদ্ধ">বৌদ্ধ</option>
+                            <option value="খ্রিস্টান">খ্রিস্টান</option>
+                            <option value="অন্যান্য">অন্যান্য</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>রক্তের গ্রুপ</label>
+                        <select id="eBlood">
+                            <option value="">Select</option>
+                            <option value="A+">A+</option> <option value="A-">A-</option>
+                            <option value="B+">B+</option> <option value="B-">B-</option>
+                            <option value="O+">O+</option> <option value="O-">O-</option>
+                            <option value="AB+">AB+</option> <option value="AB-">AB-</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>মোবাইল নম্বর</label>
+                        <input type="tel" id="ePhone" required>
+                    </div>
+                    <div class="form-group">
+                        <label>জাতীয় পরিচয়পত্র / জন্মনিবন্ধন</label>
+                        <input type="text" id="eNid">
+                    </div>
+                    <div class="form-group">
+                        <label>পাসপোর্ট নম্বর</label>
+                        <input type="text" id="ePassport">
+                    </div>
+                    <div class="form-group">
+                        <label>পাসওয়ার্ড</label>
+                        <input type="text" id="ePassword">
+                    </div>
+                    <div class="form-group full-width">
+                        <label>বর্তমান ঠিকানা</label>
+                        <textarea id="ePresentAdd" rows="2"></textarea>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>স্থায়ী ঠিকানা</label>
+                        <textarea id="ePermanentAdd" rows="2"></textarea>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>স্ট্যাটাস</label>
+                        <select id="eStatus">
+                            <option value="active">সক্রিয় (Active)</option>
+                            <option value="inactive">নিষ্ক্রিয় (Inactive)</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="save-btn" id="editSubmitBtn"><i class="fa-solid fa-floppy-disk"></i> আপডেট সেভ করুন</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ইমেজ ক্রপার মোডাল -->
+    <div class="cropper-overlay" id="cropperModal">
+        <div class="cropper-content">
+            <h3>ছবি ক্রপ করুন</h3>
+            <div class="img-container">
+                <img id="imageToCrop" src="">
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
+                <button type="button" style="padding:10px 20px; border:none; border-radius:5px; cursor:pointer;" onclick="closeCropper()">বাতিল</button>
+                <button type="button" style="padding:10px 20px; border:none; border-radius:5px; background:var(--primary-green); color:white; cursor:pointer;" onclick="cropImage()">ক্রপ করুন</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('show');
+            document.getElementById('sidebarOverlay').classList.toggle('show');
+        }
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // মোডালের বাইরে ক্লিক করলে বন্ধ হওয়ার লজিক
+        window.onclick = function(event) {
+            const viewModal = document.getElementById('viewModal');
+            const editModal = document.getElementById('editModal');
+            if (event.target == viewModal) { viewModal.style.display = "none"; }
+            if (event.target == editModal) { editModal.style.display = "none"; }
+        }
+
+        // --- ইমেজ ক্রপার লজিক ---
+        let cropper;
+        let updatedImageBase64 = null; 
+        
+        document.getElementById('editPicInput').addEventListener('change', function(e) {
+            const files = e.target.files;
+            if (files && files.length > 0) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    document.getElementById('imageToCrop').src = event.target.result;
+                    document.getElementById('cropperModal').style.display = 'flex';
+                    if (cropper) cropper.destroy();
+                    cropper = new Cropper(document.getElementById('imageToCrop'), { aspectRatio: 1, viewMode: 1 });
+                };
+                reader.readAsDataURL(files[0]);
+            }
+            this.value = '';
+        });
+
+        function closeCropper() { document.getElementById('cropperModal').style.display = 'none'; }
+
+        function cropImage() {
+            const canvas = cropper.getCroppedCanvas({ width: 200, height: 200 });
+            updatedImageBase64 = canvas.toDataURL('image/jpeg', 0.8);
+            document.getElementById('editPicPreview').src = updatedImageBase64;
+            document.getElementById('editPicPreview').style.display = 'block';
+            document.getElementById('editCameraIcon').style.display = 'none';
+            closeCropper();
+        }
+    </script>
+
+    <!-- Firebase Connection Script -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getDatabase, ref, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+        // ==========================================
+        // আপনার কপি করা firebaseConfig কোডটি ঠিক এখানে বসান
+        // ==========================================
+const firebaseConfig = {
+  apiKey: "AIzaSyDqSsaNPqrWQfSeGvh0IuPxGaOJ7S4y4Qo",
+  authDomain: "darul-ittihad-foundation.firebaseapp.com",
+  projectId: "darul-ittihad-foundation",
+  storageBucket: "darul-ittihad-foundation.firebasestorage.app",
+  messagingSenderId: "1068343055365",
+  appId: "1:1068343055365:web:a42b6545e7fcd449de786c"
+};
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        const tbody = document.getElementById('memberTableBody');
+        let allMembers = [];
+
+        const membersRef = ref(db, 'members');
+        
+        onValue(membersRef, (snapshot) => {
+            const data = snapshot.val();
+            tbody.innerHTML = ''; 
+            allMembers = []; 
+
+            if (data) {
+                Object.keys(data).forEach((key) => {
+                    const member = data[key];
+                    member.id = key; 
+                    if (!member.sortOrder) member.sortOrder = new Date(member.joinDate || Date.now()).getTime();
+                    allMembers.push(member);
+                });
+
+                allMembers.sort((a, b) => a.sortOrder - b.sortOrder);
+                renderTable(allMembers);
+            } else {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 20px;">কোনো সদস্য পাওয়া যায়নি।</td></tr>';
+            }
+        });
+
+        function renderTable(dataArray) {
+            tbody.innerHTML = '';
+            if(dataArray.length === 0){
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 20px;">কোনো রেকর্ড পাওয়া যায়নি।</td></tr>';
+                return;
+            }
+
+            const isFiltering = searchInput.value !== '' || statusFilter.value !== 'all';
+
+            dataArray.forEach((member, index) => {
+                let displayName = member.nameBn ? member.nameBn : member.nameEn;
+                let statusText = member.status === 'active' ? 'সক্রিয়' : 'নিষ্ক্রিয়';
+                let statusClass = member.status === 'active' ? 'active' : 'inactive';
+                let avatarHtml = member.photo ? `<img src="${member.photo}" alt="Profile">` : `<i class="fa-solid fa-user"></i>`;
+
+                let disableUp = (index === 0 || isFiltering) ? 'disabled' : '';
+                let disableDown = (index === dataArray.length - 1 || isFiltering) ? 'disabled' : '';
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${index + 1}</strong></td>
+                    <td>
+                        <div class="member-info">
+                            <div class="member-avatar">${avatarHtml}</div>
+                            <div class="member-details">
+                                <h4>${displayName}</h4>
+                                <span>ID: ${member.memberId || 'N/A'}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${member.phone}</td>
+                    <td>${member.memberType || 'সাধারণ সদস্য'}</td>
+                    <td><span class="status ${statusClass}">${statusText}</span></td>
+                    <td>
+                        <div class="action-icons">
+                            <button class="btn-order" ${disableUp} title="উপরে তুলুন" onclick="moveRow(${index}, -1)"><i class="fa-solid fa-arrow-up"></i></button>
+                            <button class="btn-order" ${disableDown} title="নিচে নামান" onclick="moveRow(${index}, 1)"><i class="fa-solid fa-arrow-down"></i></button>
+                            <button class="btn-view" title="প্রোফাইল দেখুন" onclick="viewMember('${member.id}')"><i class="fa-solid fa-eye"></i></button>
+                            <button class="btn-edit" title="এডিট করুন" onclick="openEditModal('${member.id}')"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button class="btn-delete" title="ডিলিট করুন" onclick="deleteMemberData('${member.id}')"><i class="fa-solid fa-trash-can"></i></button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // সার্চ এবং ফিল্টার
+        const searchInput = document.getElementById('searchInput');
+        const statusFilter = document.getElementById('statusFilter');
+
+        function filterData() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const filterValue = statusFilter.value;
+            
+            const filteredMembers = allMembers.filter(member => {
+                const searchMatch = 
+                    (member.nameEn || '').toLowerCase().includes(searchTerm) || 
+                    (member.nameBn || '').toLowerCase().includes(searchTerm) || 
+                    (member.phone || '').includes(searchTerm) ||
+                    (member.memberId || '').toLowerCase().includes(searchTerm);
+                    
+                const statusMatch = filterValue === 'all' || member.status === filterValue;
+                return searchMatch && statusMatch;
+            });
+            renderTable(filteredMembers);
+        }
+
+        searchInput.addEventListener('input', filterData);
+        statusFilter.addEventListener('change', filterData);
+
+        // ১. ভিউ (Photocard)
+        window.viewMember = function(id) {
+            const m = allMembers.find(x => x.id === id);
+            if(m) {
+                document.getElementById('vPhoto').src = m.photo ? m.photo : 'https://via.placeholder.com/150?text=No+Photo';
+                document.getElementById('vNameBn').innerText = m.nameBn || m.nameEn;
+                document.getElementById('vNameEn').innerText = m.nameEn || '-';
+                document.getElementById('vStatus').innerText = m.status === 'active' ? 'সক্রিয়' : 'নিষ্ক্রিয়';
+                document.getElementById('vStatus').className = m.status === 'active' ? 'status active' : 'status inactive';
+                
+                document.getElementById('vMemberId').innerText = m.memberId || '-';
+                document.getElementById('vType').innerText = m.memberType || '-';
+                document.getElementById('vFather').innerText = m.fatherName || '-';
+                document.getElementById('vMother').innerText = m.motherName || '-';
+                document.getElementById('vDob').innerText = m.dob || '-';
+                document.getElementById('vGender').innerText = m.gender || '-';
+                document.getElementById('vProfession').innerText = m.profession || '-';
+                document.getElementById('vEducation').innerText = m.education || '-';
+                document.getElementById('vReligion').innerText = m.religion || '-';
+                document.getElementById('vBlood').innerText = m.bloodGroup || '-';
+                document.getElementById('vNid').innerText = m.nid || '-';
+                document.getElementById('vPassport').innerText = m.passport || '-';
+                document.getElementById('vPresentAdd').innerText = m.presentAddress || '-';
+                document.getElementById('vPermanentAdd').innerText = m.permanentAddress || '-';
+                document.getElementById('vPhone').innerText = m.phone || '-';
+                
+                let jDate = '-';
+                if(m.joinDate) {
+                    const d = new Date(m.joinDate);
+                    jDate = d.toLocaleDateString('en-GB'); 
+                }
+                document.getElementById('vJoinDate').innerText = jDate;
+                
+                document.getElementById('viewModal').style.display = 'block'; 
+            }
+        }
+
+        // ২. এডিট মোডাল ওপেন
+        window.openEditModal = function(id) {
+            const m = allMembers.find(x => x.id === id);
+            if(m) {
+                document.getElementById('editMemberKey').value = id;
+                
+                updatedImageBase64 = null; 
+                const picPreview = document.getElementById('editPicPreview');
+                const camIcon = document.getElementById('editCameraIcon');
+                if(m.photo) {
+                    picPreview.src = m.photo;
+                    picPreview.style.display = 'block';
+                    camIcon.style.display = 'none';
+                } else {
+                    picPreview.style.display = 'none';
+                    camIcon.style.display = 'block';
+                }
+
+                document.getElementById('eMemberId').value = m.memberId || '';
+                document.getElementById('eMemberType').value = m.memberType || 'সাধারণ সদস্য';
+                document.getElementById('eNameEn').value = m.nameEn || '';
+                document.getElementById('eNameBn').value = m.nameBn || '';
+                document.getElementById('eFather').value = m.fatherName || '';
+                document.getElementById('eMother').value = m.motherName || '';
+                document.getElementById('eDob').value = m.dob || '';
+                document.getElementById('eGender').value = m.gender || '';
+                document.getElementById('eProfession').value = m.profession || '';
+                document.getElementById('eEducation').value = m.education || '';
+                document.getElementById('eReligion').value = m.religion || '';
+                document.getElementById('eBlood').value = m.bloodGroup || '';
+                document.getElementById('ePhone').value = m.phone || '';
+                document.getElementById('eNid').value = m.nid || '';
+                document.getElementById('ePassport').value = m.passport || '';
+                document.getElementById('ePassword').value = m.password || '';
+                document.getElementById('ePresentAdd').value = m.presentAddress || '';
+                document.getElementById('ePermanentAdd').value = m.permanentAddress || '';
+                document.getElementById('eStatus').value = m.status || 'active';
+                
+                document.getElementById('editModal').style.display = 'block'; 
+            }
+        }
+
+        // ৩. এডিট সেভ করা
+        document.getElementById('editForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('editSubmitBtn');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> সেভ হচ্ছে...';
+            btn.disabled = true;
+
+            const id = document.getElementById('editMemberKey').value;
+            
+            const updates = {
+                memberId: document.getElementById('eMemberId').value,
+                memberType: document.getElementById('eMemberType').value,
+                nameEn: document.getElementById('eNameEn').value,
+                nameBn: document.getElementById('eNameBn').value,
+                fatherName: document.getElementById('eFather').value,
+                motherName: document.getElementById('eMother').value,
+                dob: document.getElementById('eDob').value,
+                gender: document.getElementById('eGender').value,
+                profession: document.getElementById('eProfession').value,
+                education: document.getElementById('eEducation').value,
+                religion: document.getElementById('eReligion').value,
+                bloodGroup: document.getElementById('eBlood').value,
+                phone: document.getElementById('ePhone').value,
+                nid: document.getElementById('eNid').value,
+                passport: document.getElementById('ePassport').value,
+                password: document.getElementById('ePassword').value,
+                presentAddress: document.getElementById('ePresentAdd').value,
+                permanentAddress: document.getElementById('ePermanentAdd').value,
+                status: document.getElementById('eStatus').value
+            };
+
+            if (updatedImageBase64) {
+                updates.photo = updatedImageBase64;
+            }
+            
+            try {
+                await update(ref(db, 'members/' + id), updates);
+                alert('সদস্যের সকল তথ্য সফলভাবে আপডেট করা হয়েছে!');
+                document.getElementById('editModal').style.display = 'none';
+            } catch(error) {
+                alert('আপডেট করতে সমস্যা হয়েছে!');
+            } finally {
+                btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> আপডেট সেভ করুন';
+                btn.disabled = false;
+            }
+        });
+
+        // ৪. ডিলিট 
+        window.deleteMemberData = async function(id) {
+            if(confirm('সতর্কতা: আপনি কি নিশ্চিত যে এই সদস্যের সম্পূর্ণ ডাটা মুছে ফেলতে চান?')) {
+                try {
+                    await remove(ref(db, 'members/' + id));
+                } catch (error) {
+                    alert('ডিলিট করতে সমস্যা হয়েছে: ' + error.message);
+                }
+            }
+        }
+
+        // ৫. সিরিয়াল (Reorder)
+        window.moveRow = async function(currentIndex, direction) {
+            const targetIndex = currentIndex + direction;
+            if (targetIndex < 0 || targetIndex >= allMembers.length) return;
+
+            const currentMember = allMembers[currentIndex];
+            const targetMember = allMembers[targetIndex];
+
+            const updates = {};
+            updates['members/' + currentMember.id + '/sortOrder'] = targetMember.sortOrder;
+            updates['members/' + targetMember.id + '/sortOrder'] = currentMember.sortOrder;
+
+            try { await update(ref(db), updates); } 
+            catch (error) { alert('সিরিয়াল পরিবর্তন করতে সমস্যা হয়েছে!'); }
+        }
+    </script>
+</body>
+</html>

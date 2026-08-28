@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>সেটিংস - Darul Ittihad Foundation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --primary-green: #0b9e4a; --dark-green: #077033; --light-green: #eaf6ee; --white: #ffffff; --bg-color: #f4f7f6; --text-dark: #2c3e50; --text-gray: #666666; --border-color: #e0e0e0; --sidebar-width: 250px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Poppins', 'Hind Siliguri', sans-serif; background-color: var(--bg-color); color: var(--text-dark); display: flex; }
+        .en-text { font-family: 'Poppins', sans-serif; }
+        
+        .sidebar { width: var(--sidebar-width); background-color: var(--white); height: 100vh; position: fixed; left: 0; top: 0; box-shadow: 2px 0 10px rgba(0,0,0,0.05); display: flex; flex-direction: column; z-index: 1000; }
+        .sidebar-header { padding: 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border-color); }
+        .sidebar-header img { width: 45px; }
+        .sidebar-header h2 { font-size: 15px; color: var(--primary-green); font-family: 'Poppins', sans-serif; font-weight: 700;}
+        .sidebar-menu { list-style: none; padding: 20px 0; flex: 1; overflow-y: auto; }
+        .sidebar-menu li a { text-decoration: none; color: var(--text-gray); display: flex; align-items: center; gap: 12px; padding: 12px 20px; font-size: 16px; font-weight: 500; transition: 0.3s; }
+        .sidebar-menu li a:hover, .sidebar-menu li a.active { background-color: var(--light-green); color: var(--primary-green); }
+        .main-content { flex: 1; margin-left: var(--sidebar-width); padding: 20px 30px; }
+        .topbar { display: flex; justify-content: space-between; background: var(--white); padding: 15px 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); margin-bottom: 30px; }
+        .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; align-items: start;}
+        .form-container { background: var(--white); border-radius: 12px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border-top: 4px solid var(--primary-green); margin-bottom: 25px;}
+        .form-container h3 { color: var(--dark-green); margin-bottom: 20px; font-size: 18px; border-bottom: 2px solid var(--light-green); padding-bottom: 10px;}
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-dark); font-size: 14px;}
+        .form-group input, .form-group textarea { width: 100%; padding: 10px 15px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 14px; font-family: inherit; outline: none; background: #fafafa;}
+        .form-group input:focus, .form-group textarea:focus { border-color: var(--primary-green); background: var(--white);}
+        .action-buttons { display: flex; gap: 10px; margin-top: 20px; }
+        .save-btn { flex: 1; background: var(--primary-green); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s;}
+        .save-btn:hover { background: var(--dark-green); }
+        .cancel-btn { flex: 1; background: #ffeaea; color: #d32f2f; border: none; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer; display: none;}
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px;}
+        table th, table td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border-color); }
+        table th { background: var(--light-green); color: var(--dark-green); }
+        .btn-edit { color: var(--primary-green); background: none; border: none; cursor: pointer; font-size: 16px; margin-right: 10px;}
+        .btn-delete { color: #d32f2f; background: none; border: none; cursor: pointer; font-size: 16px;}
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <img src="1000123161.png" alt="Logo">
+            <h2>DARUL ITTIHAD</h2>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="admin_dashboard.html"><i class="fa-solid fa-gauge"></i> ড্যাশবোর্ড</a></li>
+            <li><a href="member_list.html"><i class="fa-solid fa-users"></i> সদস্য তালিকা</a></li>
+            <li><a href="monthly_collection.html"><i class="fa-solid fa-calendar-check"></i> মাসিক জমা</a></li>
+            <li><a href="settings.html" class="active"><i class="fa-solid fa-gear"></i> সেটিংস</a></li>
+        </ul>
+    </aside>
+    <main class="main-content">
+        <header class="topbar">
+            <h2 style="color: var(--dark-green);">সিস্টেম সেটিংস</h2>
+        </header>
+
+        <div class="settings-grid">
+            <!-- নোটিশ বোর্ড -->
+            <div>
+                <div class="form-container">
+                    <h3><i class="fa-solid fa-bullhorn"></i> নোটিশ বোর্ড</h3>
+                    <form id="noticeForm">
+                        <input type="hidden" id="editNoticeId">
+                        <div class="form-group"><label>শিরোনাম</label><input type="text" id="nTitle" required></div>
+                        <div class="form-group"><label>বিবরণ</label><textarea id="nDesc" rows="3" required></textarea></div>
+                        <div class="action-buttons">
+                            <button type="button" class="cancel-btn" id="cancelNoticeBtn" onclick="resetNoticeForm()">বাতিল</button>
+                            <button type="submit" class="save-btn" id="saveNoticeBtn">পাবলিশ করুন</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="form-container" style="border-top: none;">
+                    <h3>নোটিশের তালিকা</h3>
+                    <table>
+                        <thead><tr><th>তারিখ ও বিষয়</th><th style="text-align: right;">অ্যাকশন</th></tr></thead>
+                        <tbody id="noticeTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ব্যাংক একাউন্টস -->
+            <div>
+                <div class="form-container" style="border-top-color: #1976d2;">
+                    <h3 style="color: #1976d2; border-bottom-color: #e3f2fd;"><i class="fa-solid fa-building-columns"></i> ব্যাংক একাউন্ট যুক্ত করুন</h3>
+                    <form id="bankForm">
+                        <input type="hidden" id="editBankId">
+                        <div class="form-group"><label>ব্যাংকের নাম</label><input type="text" id="bName" placeholder="যেমন: Islami Bank" required></div>
+                        <div class="form-group"><label>একাউন্টের নাম</label><input type="text" id="bAccName" class="en-text" required></div>
+                        <div class="form-group"><label>একাউন্ট নম্বর</label><input type="text" id="bAccNo" class="en-text" required></div>
+                        <div class="form-group"><label>শাখা / ব্রাঞ্চ (ঐচ্ছিক)</label><input type="text" id="bBranch"></div>
+                        <div class="action-buttons">
+                            <button type="button" class="cancel-btn" id="cancelBankBtn" onclick="resetBankForm()">বাতিল</button>
+                            <button type="submit" class="save-btn" id="saveBankBtn" style="background: #1976d2;">সংরক্ষণ করুন</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="form-container" style="border-top: none;">
+                    <h3>ব্যাংক একাউন্টস তালিকা</h3>
+                    <table>
+                        <thead><tr><th>একাউন্টের বিবরণ</th><th style="text-align: right;">অ্যাকশন</th></tr></thead>
+                        <tbody id="bankTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Firebase Scripts -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getDatabase, ref, set, onValue, push, remove, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+        // ==========================================
+        // আপনার Firebase Config বসান
+        // ==========================================
+        const firebaseConfig = {
+  apiKey: "AIzaSyDqSsaNPqrWQfSeGvh0IuPxGaOJ7S4y4Qo",
+  authDomain: "darul-ittihad-foundation.firebaseapp.com",
+  projectId: "darul-ittihad-foundation",
+  storageBucket: "darul-ittihad-foundation.firebasestorage.app",
+  messagingSenderId: "1068343055365",
+  appId: "1:1068343055365:web:a42b6545e7fcd449de786c"
+};
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // --- নোটিশ বোর্ড লজিক ---
+        let allNotices = [];
+        onValue(ref(db, 'notices'), (snapshot) => {
+            const tbody = document.getElementById('noticeTableBody');
+            tbody.innerHTML = ''; allNotices = [];
+            if (snapshot.val()) {
+                Object.keys(snapshot.val()).forEach(k => allNotices.push({id: k, ...snapshot.val()[k]}));
+                allNotices.sort((a, b) => b.timestamp - a.timestamp).forEach(n => {
+                    let d = new Date(n.timestamp).toLocaleDateString('en-GB');
+                    tbody.innerHTML += `<tr>
+                        <td><div class="en-text" style="font-size:12px; color:gray;">${d}</div><div style="font-weight:600;">${n.title}</div></td>
+                        <td style="text-align: right; vertical-align: top;">
+                            <button class="btn-edit" onclick="window.editNotice('${n.id}')"><i class="fa-solid fa-pen"></i></button>
+                            <button class="btn-delete" onclick="window.delNotice('${n.id}')"><i class="fa-solid fa-trash"></i></button>
+                        </td></tr>`;
+                });
+            }
+        });
+
+        document.getElementById('noticeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('editNoticeId').value;
+            const data = { title: document.getElementById('nTitle').value, description: document.getElementById('nDesc').value, timestamp: Date.now() };
+            if(id) await update(ref(db, 'notices/' + id), data);
+            else await set(push(ref(db, 'notices')), data);
+            window.resetNoticeForm();
+        });
+
+        window.editNotice = (id) => {
+            const n = allNotices.find(x => x.id === id);
+            document.getElementById('editNoticeId').value = n.id; document.getElementById('nTitle').value = n.title; document.getElementById('nDesc').value = n.description;
+            document.getElementById('saveNoticeBtn').innerText = 'আপডেট করুন'; document.getElementById('cancelNoticeBtn').style.display = 'block';
+        };
+        window.delNotice = async (id) => { if(confirm("ডিলিট করবেন?")) await remove(ref(db, 'notices/' + id)); };
+        window.resetNoticeForm = () => { document.getElementById('noticeForm').reset(); document.getElementById('editNoticeId').value = ''; document.getElementById('saveNoticeBtn').innerText = 'পাবলিশ করুন'; document.getElementById('cancelNoticeBtn').style.display = 'none'; };
+
+        // --- ব্যাংক একাউন্ট লজিক ---
+        let allBanks = [];
+        onValue(ref(db, 'bank_accounts'), (snapshot) => {
+            const tbody = document.getElementById('bankTableBody');
+            tbody.innerHTML = ''; allBanks = [];
+            if (snapshot.val()) {
+                Object.keys(snapshot.val()).forEach(k => allBanks.push({id: k, ...snapshot.val()[k]}));
+                allBanks.forEach(b => {
+                    tbody.innerHTML += `<tr>
+                        <td>
+                            <div style="font-weight:600; color:#1976d2; font-size: 16px; margin-bottom: 5px;">Bank: ${b.bankName}</div>
+                            <div class="en-text" style="font-size:14px; color: #444; line-height: 1.6;">
+                                <strong>Name:</strong> ${b.accName}<br>
+                                <strong>Account no.:</strong> ${b.accNo}<br>
+                                <strong>Branch:</strong> ${b.branch || '-'}
+                            </div>
+                        </td>
+                        <td style="text-align: right; vertical-align: top;">
+                            <button class="btn-edit" onclick="window.editBank('${b.id}')"><i class="fa-solid fa-pen"></i></button>
+                            <button class="btn-delete" onclick="window.delBank('${b.id}')"><i class="fa-solid fa-trash"></i></button>
+                        </td></tr>`;
+                });
+            }
+        });
+
+        document.getElementById('bankForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('editBankId').value;
+            const data = { bankName: document.getElementById('bName').value, accName: document.getElementById('bAccName').value, accNo: document.getElementById('bAccNo').value, branch: document.getElementById('bBranch').value };
+            if(id) await update(ref(db, 'bank_accounts/' + id), data);
+            else await set(push(ref(db, 'bank_accounts')), data);
+            window.resetBankForm();
+        });
+
+        window.editBank = (id) => {
+            const b = allBanks.find(x => x.id === id);
+            document.getElementById('editBankId').value = b.id; document.getElementById('bName').value = b.bankName; document.getElementById('bAccName').value = b.accName; document.getElementById('bAccNo').value = b.accNo; document.getElementById('bBranch').value = b.branch;
+            document.getElementById('saveBankBtn').innerText = 'আপডেট করুন'; document.getElementById('cancelBankBtn').style.display = 'block';
+        };
+        window.delBank = async (id) => { if(confirm("ডিলিট করবেন?")) await remove(ref(db, 'bank_accounts/' + id)); };
+        window.resetBankForm = () => { document.getElementById('bankForm').reset(); document.getElementById('editBankId').value = ''; document.getElementById('saveBankBtn').innerText = 'সংরক্ষণ করুন'; document.getElementById('cancelBankBtn').style.display = 'none'; };
+    </script>
+</body>
+</html>

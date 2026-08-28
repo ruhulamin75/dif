@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>মেম্বার ড্যাশবোর্ড - Darul Ittihad Foundation</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
+
+    <style>
+        :root { --primary-green: #0b9e4a; --dark-green: #077033; --light-green: #eaf6ee; --white: #ffffff; --bg-color: #f4f7f6; --text-dark: #2c3e50; --text-gray: #666666; --border-color: #e0e0e0; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Poppins', 'Hind Siliguri', sans-serif; background-color: var(--bg-color); color: var(--text-dark); }
+        .en-text { font-family: 'Poppins', sans-serif; }
+
+        .member-topbar { background: var(--white); padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100;}
+        .brand { display: flex; align-items: center; gap: 10px; }
+        .brand img { width: 40px; }
+        .brand h2 { font-size: 18px; color: var(--primary-green); margin: 0; font-weight: 700; line-height: 1.2;}
+        
+        .user-menu { display: flex; gap: 15px; align-items: center;}
+        .btn-profile { background: var(--light-green); color: var(--dark-green); border: none; padding: 8px 15px; border-radius: 20px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.3s;}
+        .btn-profile:hover { background: var(--primary-green); color: white;}
+        .btn-logout { color: #d32f2f; background: #ffeaea; border: none; padding: 8px 15px; border-radius: 20px; font-weight: 600; cursor: pointer; transition: 0.3s;}
+
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        .welcome-card { background: linear-gradient(135deg, var(--primary-green), var(--dark-green)); color: white; padding: 30px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; box-shadow: 0 10px 20px rgba(11, 158, 74, 0.2);}
+        .welcome-text h1 { font-size: 28px; margin: 0 0 5px 0;}
+        .welcome-text p { margin: 0; opacity: 0.9; font-size: 16px;}
+        .welcome-avatar { width: 80px; height: 80px; border-radius: 50%; border: 3px solid white; object-fit: cover; background: white;}
+
+        .fund-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px;}
+        .fund-card { background: var(--white); padding: 25px 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); text-align: center; border-bottom: 4px solid var(--primary-green);}
+        .fund-card h3 { font-size: 15px; color: var(--text-gray); margin: 0 0 10px 0; font-weight: 600;}
+        .fund-card .amount { font-size: 28px; color: var(--dark-green); font-weight: 700;}
+
+        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; align-items: start;}
+        .section-card { background: var(--white); border-radius: 12px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 25px;}
+        .section-card h3 { font-size: 18px; color: var(--dark-green); margin: 0 0 20px 0; border-bottom: 2px solid var(--light-green); padding-bottom: 10px;}
+
+        .notice-item { padding: 15px; background: #f9fbf9; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid var(--primary-green);}
+        .notice-item h4 { margin: 0 0 5px 0; color: var(--text-dark); font-size: 16px;}
+        .notice-item p { margin: 0; color: var(--text-gray); font-size: 14px; line-height: 1.5;}
+        .notice-date { font-size: 12px; color: #888; display: block; margin-top: 8px;}
+
+        /* ব্যাংক লিস্ট আপডেট */
+        .bank-item { padding: 15px; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 15px; display: flex; align-items: flex-start; gap: 15px;}
+        .bank-icon { width: 45px; height: 45px; background: #e3f2fd; color: #1976d2; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 20px; flex-shrink: 0;}
+        .bank-info h4 { margin: 0 0 5px 0; color: #1976d2; font-size: 16px;}
+        .bank-info p { margin: 0; color: #444; font-size: 14px; line-height: 1.6;}
+
+        table { width: 100%; border-collapse: collapse; }
+        table th, table td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border-color); font-size: 14px;}
+        table th { background: var(--light-green); color: var(--dark-green); }
+        .btn-view-receipt { background: #e3f2fd; color: #1976d2; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600;}
+
+        /* প্রোফাইল মোডাল */
+        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 9999; overflow-y: auto; padding: 20px;}
+        .modal-content { background: var(--white); border-radius: 12px; width: 100%; max-width: 600px; margin: 30px auto; padding: 30px; position: relative;}
+        .close-btn { position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; background: none; border: none; color: #555;}
+        
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group.full { grid-column: 1 / -1; }
+        .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px;}
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; font-family: inherit; font-size: 14px; outline: none; background: #fafafa;}
+        .form-group input:focus { border-color: var(--primary-green); background: white;}
+        .form-group input[readonly] { background: #eee; cursor: not-allowed; color: #777;}
+        
+        .pic-wrapper { width: 100px; height: 100px; border-radius: 50%; border: 2px dashed var(--primary-green); margin: 0 auto 20px; display: flex; justify-content: center; align-items: center; cursor: pointer; overflow: hidden; position: relative;}
+        .pic-wrapper img { width: 100%; height: 100%; object-fit: cover;}
+        .save-btn { grid-column: 1/-1; background: var(--primary-green); color: white; border: none; padding: 12px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 16px; margin-top: 10px;}
+
+        /* =================================================
+           প্রিমিয়াম রিসিট প্রিন্ট স্টাইল (A4 Size)
+           ================================================= */
+        .receipt-print-area { display: none; }
+        
+        @media print {
+            @page { size: A4 portrait; margin: 15mm; }
+            body > * { display: none !important; }
+            
+            #printableReceipt { display: block !important; position: absolute; left: 0; top: 0; width: 100%; padding: 0;}
+            #printableReceipt * { visibility: visible !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            
+            .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.05; z-index: -1; }
+            .watermark img { width: 300px; }
+            
+            .receipt-header { text-align: center; border-bottom: 3px double #ccc; padding-bottom: 15px; margin-bottom: 25px;}
+            .receipt-header img { width: 60px; margin-bottom: 10px;}
+            .receipt-header h1 { margin: 0; font-size: 28px; font-family: 'Poppins', sans-serif; color: #222; font-weight: 700;}
+            .receipt-title { display: inline-block; padding: 8px 25px; border-radius: 30px; font-size: 18px; font-weight: 700; margin-top: 15px; background: var(--primary-green) !important; color: white !important;}
+            
+            .receipt-meta { display: flex !important; justify-content: space-between !important; margin-bottom: 20px; font-size: 15px; font-weight: 500;}
+            .receipt-user-info { margin-bottom: 20px; font-size: 16px;}
+            .receipt-user-info p { margin: 5px 0;}
+            
+            .receipt-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+            .receipt-table th, .receipt-table td { padding: 12px; border: 1px solid #ddd; text-align: left; font-size: 15px;}
+            .receipt-table th { background: #f5f5f5 !important; font-weight: 600; color: #333;}
+            .receipt-table td.amount-col, .receipt-table th.amount-col { text-align: right; }
+            
+            .total-row { font-size: 18px; font-weight: 700; display: flex !important; justify-content: flex-end !important; gap: 40px; padding-top: 15px; margin-top: 10px; color: var(--dark-green) !important; border-top: 2px solid var(--primary-green) !important;}
+            .words-text { font-size: 14px; font-style: italic; color: #666; margin-top: 5px; text-align: right;}
+            
+            .signatures { display: flex !important; justify-content: space-between !important; margin-top: 60px; padding-top: 20px;}
+            .sig-line { border-top: 1px solid #333; width: 150px; text-align: center; font-size: 14px; padding-top: 5px; font-weight: 600; color: #555;}
+        }
+
+        @media (max-width: 768px) { .dashboard-grid { grid-template-columns: 1fr; } .form-grid { grid-template-columns: 1fr; } .welcome-card { flex-direction: column; text-align: center; gap: 15px; } }
+    </style>
+</head>
+<body>
+
+    <header class="member-topbar">
+        <div class="brand">
+            <img src="1000123161.png" alt="Logo">
+            <h2 class="en-text">DARUL ITTIHAD<br><span style="font-size: 12px; color: #555;">MEMBER PORTAL</span></h2>
+        </div>
+        <div class="user-menu">
+            <button class="btn-profile" onclick="openProfileModal()"><i class="fa-solid fa-user-pen"></i> প্রোফাইল এডিট</button>
+            <button class="btn-logout" onclick="window.location.href='login.html'"><i class="fa-solid fa-right-from-bracket"></i></button>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- ওয়েলকাম কার্ড -->
+        <div class="welcome-card">
+            <div class="welcome-text">
+                <h1>স্বাগতম, <span id="mWelcomeName">...</span></h1>
+                <p>আইডি: <span id="mWelcomeId" class="en-text">...</span> | <i class="fa-solid fa-phone"></i> <span id="mWelcomePhone" class="en-text">...</span></p>
+            </div>
+            <img id="mWelcomePic" class="welcome-avatar" src="https://via.placeholder.com/100?text=Photo" alt="Profile">
+        </div>
+
+        <div class="fund-grid">
+            <div class="fund-card"><h3>মাসিক জমা</h3><div class="amount en-text" id="tMonthly">৳ 0</div></div>
+            <div class="fund-card"><h3>এককালীন/বাৎসরিক</h3><div class="amount en-text" id="tYearly">৳ 0</div></div>
+            <div class="fund-card"><h3>শেয়ার ফান্ড</h3><div class="amount en-text" id="tShare">৳ 0</div></div>
+            <div class="fund-card" style="background: #eaf6ee; border-color: var(--dark-green);">
+                <h3 style="color: var(--dark-green);">সর্বমোট জমা</h3>
+                <div class="amount en-text" id="tTotal">৳ 0</div>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <!-- কলাম ১ -->
+            <div>
+                <div class="section-card">
+                    <h3><i class="fa-solid fa-bullhorn"></i> নোটিশ বোর্ড</h3>
+                    <div id="noticesContainer"><div style="text-align: center; color: gray;">লোড হচ্ছে...</div></div>
+                </div>
+
+                <div class="section-card">
+                    <h3 style="color: #1976d2; border-bottom-color: #e3f2fd;"><i class="fa-solid fa-building-columns"></i> পেমেন্টের মাধ্যম (ব্যাংক)</h3>
+                    <div id="banksContainer"><div style="text-align: center; color: gray;">লোড হচ্ছে...</div></div>
+                </div>
+            </div>
+
+            <!-- কলাম ২ -->
+            <div>
+                <div class="section-card">
+                    <h3><i class="fa-solid fa-clock-rotate-left"></i> সাম্প্রতিক জমা (ইতিহাস)</h3>
+                    <div style="overflow-x: auto;">
+                        <table>
+                            <thead>
+                                <tr><th>তারিখ</th><th>খাতসমূহ</th><th style="text-align: right;">পরিমাণ</th><th>রিসিট</th></tr>
+                            </thead>
+                            <tbody id="trxContainer">
+                                <tr><td colspan="4" style="text-align: center;">লোড হচ্ছে...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- প্রোফাইল এডিট মোডাল -->
+    <div class="modal" id="profileModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="document.getElementById('profileModal').style.display='none'"><i class="fa-solid fa-xmark"></i></button>
+            <h2 style="color: var(--dark-green); margin-bottom: 20px; text-align: center;">প্রোফাইল আপডেট</h2>
+            
+            <form id="profileForm">
+                <div class="pic-wrapper" onclick="document.getElementById('editPicInput').click()">
+                    <img id="editPicPreview" src="https://via.placeholder.com/100?text=Upload">
+                </div>
+                <input type="file" id="editPicInput" accept="image/*" style="display:none;">
+                <div style="text-align: center; margin-bottom: 20px; font-size: 12px; color: gray;">ছবি পরিবর্তন করতে ছবির উপর ক্লিক করুন</div>
+
+                <div class="form-grid">
+                    <div class="form-group"><label>নাম (বাংলা)</label><input type="text" id="pNameBn" required></div>
+                    <div class="form-group"><label>নাম (ইংরেজি)</label><input type="text" id="pNameEn" class="en-text" required></div>
+                    
+                    <div class="form-group full"><label>মোবাইল নম্বর (পরিবর্তনযোগ্য নয়)</label>
+                        <input type="text" id="pPhone" class="en-text" readonly title="নম্বর পরিবর্তন করতে অ্যাডমিনের সাথে যোগাযোগ করুন">
+                    </div>
+
+                    <div class="form-group"><label>পিতার নাম</label><input type="text" id="pFather"></div>
+                    <div class="form-group"><label>মাতার নাম</label><input type="text" id="pMother"></div>
+                    <div class="form-group"><label>পেশা</label><input type="text" id="pProfession"></div>
+                    <div class="form-group"><label>রক্তের গ্রুপ</label><input type="text" id="pBlood" class="en-text"></div>
+                    <div class="form-group full"><label>বর্তমান ঠিকানা</label><input type="text" id="pAddress"></div>
+                    <div class="form-group full"><label>পাসওয়ার্ড (লগইন এর জন্য)</label><input type="text" id="pPassword" class="en-text" required></div>
+                    
+                    <button type="submit" class="save-btn" id="saveProfileBtn"><i class="fa-solid fa-floppy-disk"></i> আপডেট সেভ করুন</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ইমেজ ক্রপার মোডাল -->
+    <div class="modal" id="cropperModal" style="z-index: 10000;">
+        <div class="modal-content" style="max-width: 400px; text-align: center;">
+            <h3>ছবি ক্রপ করুন</h3>
+            <div style="width: 100%; height: 300px; background: #eee; margin: 15px 0;"><img id="imageToCrop" style="max-width: 100%;"></div>
+            <button class="save-btn" type="button" onclick="cropImage()">ক্রপ করুন</button>
+        </div>
+    </div>
+
+    <!-- রিসিট প্রিন্ট এরিয়া (শুধুমাত্র প্রিন্টের সময় দেখা যাবে) -->
+    <div class="receipt-print-area" id="printableReceipt"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
+    <!-- Firebase Scripts -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getDatabase, ref, onValue, update, query, limitToFirst, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+        // ==========================================
+        // আপনার Firebase Config বসান
+        // ==========================================
+       const firebaseConfig = {
+  apiKey: "AIzaSyDqSsaNPqrWQfSeGvh0IuPxGaOJ7S4y4Qo",
+  authDomain: "darul-ittihad-foundation.firebaseapp.com",
+  projectId: "darul-ittihad-foundation",
+  storageBucket: "darul-ittihad-foundation.firebasestorage.app",
+  messagingSenderId: "1068343055365",
+  appId: "1:1068343055365:web:a42b6545e7fcd449de786c"
+};
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        let loggedInUserId = localStorage.getItem('loggedInMemberId');
+        let currentMemberData = null;
+
+        // অটো ডেমো লগইন 
+        async function checkLogin() {
+            if(!loggedInUserId) {
+                const snapshot = await get(query(ref(db, 'members'), limitToFirst(1)));
+                if(snapshot.exists()) {
+                    loggedInUserId = Object.keys(snapshot.val())[0];
+                    localStorage.setItem('loggedInMemberId', loggedInUserId);
+                    loadDashboardData();
+                } else {
+                    alert("ডাটাবেসে কোনো মেম্বার পাওয়া যায়নি।");
+                }
+            } else {
+                loadDashboardData();
+            }
+        }
+        checkLogin();
+
+        function loadDashboardData() {
+            onValue(ref(db, 'members/' + loggedInUserId), (snapshot) => {
+                const m = snapshot.val();
+                if(!m) return;
+                currentMemberData = m;
+                document.getElementById('mWelcomeName').innerText = m.nameBn || m.nameEn;
+                document.getElementById('mWelcomeId').innerText = m.memberId || 'N/A';
+                document.getElementById('mWelcomePhone').innerText = m.phone || 'N/A';
+                if(m.photo) {
+                    document.getElementById('mWelcomePic').src = m.photo;
+                    document.getElementById('editPicPreview').src = m.photo;
+                }
+                
+                document.getElementById('pNameBn').value = m.nameBn || '';
+                document.getElementById('pNameEn').value = m.nameEn || '';
+                document.getElementById('pPhone').value = m.phone || '';
+                document.getElementById('pFather').value = m.fatherName || '';
+                document.getElementById('pMother').value = m.motherName || '';
+                document.getElementById('pProfession').value = m.profession || '';
+                document.getElementById('pBlood').value = m.bloodGroup || '';
+                document.getElementById('pAddress').value = m.presentAddress || '';
+                document.getElementById('pPassword').value = m.password || '';
+            });
+
+            onValue(ref(db, 'transactions'), (snapshot) => {
+                const data = snapshot.val();
+                let mSum = 0, ySum = 0, sSum = 0, totalSum = 0;
+                let myTrxs = [];
+
+                if(data) {
+                    Object.keys(data).forEach(k => {
+                        let trx = data[k];
+                        if(trx.type === 'income' && trx.payerId === loggedInUserId) {
+                            trx.id = k;
+                            myTrxs.push(trx);
+                            if(trx.items) {
+                                trx.items.forEach(item => {
+                                    if(item.category === 'মাসিক জমা') mSum += item.amount;
+                                    if(item.category === 'এককালীন/বাৎসরিক জমা') ySum += item.amount;
+                                    if(item.category === 'শেয়ার') sSum += item.amount;
+                                });
+                            }
+                            totalSum += trx.amount;
+                        }
+                    });
+                }
+
+                document.getElementById('tMonthly').innerText = '৳ ' + mSum;
+                document.getElementById('tYearly').innerText = '৳ ' + ySum;
+                document.getElementById('tShare').innerText = '৳ ' + sSum;
+                document.getElementById('tTotal').innerText = '৳ ' + totalSum;
+
+                const tbody = document.getElementById('trxContainer');
+                tbody.innerHTML = '';
+                myTrxs.sort((a,b) => b.timestamp - a.timestamp).slice(0, 10).forEach(trx => { 
+                    let d = new Date(trx.date).toLocaleDateString('en-GB');
+                    let cats = trx.items ? trx.items.map(i=>i.category).join(', ') : '-';
+                    tbody.innerHTML += `<tr>
+                        <td class="en-text">${d}</td>
+                        <td>${cats}</td>
+                        <td class="en-text" style="text-align:right; font-weight:bold; color:var(--primary-green);">৳ ${trx.amount}</td>
+                        <td><button class="btn-view-receipt" onclick="printReceipt('${trx.id}')"><i class="fa-solid fa-download"></i></button></td>
+                    </tr>`;
+                });
+                if(myTrxs.length === 0) tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">কোনো জমা নেই</td></tr>';
+            });
+
+            onValue(ref(db, 'notices'), (snapshot) => {
+                const cont = document.getElementById('noticesContainer');
+                cont.innerHTML = '';
+                if(snapshot.val()) {
+                    let notices = Object.values(snapshot.val()).sort((a,b) => b.timestamp - a.timestamp);
+                    notices.forEach(n => {
+                        let d = new Date(n.timestamp).toLocaleDateString('en-GB');
+                        cont.innerHTML += `<div class="notice-item">
+                            <h4>${n.title}</h4><p>${n.description}</p><span class="notice-date en-text"><i class="fa-regular fa-clock"></i> ${d}</span>
+                        </div>`;
+                    });
+                } else { cont.innerHTML = '<div style="color:gray;">কোনো নোটিশ নেই</div>'; }
+            });
+
+            onValue(ref(db, 'bank_accounts'), (snapshot) => {
+                const cont = document.getElementById('banksContainer');
+                cont.innerHTML = '';
+                if(snapshot.val()) {
+                    Object.values(snapshot.val()).forEach(b => {
+                        cont.innerHTML += `<div class="bank-item">
+                            <div class="bank-icon"><i class="fa-solid fa-building-columns"></i></div>
+                            <div class="bank-info">
+                                <h4>Bank: ${b.bankName}</h4>
+                                <p class="en-text">
+                                    <strong>Name:</strong> ${b.accName}<br>
+                                    <strong>Account no.:</strong> ${b.accNo}<br>
+                                    <strong>Branch:</strong> ${b.branch || '-'}
+                                </p>
+                            </div>
+                        </div>`;
+                    });
+                } else { cont.innerHTML = '<div style="color:gray;">কোনো একাউন্ট নেই</div>'; }
+            });
+        }
+
+        window.openProfileModal = () => document.getElementById('profileModal').style.display = 'block';
+
+        let cropper; let updatedImgBase64 = null;
+        document.getElementById('editPicInput').addEventListener('change', function(e) {
+            if (e.target.files.length > 0) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    document.getElementById('imageToCrop').src = event.target.result;
+                    document.getElementById('cropperModal').style.display = 'flex';
+                    if (cropper) cropper.destroy();
+                    cropper = new Cropper(document.getElementById('imageToCrop'), { aspectRatio: 1, viewMode: 1 });
+                };
+                reader.readAsDataURL(e.target.files[0]);
+            }
+        });
+        window.cropImage = () => {
+            updatedImgBase64 = cropper.getCroppedCanvas({width: 200, height: 200}).toDataURL('image/jpeg', 0.8);
+            document.getElementById('editPicPreview').src = updatedImgBase64;
+            document.getElementById('cropperModal').style.display = 'none';
+        };
+
+        document.getElementById('profileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('saveProfileBtn'); btn.innerHTML = 'সেভ হচ্ছে...'; btn.disabled = true;
+            
+            const updates = {
+                nameBn: document.getElementById('pNameBn').value,
+                nameEn: document.getElementById('pNameEn').value,
+                fatherName: document.getElementById('pFather').value,
+                motherName: document.getElementById('pMother').value,
+                profession: document.getElementById('pProfession').value,
+                bloodGroup: document.getElementById('pBlood').value,
+                presentAddress: document.getElementById('pAddress').value,
+                password: document.getElementById('pPassword').value
+            };
+            if(updatedImgBase64) updates.photo = updatedImgBase64;
+
+            try {
+                await update(ref(db, 'members/' + loggedInUserId), updates);
+                alert('প্রোফাইল সফলভাবে আপডেট হয়েছে!');
+                document.getElementById('profileModal').style.display = 'none';
+            } catch(e) { alert('সমস্যা হয়েছে!'); }
+            finally { btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> আপডেট সেভ করুন'; btn.disabled = false; }
+        });
+
+        // ==========================================
+        // প্রিমিয়াম রিসিট প্রিন্ট জেনারেটর (A4)
+        // ==========================================
+        window.printReceipt = async (trxId) => {
+            const snap = await get(ref(db, 'transactions/' + trxId));
+            if(!snap.exists()) return;
+            const trx = snap.val();
+            
+            let d = new Date(trx.date).toLocaleDateString('en-GB');
+            let itemsHtml = '';
+            
+            if(trx.items && trx.items.length > 0) {
+                trx.items.forEach((item, index) => {
+                    itemsHtml += `<tr>
+                        <td class="en-text" style="text-align:center;">${index + 1}</td>
+                        <td>${item.category}</td>
+                        <td class="amount-col en-text">৳ ${item.amount}</td>
+                    </tr>`;
+                });
+            } else {
+                itemsHtml = `<tr><td colspan="3" style="text-align:center;">খাতের বিবরণ নেই</td></tr>`;
+            }
+
+            let rId = "#" + (trx.timestamp ? trx.timestamp.toString().slice(-6) : "000000");
+            let words = trx.amountInWords || "টাকা মাত্র"; 
+
+            const html = `
+                <div class="watermark"><img src="1000123161.png" alt="Watermark"></div>
+                <div class="receipt-header">
+                    <img src="1000123161.png" alt="Logo">
+                    <h1 class="en-text">DARUL ITTIHAD FOUNDATION</h1>
+                    <p>House: 12, Road: 5, Block: A, Dhaka-1212</p>
+                    <div class="receipt-title">আয় রিসিট (Income Receipt)</div>
+                </div>
+                
+                <div class="receipt-meta">
+                    <div><strong>রিসিট নং:</strong> <span class="en-text">${rId}</span></div>
+                    <div><strong>তারিখ:</strong> <span class="en-text">${d}</span></div>
+                </div>
+                
+                <div class="receipt-user-info">
+                    <p><strong>প্রদানকারীর নাম:</strong> ${trx.payerName || '-'}</p>
+                    <p><strong>আদায়কারী:</strong> ${trx.collector || '-'}</p>
+                </div>
+                
+                <table class="receipt-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 10%; text-align: center;">ক্রঃ নং</th>
+                            <th>খাতের বিবরণ</th>
+                            <th class="amount-col" style="width: 25%;">টাকার পরিমাণ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${itemsHtml}
+                    </tbody>
+                </table>
+                
+                <div class="total-row">
+                    <span>সর্বমোট:</span>
+                    <span class="en-text">৳ ${trx.amount}</span>
+                </div>
+                <div class="words-text">কথায়: ${words}</div>
+                
+                <div class="signatures">
+                    <div class="sig-line">প্রদানকারীর স্বাক্ষর</div>
+                    <div class="sig-line">আদায়কারীর স্বাক্ষর</div>
+                </div>
+            `;
+            
+            document.getElementById('printableReceipt').innerHTML = html;
+            
+            setTimeout(() => {
+                window.print();
+            }, 100);
+        }
+    </script>
+</body>
+</html>

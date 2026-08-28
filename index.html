@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Darul Ittihad Foundation</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* বেসিক সেটআপ ও কালার ভেরিয়েবল */
+        :root {
+            --primary-green: #0b9e4a; 
+            --dark-green: #077033;
+            --light-green: #eaf6ee;
+            --white: #ffffff;
+            --text-dark: #2c3e50;
+            --text-gray: #555555;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Hind Siliguri', sans-serif;
+            background-color: #f8fbf9;
+            color: var(--text-dark);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .en-text {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* হেডার অংশ */
+        header {
+            background-color: var(--white);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-section img {
+            width: 55px;
+            height: auto;
+        }
+
+        .logo-section h1 {
+            font-size: 20px;
+            color: var(--primary-green);
+            font-weight: 700;
+            line-height: 1.2;
+            letter-spacing: 0.5px;
+        }
+
+        .header-login-btn {
+            background-color: var(--primary-green);
+            color: var(--white);
+            padding: 10px 22px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .header-login-btn:hover {
+            background-color: var(--dark-green);
+            box-shadow: 0 4px 10px rgba(11, 158, 74, 0.2);
+        }
+
+        /* মূল কন্টেন্ট (ফাউন্ডেশনের তথ্য) */
+        main {
+            flex: 1; /* ফুটারকে নিচে রাখার জন্য */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 60px 20px;
+        }
+
+        .info-container {
+            background: var(--white);
+            max-width: 800px;
+            padding: 50px 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+            border-top: 5px solid var(--primary-green);
+            text-align: center;
+        }
+
+        .info-container i.main-icon {
+            font-size: 50px;
+            color: var(--primary-green);
+            margin-bottom: 20px;
+            background: var(--light-green);
+            padding: 20px;
+            border-radius: 50%;
+        }
+
+        .info-container h2 {
+            font-size: 32px;
+            color: var(--dark-green);
+            margin-bottom: 20px;
+        }
+
+        .info-container p {
+            font-size: 18px;
+            color: var(--text-gray);
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+
+        .main-login-btn {
+            display: inline-block;
+            background-color: var(--white);
+            color: var(--primary-green);
+            border: 2px solid var(--primary-green);
+            padding: 12px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .main-login-btn:hover {
+            background-color: var(--primary-green);
+            color: var(--white);
+        }
+
+        /* ফুটার অংশ */
+        footer {
+            background-color: var(--dark-green);
+            color: var(--white);
+            padding: 40px 5% 20px 5%;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 30px;
+        }
+
+        .footer-links h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--light-green);
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links ul li a {
+            color: #d1e8da;
+            text-decoration: none;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-links ul li a:hover {
+            color: var(--white);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            font-size: 14px;
+            color: #a3cbbb;
+        }
+
+        /* রেসপন্সিভ ডিজাইন */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .info-container {
+                padding: 30px 20px;
+            }
+
+            .info-container h2 {
+                font-size: 26px;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .footer-links ul li a {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- হেডার -->
+    <header>
+        <div class="logo-section">
+            <img src="1000123161.png" alt="DIF Logo">
+            <div>
+                <h1 class="en-text">DARUL ITTIHAD<br>FOUNDATION</h1>
+            </div>
+        </div>
+        
+        <!-- হেডারে লগিন বাটন -->
+        <a href="login.html" class="header-login-btn">
+            <i class="fa-solid fa-user-lock"></i> লগিন
+        </a>
+    </header>
+
+    <!-- মূল কন্টেন্ট (ফাউন্ডেশন ইনফো) -->
+    <main>
+        <div class="info-container">
+            <i class="fa-solid fa-handshake-angle main-icon"></i>
+            <h2>দারুল ইত্তিহাদ ফাউন্ডেশন সম্পর্কে</h2>
+            <p>আমাদের ফাউন্ডেশনটি মূলত একটি সেবামূলক ও সমবায় ভিত্তিক প্রতিষ্ঠান। এর মূল লক্ষ্য হলো সদস্যদের মাঝে পারস্পরিক বন্ধন ও সহযোগিতা বৃদ্ধি করা এবং শতভাগ স্বচ্ছতার সাথে আর্থিক লেনদেন ও সঞ্চয়ের হিসাব সংরক্ষণ করা। আমরা একটি সুন্দর ও স্বনির্ভর সমাজ গঠনে প্রতিশ্রুতিবদ্ধ।</p>
+            
+            <!-- বড় লগিন বাটন -->
+            <a href="login.html" class="main-login-btn">
+                <i class="fa-solid fa-arrow-right-to-bracket"></i> ড্যাশবোর্ডে প্রবেশ করুন
+            </a>
+        </div>
+    </main>
+
+    <!-- ফুটার (বটম লিংকস) -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <h3>প্রয়োজনীয় লিংক</h3>
+                <ul>
+                    <li><a href="#"><i class="fa-solid fa-angle-right"></i> হোমপেজ</a></li>
+                    <li><a href="#"><i class="fa-solid fa-angle-right"></i> আমাদের লক্ষ্য ও উদ্দেশ্য</a></li>
+                    <li><a href="#"><i class="fa-solid fa-angle-right"></i> সমিতির নিয়মাবলি</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-links">
+                <h3>যোগাযোগ</h3>
+                <ul>
+                    <li><a href="#"><i class="fa-solid fa-envelope"></i> info@darulittihad.com</a></li>
+                    <li><a href="#"><i class="fa-solid fa-phone"></i> +880 1XXX-XXXXXX</a></li>
+                    <li><a href="#"><i class="fa-solid fa-location-dot"></i> ঢাকা, বাংলাদেশ</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 <span class="en-text">Darul Ittihad Foundation</span>. সর্বস্বত্ব সংরক্ষিত।</p>
+        </div>
+    </footer>
+
+</body>
+</html>

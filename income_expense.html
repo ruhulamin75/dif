@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>আয়/ব্যয় এন্ট্রি - Darul Ittihad Foundation</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root { --primary-green: #0b9e4a; --dark-green: #077033; --light-green: #eaf6ee; --expense-red: #d32f2f; --expense-light: #ffeaea; --white: #ffffff; --bg-color: #f4f7f6; --text-dark: #2c3e50; --text-gray: #666666; --border-color: #e0e0e0; --sidebar-width: 250px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Poppins', 'Hind Siliguri', sans-serif; background-color: var(--bg-color); color: var(--text-dark); display: flex; }
+        .en-text { font-family: 'Poppins', sans-serif; }
+
+        /* সাইডবার */
+        .sidebar { width: var(--sidebar-width); background-color: var(--white); height: 100vh; position: fixed; left: 0; top: 0; box-shadow: 2px 0 10px rgba(0,0,0,0.05); display: flex; flex-direction: column; z-index: 1000; transition: transform 0.3s ease; }
+        .sidebar-header { padding: 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border-color); }
+        .sidebar-header img { width: 45px; }
+        .sidebar-header h2 { font-size: 15px; color: var(--primary-green); line-height: 1.3; font-weight: 700; font-family: 'Poppins', sans-serif; }
+        .sidebar-menu { list-style: none; padding: 20px 0; flex: 1; overflow-y: auto; }
+        .sidebar-menu li { padding: 5px 20px; }
+        .sidebar-menu li a { text-decoration: none; color: var(--text-gray); display: flex; align-items: center; gap: 12px; padding: 12px 15px; border-radius: 8px; font-size: 16px; font-weight: 500; transition: all 0.3s; }
+        .sidebar-menu li a:hover, .sidebar-menu li a.active { background-color: var(--light-green); color: var(--primary-green); }
+        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 999; }
+
+        /* মূল কন্টেন্ট */
+        .main-content { flex: 1; margin-left: var(--sidebar-width); padding: 20px 30px; width: calc(100% - var(--sidebar-width)); }
+        .topbar { display: flex; justify-content: space-between; align-items: center; background: var(--white); padding: 15px 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); margin-bottom: 30px; }
+        .menu-toggle { display: none; font-size: 24px; color: var(--primary-green); cursor: pointer; }
+        .admin-profile { display: flex; align-items: center; gap: 12px; }
+        .admin-profile div h4 { font-size: 16px; color: var(--dark-green); margin: 0; }
+        .admin-icon { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--primary-green); background-color: var(--light-green); color: var(--primary-green); display: flex; justify-content: center; align-items: center; font-size: 20px; }
+
+        .page-header { margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;}
+        .page-header h2 { font-size: 24px; color: var(--dark-green); margin: 0;}
+
+        /* ফর্ম কন্টেইনার */
+        .form-container { background: var(--white); border-radius: 12px; padding: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 30px;}
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-dark); font-size: 15px;}
+        .form-group input[type="text"], .form-group input[type="number"], .form-group input[type="date"], .form-group select, .form-group textarea { width: 100%; padding: 12px 15px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 15px; font-family: inherit; outline: none; background: #fafafa; transition: 0.3s;}
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--primary-green); background: var(--white);}
+        
+        .category-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin-bottom: 10px;}
+        .category-item { background: #f9fbf9; border: 1px solid var(--border-color); padding: 12px; border-radius: 8px; display: flex; flex-direction: column; gap: 10px; transition: 0.2s;}
+        .category-item:hover { border-color: var(--primary-green); }
+        .category-item .checkbox-row { display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 15px; font-weight: 500;}
+        .category-item .checkbox-row input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--primary-green); cursor: pointer;}
+        .category-item .amount-input { display: none; margin-top: 5px;}
+        .category-item .amount-input input { padding: 8px 12px; font-size: 14px;}
+
+        /* ব্যয়ের ডাইনামিক রো */
+        .expense-row { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; background: #fffafafa; padding: 10px; border-radius: 8px; border: 1px dashed #ccc;}
+        .expense-row input { flex: 1; padding: 10px; }
+        .btn-add-row { background: var(--primary-green); color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-size: 16px; transition: 0.3s;}
+        .btn-add-row:hover { background: var(--dark-green); }
+        .btn-remove-row { background: #ffeaea; color: #d32f2f; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-size: 16px; transition: 0.3s;}
+        .btn-remove-row:hover { background: #c62828; color: white;}
+
+        .action-buttons { display: flex; gap: 15px; margin-top: 25px; flex-wrap: wrap;}
+        .save-btn { flex: 1; min-width: 200px; background: var(--primary-green); color: white; border: none; padding: 14px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.3s;}
+        .save-btn:hover { background: var(--dark-green); }
+        .cancel-btn { flex: 1; min-width: 200px; background: #ffeaea; color: #d32f2f; border: none; padding: 14px 25px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.3s; display: none; justify-content: center; align-items: center; gap: 8px;}
+        .cancel-btn:hover { background: #c62828; color: white;}
+
+        /* টেবিল */
+        .table-container { background: var(--white); border-radius: 12px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; min-width: 900px; }
+        table th, table td { padding: 15px; text-align: left; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+        table th { background-color: var(--light-green); color: var(--dark-green); font-weight: 600; }
+        table tbody tr:hover { background-color: #f9fbf9; }
+        
+        .badge { padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; display: inline-block;}
+        .badge.income { background: var(--light-green); color: var(--dark-green); border: 1px solid var(--primary-green);}
+        .badge.expense { background: var(--expense-light); color: var(--expense-red); border: 1px solid var(--expense-red);}
+
+        /* অ্যাকশন বাটন */
+        .action-icons { display: flex; gap: 8px; }
+        .action-icons button { border: none; background: none; cursor: pointer; font-size: 15px; padding: 8px 10px; border-radius: 6px; transition: 0.3s; display: flex; align-items: center; justify-content: center;}
+        .btn-view { color: #1976d2; background: #f0f8ff; font-weight: 600;} .btn-view:hover { background: #e3f2fd; }
+        .btn-edit { color: var(--primary-green); background: #eaf6ee; font-weight: 600;} .btn-edit:hover { background: #d4f0df; }
+        .btn-delete { color: #d32f2f; background: #ffeaea; font-weight: 600;} .btn-delete:hover { background: #fbdada; }
+
+        /* ====================================================
+           মোডাল (স্ক্রল ফিক্স)
+           ==================================================== */
+        .modal { 
+            display: none; /* ডিফল্ট হাইড */
+            position: fixed; 
+            top: 0; left: 0; right: 0; bottom: 0; 
+            background: rgba(0,0,0,0.7); 
+            z-index: 9999; 
+            overflow-y: auto; /* স্ক্রলিং চালু করা হলো */
+            padding: 40px 20px; /* পেজের চারপাশে ফাঁকা জায়গা */
+        }
+        
+        .receipt-wrapper { 
+            background: var(--white); 
+            width: 100%; 
+            max-width: 700px; 
+            margin: 0 auto; /* পপআপ মাঝখানে থাকবে কিন্তু স্ক্রল হবে */
+            position: relative; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4); 
+            border-radius: 8px; 
+            overflow: hidden; 
+        }
+
+        .close-btn { position: absolute; top: 15px; right: 20px; font-size: 26px; color: var(--text-dark); cursor: pointer; background: rgba(255,255,255,0.8); width: 40px; height: 40px; border-radius: 50%; border: none; display: flex; justify-content: center; align-items: center; z-index: 10; transition: 0.3s;}
+        .close-btn:hover { background: #d32f2f; color: white;}
+        
+        .receipt-print-area { position: relative; background: #fff; padding: 40px; font-family: 'Hind Siliguri', sans-serif; color: #333; z-index: 1;}
+        .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.05; z-index: -1; pointer-events: none; }
+        .watermark img { width: 300px; height: auto;}
+        
+        .receipt-header { text-align: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 3px double #ccc;}
+        .receipt-header img { width: 60px; margin-bottom: 10px;}
+        .receipt-header h1 { margin: 0; font-size: 28px; font-family: 'Poppins', sans-serif; color: #222; font-weight: 700;}
+        .receipt-title { display: inline-block; padding: 8px 25px; border-radius: 30px; font-size: 18px; font-weight: 700; margin-top: 15px; letter-spacing: 1px;}
+        
+        .receipt-wrapper.type-income .receipt-title { background: var(--primary-green); color: white;}
+        .receipt-wrapper.type-income .receipt-header { border-bottom-color: var(--primary-green); }
+        .receipt-wrapper.type-income .total-row { color: var(--dark-green); border-top: 2px solid var(--primary-green);}
+        
+        .receipt-wrapper.type-expense .receipt-title { background: var(--expense-red); color: white;}
+        .receipt-wrapper.type-expense .receipt-header { border-bottom-color: var(--expense-red); }
+        .receipt-wrapper.type-expense .total-row { color: var(--expense-red); border-top: 2px solid var(--expense-red);}
+
+        .receipt-meta { display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 15px; font-weight: 500;}
+        .receipt-user-info { margin-bottom: 20px; font-size: 16px;}
+        .receipt-user-info p { margin: 5px 0;}
+        .receipt-user-info strong { width: 120px; display: inline-block; color: #555;}
+
+        .receipt-table-wrapper { width: 100%; overflow-x: auto;}
+        .receipt-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; min-width: 400px;}
+        .receipt-table th, .receipt-table td { padding: 12px; border: 1px solid #ddd; text-align: left; font-size: 15px;}
+        .receipt-table th { background: #f5f5f5; font-weight: 600; color: #333;}
+        .receipt-table td.amount-col { text-align: right; font-weight: 600; font-family: 'Poppins', sans-serif;}
+        .receipt-table th.amount-col { text-align: right; }
+
+        .total-row { font-size: 18px; font-weight: 700; display: flex; justify-content: flex-end; gap: 40px; padding-top: 15px; margin-top: 10px; }
+        .words-text { font-size: 14px; font-style: italic; color: #666; margin-top: 5px; text-align: right;}
+        
+        .signatures { display: flex; justify-content: space-between; margin-top: 60px; padding-top: 20px;}
+        .sig-line { border-top: 1px solid #333; width: 150px; text-align: center; font-size: 14px; padding-top: 5px; font-weight: 600; color: #555;}
+
+        .print-btn-container { padding: 20px; background: #f0f0f0; text-align: center; border-top: 1px solid #ddd;}
+        .print-btn { background: #1976d2; color: white; border: none; padding: 12px 30px; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 10px; transition: 0.3s;}
+        .print-btn:hover { background: #115293; }
+
+        /* ====================================================
+           প্রিন্ট মিডিয়া কোয়েরি ফিক্স (A4 Size Fix)
+           ==================================================== */
+        @media print {
+            @page { size: A4 portrait; margin: 15mm; }
+            
+            /* মূল পেজের সবকিছুকে সম্পূর্ণ গায়েব করা হলো */
+            body > * { display: none !important; }
+            
+            /* শুধুমাত্র রিসিট মোডালকে দৃশ্যমান রাখা হলো */
+            #receiptModal { 
+                display: block !important; 
+                position: absolute !important; 
+                left: 0 !important; 
+                top: 0 !important; 
+                width: 100% !important;
+                background: none !important; 
+                padding: 0 !important; 
+                margin: 0 !important;
+                overflow: visible !important;
+            }
+            
+            .receipt-wrapper { 
+                box-shadow: none !important; 
+                max-width: 100% !important; 
+                width: 100% !important; 
+                border-radius: 0 !important; 
+                margin: 0 !important;
+            }
+
+            .receipt-print-area { 
+                padding: 0 !important; 
+            }
+            
+            /* অপ্রয়োজনীয় বাটন গায়েব */
+            .close-btn, .print-btn-container { display: none !important; }
+
+            /* ব্যাকগ্রাউন্ড কালার প্রিন্ট করার জন্য */
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            .receipt-wrapper.type-income .receipt-title { background-color: var(--primary-green) !important; color: white !important;}
+            .receipt-wrapper.type-expense .receipt-title { background-color: var(--expense-red) !important; color: white !important;}
+            .receipt-table th { background-color: #f5f5f5 !important; }
+        }
+
+        @media (max-width: 992px) { .sidebar { transform: translateX(-100%); } .sidebar.show { transform: translateX(0); } .sidebar-overlay.show { display: block; } .main-content { margin-left: 0; width: 100%; padding: 15px; } .menu-toggle { display: block; } }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="1000123161.png" alt="DIF Logo">
+            <h2>DARUL ITTIHAD<br>FOUNDATION</h2>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="admin_dashboard.html"><i class="fa-solid fa-gauge"></i> ড্যাশবোর্ড</a></li>
+            <li><a href="member_list.html"><i class="fa-solid fa-users"></i> সদস্য তালিকা</a></li>
+            <li><a href="monthly_collection.html"><i class="fa-solid fa-calendar-check"></i> মাসিক জমা</a></li>
+            <li><a href="#"><i class="fa-solid fa-chart-pie"></i> শেয়ার</a></li>
+            <li><a href="#"><i class="fa-solid fa-sack-dollar"></i> এককালীন/বাৎসরিক জমা</a></li>
+            <li><a href="income_expense.html" class="active"><i class="fa-solid fa-scale-balanced"></i> আয়/ব্যয়</a></li>
+            <li><a href="#"><i class="fa-solid fa-file-invoice"></i> রিপোর্টস</a></li>
+            <li><a href="settings.html"><i class="fa-solid fa-gear"></i> সেটিংস</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="menu-toggle" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></div>
+            <div><h2 style="color: var(--dark-green); font-size: 22px;">আয়/ব্যয় এন্ট্রি</h2></div>
+        </header>
+
+        <div class="form-container">
+            <div class="form-group">
+                <label>লেনদেনের ধরন নির্বাচন করুন</label>
+                <select id="trxType" onchange="toggleFormType()">
+                    <option value="income">আয় (Income)</option>
+                    <option value="expense">ব্যয় (Expense)</option>
+                </select>
+            </div>
+
+            <form id="trxForm">
+                <input type="hidden" id="editTrxId" value="">
+                
+                <div class="form-group">
+                    <label>তারিখ</label>
+                    <input type="date" id="trxDate" class="en-text" required>
+                </div>
+
+                <!-- ================== আয় (Income) ================== -->
+                <div id="incomeSection">
+                    <div class="form-group">
+                        <label>আয়ের খাতসমূহ (যেকোনোটিতে টিক দিন ও পরিমাণ লিখুন)</label>
+                        <div class="category-grid">
+                            <div class="category-item">
+                                <label class="checkbox-row"><input type="checkbox" id="chk-1" value="ভর্তি ফি" onchange="toggleIncAmt(this, 'inc-box-1')"> ভর্তি ফি</label>
+                                <div class="amount-input" id="inc-box-1"><input type="number" id="amt-1" class="inc-amt-val en-text" data-cat="ভর্তি ফি" placeholder="পরিমাণ (৳)" oninput="calcTotalIncome()"></div>
+                            </div>
+                            <div class="category-item">
+                                <label class="checkbox-row"><input type="checkbox" id="chk-2" value="এককালীন/বাৎসরিক জমা" onchange="toggleIncAmt(this, 'inc-box-2')"> এককালীন/বাৎসরিক জমা</label>
+                                <div class="amount-input" id="inc-box-2"><input type="number" id="amt-2" class="inc-amt-val en-text" data-cat="এককালীন/বাৎসরিক জমা" placeholder="পরিমাণ (৳)" oninput="calcTotalIncome()"></div>
+                            </div>
+                            <div class="category-item">
+                                <label class="checkbox-row"><input type="checkbox" id="chk-3" value="মাসিক জমা" onchange="toggleIncAmt(this, 'inc-box-3')"> মাসিক জমা</label>
+                                <div class="amount-input" id="inc-box-3"><input type="number" id="amt-3" class="inc-amt-val en-text" data-cat="মাসিক জমা" placeholder="পরিমাণ (৳)" oninput="calcTotalIncome()"></div>
+                            </div>
+                            <div class="category-item">
+                                <label class="checkbox-row"><input type="checkbox" id="chk-4" value="সার্ভিস চার্জ" onchange="toggleIncAmt(this, 'inc-box-4')"> সার্ভিস চার্জ</label>
+                                <div class="amount-input" id="inc-box-4"><input type="number" id="amt-4" class="inc-amt-val en-text" data-cat="সার্ভিস চার্জ" placeholder="পরিমাণ (৳)" oninput="calcTotalIncome()"></div>
+                            </div>
+                            <div class="category-item">
+                                <label class="checkbox-row"><input type="checkbox" id="chk-5" value="শেয়ার" onchange="toggleIncAmt(this, 'inc-box-5')"> শেয়ার</label>
+                                <div class="amount-input" id="inc-box-5"><input type="number" id="amt-5" class="inc-amt-val en-text" data-cat="শেয়ার" placeholder="পরিমাণ (৳)" oninput="calcTotalIncome()"></div>
+                            </div>
+                            <div class="category-item">
+                                <label class="checkbox-row"><input type="checkbox" id="chk-6" value="ডোনেশন" onchange="toggleIncAmt(this, 'inc-box-6')"> ডোনেশন</label>
+                                <div class="amount-input" id="inc-box-6"><input type="number" id="amt-6" class="inc-amt-val en-text" data-cat="ডোনেশন" placeholder="পরিমাণ (৳)" oninput="calcTotalIncome()"></div>
+                            </div>
+                            <div class="category-item">
+                                <label class="checkbox-row"><input type="checkbox" id="chk-7" value="জরিমানা" onchange="toggleIncAmt(this, 'inc-box-7')"> জরিমানা</label>
+                                <div class="amount-input" id="inc-box-7"><input type="number" id="amt-7" class="inc-amt-val en-text" data-cat="জরিমানা" placeholder="পরিমাণ (৳)" oninput="calcTotalIncome()"></div>
+                            </div>
+                            <div class="category-item">
+                                <label class="checkbox-row"><input type="checkbox" id="chk-other" value="অন্যান্য" onchange="toggleIncAmt(this, 'inc-box-other')"> অন্যান্য</label>
+                                <div class="amount-input" id="inc-box-other">
+                                    <input type="text" id="incOtherText" placeholder="খাতের নাম লিখুন" style="margin-bottom: 8px;">
+                                    <input type="number" id="amt-other" class="inc-amt-val en-text" placeholder="পরিমাণ (৳)" oninput="calcTotalIncome()">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="background: #eaf6ee; padding: 15px; border-radius: 8px; border: 1px solid var(--primary-green);">
+                        <label>সর্বমোট আয়ের পরিমাণ</label>
+                        <input type="text" id="incTotalAmount" class="en-text" value="0" readonly style="background: transparent; border: none; font-size: 20px; font-weight: bold; color: var(--dark-green); padding:0;">
+                        <div style="font-size: 14px; color: #d32f2f; margin-top: 5px; font-weight: 600;">কথায়: <span id="amountInWordsInc">শূন্য টাকা মাত্র</span></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>প্রদানকারীর আইডি ও নাম</label>
+                        <select id="incMember" onchange="checkOtherMember()">
+                            <option value="" disabled selected>সদস্য নির্বাচন করুন</option>
+                            <option value="other">অন্যান্য (ম্যানুয়ালি লিখুন)</option>
+                        </select>
+                        <input type="text" id="incOtherMemberText" placeholder="নাম লিখুন" style="display: none; margin-top: 8px;">
+                    </div>
+
+                    <div class="form-group">
+                        <label>ঠিকানা (ঐচ্ছিক)</label>
+                        <input type="text" id="incAddress" placeholder="ঠিকানা লিখুন">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>বিবরণ (ঐচ্ছিক)</label>
+                        <textarea id="incDesc" rows="2" placeholder="বিস্তারিত বিবরণ"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>আদায়কারীর নাম</label>
+                        <select id="incCollector">
+                            <option value="" disabled selected>আদায়কারী নির্বাচন করুন</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- ================== ব্যয় (Expense) ================== -->
+                <div id="expenseSection" style="display: none;">
+                    <div class="form-group">
+                        <label>ব্যয়ের খাত ও পরিমাণ</label>
+                        <div id="expenseRowsContainer">
+                            <div class="expense-row">
+                                <input type="text" class="exp-cat" placeholder="খাতের নাম (যেমন: অফিস ভাড়া)">
+                                <input type="number" class="exp-amt en-text" placeholder="পরিমাণ (৳)" oninput="calculateExpenseTotal()">
+                                <button type="button" class="btn-add-row" onclick="addExpenseRow()"><i class="fa-solid fa-plus"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="background: #ffeaea; padding: 15px; border-radius: 8px; border: 1px solid #ffcdd2;">
+                        <label>সর্বমোট ব্যয়ের পরিমাণ</label>
+                        <input type="text" id="expTotalAmount" class="en-text" value="0" readonly style="background: transparent; border: none; font-size: 20px; font-weight: bold; color: var(--expense-red); padding:0;">
+                        <div style="font-size: 14px; color: var(--dark-green); margin-top: 5px; font-weight: 600;">কথায়: <span id="amountInWordsExp">শূন্য টাকা মাত্র</span></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>ব্যয়কারীর নাম</label>
+                        <select id="expSpender">
+                            <option value="" disabled selected>ব্যয়কারী নির্বাচন করুন</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>বিবরণ (ঐচ্ছিক)</label>
+                        <textarea id="expDesc" rows="2" placeholder="বিস্তারিত বিবরণ"></textarea>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button type="button" class="cancel-btn" id="cancelEditBtn" onclick="resetForm()"><i class="fa-solid fa-xmark"></i> এডিট বাতিল করুন</button>
+                    <button type="submit" class="save-btn" id="saveTrxBtn"><i class="fa-solid fa-floppy-disk"></i> সংরক্ষণ করুন</button>
+                </div>
+            </form>
+        </div>
+
+        <h3 style="color: var(--dark-green); margin-bottom: 15px;">সাম্প্রতিক লেনদেন</h3>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>তারিখ</th>
+                        <th>ধরণ</th>
+                        <th>নাম/বিবরণ</th>
+                        <th>খাত</th>
+                        <th>মোট পরিমাণ</th>
+                        <th style="text-align: center;">অ্যাকশন</th>
+                    </tr>
+                </thead>
+                <tbody id="trxTableBody">
+                    <tr><td colspan="6" class="loading-data"><i class="fa-solid fa-spinner fa-spin"></i> ডাটা লোড হচ্ছে...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- রিসিট মোডাল -->
+    <div class="modal" id="receiptModal">
+        <div class="receipt-wrapper" id="receiptWrapper">
+            <button class="close-btn" onclick="document.getElementById('receiptModal').style.display='none'"><i class="fa-solid fa-xmark"></i></button>
+            <div class="receipt-print-area" id="printableArea">
+                <div class="watermark"><img src="1000123161.png" alt="Watermark"></div>
+                <div class="receipt-header">
+                    <img src="1000123161.png" alt="Logo">
+                    <h1 class="en-text">DARUL ITTIHAD FOUNDATION</h1>
+                    <p>House: 12, Road: 5, Block: A, Dhaka-1212</p>
+                    <div class="receipt-title" id="receiptTitle">রিসিট</div>
+                </div>
+                <div class="receipt-meta">
+                    <div><strong>রিসিট নং:</strong> <span class="en-text" id="rId">#123456</span></div>
+                    <div><strong>তারিখ:</strong> <span class="en-text" id="rDate">DD/MM/YYYY</span></div>
+                </div>
+                <div class="receipt-user-info" id="rUserInfo"></div>
+                
+                <div class="receipt-table-wrapper">
+                    <table class="receipt-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 10%; text-align: center;">ক্রঃ নং</th>
+                                <th>খাতের বিবরণ</th>
+                                <th class="amount-col" style="width: 25%;">টাকার পরিমাণ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rTableBody"></tbody>
+                    </table>
+                </div>
+
+                <div class="total-row">
+                    <span>সর্বমোট:</span>
+                    <span class="en-text" id="rTotalAmt">৳ 0</span>
+                </div>
+                <div class="words-text" id="rWords">কথায়: শূন্য টাকা মাত্র</div>
+                <div class="signatures">
+                    <div class="sig-line" id="sigPayer">প্রদানকারীর স্বাক্ষর</div>
+                    <div class="sig-line" id="sigReceiver">আদায়কারীর স্বাক্ষর</div>
+                </div>
+            </div>
+            <div class="print-btn-container">
+                <button class="print-btn" onclick="window.print()"><i class="fa-solid fa-print"></i> রিসিট প্রিন্ট করুন</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- লজিক -->
+    <script>
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('show'); document.getElementById('sidebarOverlay').classList.toggle('show'); }
+        document.getElementById('trxDate').valueAsDate = new Date();
+
+        function toggleFormType() {
+            const type = document.getElementById('trxType').value;
+            if(type === 'income') {
+                document.getElementById('incomeSection').style.display = 'block';
+                document.getElementById('expenseSection').style.display = 'none';
+            } else {
+                document.getElementById('incomeSection').style.display = 'none';
+                document.getElementById('expenseSection').style.display = 'block';
+            }
+        }
+
+        function toggleIncAmt(chk, boxId) {
+            const box = document.getElementById(boxId);
+            if(chk.checked) {
+                box.style.display = 'block';
+            } else {
+                box.style.display = 'none';
+                box.querySelector('input[type="number"]').value = '';
+                if(boxId === 'inc-box-other') document.getElementById('incOtherText').value = '';
+                calcTotalIncome();
+            }
+        }
+
+        function checkOtherMember() {
+            const val = document.getElementById('incMember').value;
+            document.getElementById('incOtherMemberText').style.display = (val === 'other') ? 'block' : 'none';
+        }
+
+        function calcTotalIncome() {
+            let total = 0;
+            for(let i=1; i<=7; i++) {
+                let chk = document.getElementById('chk-'+i);
+                let amt = document.getElementById('amt-'+i);
+                if(chk && chk.checked && amt.value) total += parseFloat(amt.value);
+            }
+            let chkO = document.getElementById('chk-other');
+            let amtO = document.getElementById('amt-other');
+            if(chkO && chkO.checked && amtO.value) total += parseFloat(amtO.value);
+
+            document.getElementById('incTotalAmount').value = total;
+            document.getElementById('amountInWordsInc').innerText = getBanglaWords(total) + " টাকা মাত্র";
+        }
+
+        function addExpenseRow(cat = '', amt = '') {
+            const container = document.getElementById('expenseRowsContainer');
+            const row = document.createElement('div');
+            row.className = 'expense-row';
+            row.innerHTML = `
+                <input type="text" class="exp-cat" placeholder="খাতের নাম" value="${cat}">
+                <input type="number" class="exp-amt en-text" placeholder="পরিমাণ (৳)" value="${amt}" oninput="calculateExpenseTotal()">
+                <button type="button" class="btn-remove-row" onclick="this.parentElement.remove(); calculateExpenseTotal();"><i class="fa-solid fa-minus"></i></button>
+            `;
+            container.appendChild(row);
+            calculateExpenseTotal();
+        }
+
+        function calculateExpenseTotal() {
+            let total = 0;
+            document.querySelectorAll('.exp-amt').forEach(inp => {
+                if(inp.value) total += parseFloat(inp.value);
+            });
+            document.getElementById('expTotalAmount').value = total;
+            document.getElementById('amountInWordsExp').innerText = getBanglaWords(total) + " টাকা মাত্র";
+        }
+
+        const banglaWords = { 0: 'শূন্য', 1: 'এক', 2: 'দুই', 3: 'তিন', 4: 'চার', 5: 'পাঁচ', 6: 'ছয়', 7: 'সাত', 8: 'আট', 9: 'নয়', 10: 'দশ', 11: 'এগারো', 12: 'বারো', 13: 'তেরো', 14: 'চোদ্দ', 15: 'পনেরো', 16: 'ষোলো', 17: 'সতেরো', 18: 'আঠারো', 19: 'উনিশ', 20: 'বিশ', 21: 'একুশ', 22: 'বাইশ', 23: 'তেইশ', 24: 'চব্বিশ', 25: 'পঁচিশ', 26: 'ছাব্বিশ', 27: 'সাতাশ', 28: 'আটাশ', 29: 'ঊনত্রিশ', 30: 'ত্রিশ', 31: 'একত্রিশ', 32: 'বত্রিশ', 33: 'তেত্রিশ', 34: 'চৌত্রিশ', 35: 'পঁয়ত্রিশ', 36: 'ছত্রিশ', 37: 'সাঁইত্রিশ', 38: 'আটত্রিশ', 39: 'ঊনচল্লিশ', 40: 'চল্লিশ', 41: 'একচল্লিশ', 42: 'বিয়াল্লিশ', 43: 'তেতাল্লিশ', 44: 'চুয়াল্লিশ', 45: 'পঁয়তাল্লিশ', 46: 'ছেচল্লিশ', 47: 'সাতচল্লিশ', 48: 'আটচল্লিশ', 49: 'ঊনপঞ্চাশ', 50: 'পঞ্চাশ', 51: 'একান্ন', 52: 'বায়ান্ন', 53: 'তিপ্পান্ন', 54: 'চুয়ান্ন', 55: 'পঞ্চান্ন', 56: 'ছাপ্পান্ন', 57: 'সাতান্ন', 58: 'আটান্ন', 59: 'ঊনষাট', 60: 'ষাট', 61: 'একষট্টি', 62: 'বাষট্টি', 63: 'তেষট্টি', 64: 'চৌষট্টি', 65: 'পঁয়ষট্টি', 66: 'ছেষট্টি', 67: 'সাতষট্টি', 68: 'আটষট্টি', 69: 'ঊনসত্তর', 70: 'সত্তর', 71: 'একাতর', 72: 'বাহাত্তর', 73: 'তিয়াত্তর', 74: 'চুয়াত্তর', 75: 'পঁচাত্তর', 76: 'ছিয়াত্তর', 77: 'সাতাত্তর', 78: 'আটাত্তর', 79: 'ঊনআশি', 80: 'আশি', 81: 'একাশি', 82: 'বিরাশি', 83: 'তিরাশি', 84: 'চুরাশি', 85: 'পঁচাশি', 86: 'ছিয়াশি', 87: 'সাতাশি', 88: 'আটাশি', 89: 'ঊননব্বই', 90: 'নব্বই', 91: 'একানব্বই', 92: 'বিরানব্বই', 93: 'তিরানব্বই', 94: 'চুরানব্বই', 95: 'পঁচানব্বই', 96: 'ছিয়ানব্বই', 97: 'সাতানব্বই', 98: 'আটানব্বই', 99: 'নিরানব্বই' };
+        function getBanglaWords(num) {
+            if (num === 0) return banglaWords[0];
+            let words = "";
+            if (Math.floor(num / 10000000) > 0) { words += getBanglaWords(Math.floor(num / 10000000)) + " কোটি "; num %= 10000000; }
+            if (Math.floor(num / 100000) > 0) { words += banglaWords[Math.floor(num / 100000)] + " লক্ষ "; num %= 100000; }
+            if (Math.floor(num / 1000) > 0) { words += banglaWords[Math.floor(num / 1000)] + " হাজার "; num %= 1000; }
+            if (Math.floor(num / 100) > 0) { words += banglaWords[Math.floor(num / 100)] + " শত "; num %= 100; }
+            if (num > 0) { words += banglaWords[num]; }
+            return words.trim();
+        }
+
+        function resetForm() {
+            document.getElementById('trxForm').reset();
+            document.getElementById('editTrxId').value = "";
+            document.getElementById('trxDate').valueAsDate = new Date();
+            
+            document.querySelectorAll('.category-item input[type="checkbox"]').forEach(chk => { chk.checked = false; toggleIncAmt(chk, chk.id.replace('chk', 'inc-box')); });
+            document.getElementById('incOtherMemberText').style.display = 'none';
+            document.getElementById('expenseRowsContainer').innerHTML = `
+                <div class="expense-row">
+                    <input type="text" class="exp-cat" placeholder="খাতের নাম">
+                    <input type="number" class="exp-amt en-text" placeholder="পরিমাণ (৳)" oninput="calculateExpenseTotal()">
+                    <button type="button" class="btn-add-row" onclick="addExpenseRow()"><i class="fa-solid fa-plus"></i></button>
+                </div>`;
+            calcTotalIncome();
+            calculateExpenseTotal();
+            
+            document.getElementById('cancelEditBtn').style.display = 'none';
+            document.getElementById('saveTrxBtn').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> সংরক্ষণ করুন';
+            document.getElementById('trxType').disabled = false;
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+
+    <!-- Firebase Connection -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getDatabase, ref, onValue, push, set, remove, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+        // ==========================================
+        // আপনার কপি করা firebaseConfig কোডটি ঠিক এখানে বসান
+        // ==========================================
+        const firebaseConfig = {
+  apiKey: "AIzaSyDqSsaNPqrWQfSeGvh0IuPxGaOJ7S4y4Qo",
+  authDomain: "darul-ittihad-foundation.firebaseapp.com",
+  projectId: "darul-ittihad-foundation",
+  storageBucket: "darul-ittihad-foundation.firebasestorage.app",
+  messagingSenderId: "1068343055365",
+  appId: "1:1068343055365:web:a42b6545e7fcd449de786c"
+};
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        let memberDict = {}; 
+        let allTransactions = [];
+
+        // সদস্য লিস্ট ড্রপডাউনে
+        onValue(ref(db, 'members'), (snapshot) => {
+            const data = snapshot.val();
+            const incMemSelect = document.getElementById('incMember');
+            const incColSelect = document.getElementById('incCollector');
+            const expSpSelect = document.getElementById('expSpender');
+            
+            incMemSelect.innerHTML = '<option value="" disabled selected>সদস্য নির্বাচন করুন</option><option value="other">অন্যান্য (ম্যানুয়ালি লিখুন)</option>';
+            incColSelect.innerHTML = '<option value="" disabled selected>আদায়কারী নির্বাচন করুন</option>';
+            expSpSelect.innerHTML = '<option value="" disabled selected>ব্যয়কারী নির্বাচন করুন</option>';
+
+            if (data) {
+                Object.keys(data).forEach(key => {
+                    const m = data[key];
+                    let mName = m.nameBn || m.nameEn;
+                    let displayName = `${mName} ${m.memberId ? `(${m.memberId})` : ''}`;
+                    memberDict[key] = displayName;
+
+                    incMemSelect.insertBefore(new Option(displayName, key), incMemSelect.lastElementChild);
+                    incColSelect.appendChild(new Option(displayName, key));
+                    expSpSelect.appendChild(new Option(displayName, key));
+                });
+            }
+        });
+
+        // ফর্ম সাবমিট (JS Validation সহ)
+        document.getElementById('trxForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const type = document.getElementById('trxType').value;
+            let items = [];
+            
+            if(type === 'income') {
+                for(let i=1; i<=7; i++){
+                    let chk = document.getElementById('chk-'+i);
+                    let amt = document.getElementById('amt-'+i);
+                    if(chk && chk.checked && amt.value) {
+                        items.push({ category: chk.value, amount: parseInt(amt.value) });
+                    }
+                }
+                let chkO = document.getElementById('chk-other');
+                let amtO = document.getElementById('amt-other');
+                let txtO = document.getElementById('incOtherText');
+                if(chkO && chkO.checked && amtO.value) {
+                    items.push({ category: txtO.value || 'অন্যান্য', amount: parseInt(amtO.value) });
+                }
+
+                if(items.length === 0) { alert("দয়া করে অন্তত একটি আয়ের খাত নির্বাচন করে পরিমাণ লিখুন।"); return; }
+                if(!document.getElementById('incMember').value) { alert("প্রদানকারীর নাম নির্বাচন করুন।"); return; }
+                if(!document.getElementById('incCollector').value) { alert("আদায়কারীর নাম নির্বাচন করুন।"); return; }
+            } else {
+                let valid = true;
+                const catInputs = document.querySelectorAll('.exp-cat');
+                const amtInputs = document.querySelectorAll('.exp-amt');
+                for(let i=0; i<catInputs.length; i++){
+                    if(!catInputs[i].value || !amtInputs[i].value) valid = false;
+                    else items.push({ category: catInputs[i].value, amount: parseInt(amtInputs[i].value) });
+                }
+                if(!valid || items.length === 0) { alert('অনুগ্রহ করে ব্যয়ের খাত এবং পরিমাণ সঠিকভাবে দিন।'); return; }
+                if(!document.getElementById('expSpender').value) { alert("ব্যয়কারীর নাম নির্বাচন করুন।"); return; }
+            }
+
+            const btn = document.getElementById('saveTrxBtn');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> সেভ হচ্ছে...';
+            btn.disabled = true;
+
+            const editId = document.getElementById('editTrxId').value;
+            let trxData = { type: type, date: document.getElementById('trxDate').value, items: items };
+
+            if(type === 'income') {
+                let memVal = document.getElementById('incMember').value;
+                trxData.payerName = (memVal === 'other') ? document.getElementById('incOtherMemberText').value : memberDict[memVal];
+                trxData.payerId = (memVal === 'other') ? '' : memVal;
+                trxData.address = document.getElementById('incAddress').value;
+                trxData.description = document.getElementById('incDesc').value;
+                trxData.amount = parseInt(document.getElementById('incTotalAmount').value);
+                trxData.amountInWords = document.getElementById('amountInWordsInc').innerText;
+                trxData.collector = memberDict[document.getElementById('incCollector').value];
+            } else {
+                trxData.description = document.getElementById('expDesc').value;
+                trxData.amount = parseInt(document.getElementById('expTotalAmount').value);
+                trxData.amountInWords = document.getElementById('amountInWordsExp').innerText;
+                trxData.spender = memberDict[document.getElementById('expSpender').value];
+            }
+
+            try {
+                if(editId) {
+                    await update(ref(db, 'transactions/' + editId), trxData);
+                    alert('লেনদেনটি সফলভাবে আপডেট হয়েছে!');
+                } else {
+                    trxData.timestamp = Date.now();
+                    await set(push(ref(db, 'transactions')), trxData);
+                    alert('লেনদেন সফলভাবে সংরক্ষণ করা হয়েছে!');
+                }
+                resetForm();
+            } catch(error) {
+                alert('সংরক্ষণ করতে সমস্যা হয়েছে!');
+            } finally {
+                btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> সংরক্ষণ করুন';
+                btn.disabled = false;
+            }
+        });
+
+        // টেবিল ডাটা লোড
+        onValue(ref(db, 'transactions'), (snapshot) => {
+            const data = snapshot.val();
+            const tbody = document.getElementById('trxTableBody');
+            tbody.innerHTML = '';
+            allTransactions = [];
+
+            if(data) {
+                Object.keys(data).forEach(key => { let d = data[key]; d.id = key; allTransactions.push(d); });
+                allTransactions.sort((a,b) => b.timestamp - a.timestamp); 
+
+                allTransactions.forEach(trx => {
+                    let dStr = new Date(trx.date).toLocaleDateString('en-GB');
+                    let isIncome = trx.type === 'income';
+                    let badge = isIncome ? '<span class="badge income">আয়</span>' : '<span class="badge expense">ব্যয়</span>';
+                    let nameTitle = isIncome ? (trx.payerName || 'অজ্ঞাত') : (trx.spender || 'অজ্ঞাত');
+                    let cats = trx.items ? trx.items.map(i => i.category).join(', ') : 'খাত নেই';
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td class="en-text">${dStr}</td>
+                        <td>${badge}</td>
+                        <td><strong>${nameTitle}</strong></td>
+                        <td>${cats}</td>
+                        <td class="en-text" style="font-weight:bold; color: ${isIncome ? 'var(--primary-green)' : 'var(--expense-red)'};">৳ ${trx.amount}</td>
+                        <td style="text-align: center;">
+                            <div class="action-icons">
+                                <button class="btn-view" title="রিসিট দেখুন" onclick="window.showReceipt('${trx.id}')"><i class="fa-solid fa-receipt"></i></button>
+                                <button class="btn-edit" title="এডিট করুন" onclick="window.editTrx('${trx.id}')"><i class="fa-solid fa-pen-to-square"></i></button>
+                                <button class="btn-delete" title="ডিলিট করুন" onclick="window.deleteTrx('${trx.id}')"><i class="fa-solid fa-trash-can"></i></button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } else {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">কোনো লেনদেন পাওয়া যায়নি।</td></tr>';
+            }
+        });
+
+        // রিসিট তৈরি ফাংশন
+        window.showReceipt = function(id) {
+            const trx = allTransactions.find(t => t.id === id);
+            if(!trx) return;
+
+            let dStr = new Date(trx.date).toLocaleDateString('en-GB');
+            let isIncome = trx.type === 'income';
+            
+            const wrapper = document.getElementById('receiptWrapper');
+            if(isIncome) {
+                wrapper.className = "receipt-wrapper type-income";
+                document.getElementById('receiptTitle').innerText = "আয় রিসিট (Income Receipt)";
+                document.getElementById('sigPayer').innerText = "প্রদানকারীর স্বাক্ষর";
+                document.getElementById('sigReceiver').innerText = "আদায়কারীর স্বাক্ষর";
+            } else {
+                wrapper.className = "receipt-wrapper type-expense";
+                document.getElementById('receiptTitle').innerText = "ব্যয় রিসিট (Expense Receipt)";
+                document.getElementById('sigPayer').innerText = "অ্যাডমিনের স্বাক্ষর";
+                document.getElementById('sigReceiver').innerText = "ব্যয়কারীর স্বাক্ষর";
+            }
+
+            document.getElementById('rId').innerText = "#" + (trx.timestamp ? trx.timestamp.toString().slice(-6) : "000000");
+            document.getElementById('rDate').innerText = dStr;
+
+            let uInfo = "";
+            if(isIncome) {
+                uInfo += `<p><strong>প্রদানকারীর নাম:</strong> ${trx.payerName || '-'}</p>`;
+                if(trx.address) uInfo += `<p><strong>ঠিকানা:</strong> ${trx.address}</p>`;
+                uInfo += `<p><strong>আদায়কারী:</strong> ${trx.collector || '-'}</p>`;
+                if(trx.description) uInfo += `<p><strong>বিবরণ:</strong> ${trx.description}</p>`;
+            } else {
+                uInfo += `<p><strong>ব্যয়কারীর নাম:</strong> ${trx.spender || '-'}</p>`;
+                if(trx.description) uInfo += `<p><strong>বিবরণ:</strong> ${trx.description}</p>`;
+            }
+            document.getElementById('rUserInfo').innerHTML = uInfo;
+
+            let tBody = "";
+            if(trx.items && trx.items.length > 0) {
+                trx.items.forEach((item, index) => {
+                    tBody += `<tr>
+                        <td class="en-text" style="text-align:center;">${index + 1}</td>
+                        <td>${item.category}</td>
+                        <td class="amount-col en-text">৳ ${item.amount}</td>
+                    </tr>`;
+                });
+            } else {
+                tBody = `<tr><td colspan="3" style="text-align:center;">খাতের বিবরণ নেই</td></tr>`;
+            }
+            document.getElementById('rTableBody').innerHTML = tBody;
+
+            document.getElementById('rTotalAmt').innerText = "৳ " + trx.amount;
+            
+            let words = trx.amountInWords || (getBanglaWords(trx.amount) + " টাকা মাত্র");
+            document.getElementById('rWords').innerText = "কথায়: " + words;
+
+            document.getElementById('receiptModal').style.display = 'block';
+        }
+
+        // এডিট ও ডিলিট
+        window.deleteTrx = async function(id) {
+            if(confirm("আপনি কি নিশ্চিত যে এই লেনদেনটি সম্পূর্ণ ডিলিট করতে চান?")) {
+                try {
+                    await remove(ref(db, 'transactions/' + id));
+                    alert('লেনদেনটি সফলভাবে ডিলিট হয়েছে!');
+                } catch(e) { alert('ডিলিট করতে সমস্যা হয়েছে।'); }
+            }
+        }
+
+        window.editTrx = function(id) {
+            const trx = allTransactions.find(t => t.id === id);
+            if(!trx) return;
+            resetForm(); 
+
+            document.getElementById('editTrxId').value = trx.id;
+            document.getElementById('trxType').value = trx.type;
+            document.getElementById('trxType').disabled = true; 
+            toggleFormType();
+            document.getElementById('trxDate').value = trx.date || '';
+
+            if(trx.type === 'income') {
+                if(trx.items) {
+                    trx.items.forEach(item => {
+                        const mapping = { "ভর্তি ফি": "1", "এককালীন/বাৎসরিক জমা": "2", "মাসিক জমা": "3", "সার্ভিস চার্জ": "4", "শেয়ার": "5", "ডোনেশন": "6", "জরিমানা": "7" };
+                        if(mapping[item.category]) {
+                            let chk = document.getElementById('chk-' + mapping[item.category]);
+                            if(chk) {
+                                chk.checked = true;
+                                toggleIncAmt(chk, 'inc-box-' + mapping[item.category]);
+                                document.getElementById('amt-' + mapping[item.category]).value = item.amount;
+                            }
+                        } else {
+                            let chkO = document.getElementById('chk-other');
+                            if(chkO) {
+                                chkO.checked = true;
+                                toggleIncAmt(chkO, 'inc-box-other');
+                                document.getElementById('incOtherText').value = item.category;
+                                document.getElementById('amt-other').value = item.amount;
+                            }
+                        }
+                    });
+                }
+
+                if(trx.payerId) { document.getElementById('incMember').value = trx.payerId; }
+                else { document.getElementById('incMember').value = 'other'; checkOtherMember(); document.getElementById('incOtherMemberText').value = trx.payerName || ''; }
+                
+                document.getElementById('incAddress').value = trx.address || '';
+                document.getElementById('incDesc').value = trx.description || '';
+                
+                let colSelect = document.getElementById('incCollector');
+                for (let i = 0; i < colSelect.options.length; i++) {
+                    if (colSelect.options[i].text === trx.collector) { colSelect.selectedIndex = i; break; }
+                }
+                calcTotalIncome();
+            } else {
+                document.getElementById('expenseRowsContainer').innerHTML = '';
+                if(trx.items) {
+                    trx.items.forEach(item => addExpenseRow(item.category, item.amount));
+                }
+                document.getElementById('expDesc').value = trx.description || '';
+                
+                let spSelect = document.getElementById('expSpender');
+                for (let i = 0; i < spSelect.options.length; i++) {
+                    if (spSelect.options[i].text === trx.spender) { spSelect.selectedIndex = i; break; }
+                }
+                calculateExpenseTotal();
+            }
+
+            document.getElementById('saveTrxBtn').innerHTML = '<i class="fa-solid fa-pen-to-square"></i> আপডেট করুন';
+            document.getElementById('cancelEditBtn').style.display = 'flex';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
