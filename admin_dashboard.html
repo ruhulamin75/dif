@@ -388,15 +388,15 @@
         <ul class="sidebar-menu">
             <li><a href="#" class="active"><i class="fa-solid fa-gauge"></i> ড্যাশবোর্ড</a></li>
             <li><a href="member_list.html"><i class="fa-solid fa-users"></i> সদস্য তালিকা</a></li>
-            <li><a href="#"><i class="fa-solid fa-calendar-check"></i> মাসিক জমা</a></li>
-            <li><a href="#"><i class="fa-solid fa-chart-pie"></i> শেয়ার</a></li>
-            <li><a href="#"><i class="fa-solid fa-sack-dollar"></i> এককালীন/বাৎসরিক জমা</a></li>
-            <li><a href="#"><i class="fa-solid fa-scale-balanced"></i> আয়/ব্যয়</a></li>
-            <li><a href="#"><i class="fa-solid fa-file-invoice"></i> রিপোর্টস</a></li>
-            <li><a href="#"><i class="fa-solid fa-gear"></i> সেটিংস</a></li>
+            <li><a href="monthly_collection.html"><i class="fa-solid fa-calendar-check"></i> মাসিক জমা</a></li>
+            <li><a href="shares.html"><i class="fa-solid fa-chart-pie"></i> শেয়ার</a></li>
+            <li><a href="yearly_deposit.html"><i class="fa-solid fa-sack-dollar"></i> এককালীন/বাৎসরিক জমা</a></li>
+            <li><a href="income_expense.html"><i class="fa-solid fa-scale-balanced"></i> আয়/ব্যয়</a></li>
+            <li><a href="reports.html"><i class="fa-solid fa-file-invoice"></i> রিপোর্টস</a></li>
+            <li><a href="settings.html"><i class="fa-solid fa-gear"></i> সেটিংস</a></li>
         </ul>
 
-        <a href="login.html" class="logout-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i> লগআউট</a>
+        <a href="login.html" class="logout-btn" onclick="logout(event)"><i class="fa-solid fa-arrow-right-from-bracket"></i> লগআউট</a>
     </aside>
 
     <!-- মূল কন্টেন্ট -->
@@ -430,35 +430,37 @@
             <div class="card">
                 <div class="card-icon"><i class="fa-solid fa-vault"></i></div>
                 <div class="card-info">
-                    <h3 class="en-text">৳ ৫,০০,০০০</h3>
+                    <h3 class="en-text" id="totalFund">৳ 0</h3>
                     <p>সর্বমোট ফান্ড</p>
                 </div>
             </div>
+            <!-- To be added in the future -->
             <div class="card">
                 <div class="card-icon"><i class="fa-solid fa-chart-line"></i></div>
                 <div class="card-info">
-                    <h3 class="en-text">৳ ২,০০,০০০</h3>
+                    <h3 class="en-text">৳ 0</h3>
                     <p>বর্তমান বিনিয়োগ</p>
                 </div>
             </div>
+            <!-- To be added in the future -->
             <div class="card">
                 <div class="card-icon"><i class="fa-solid fa-arrow-trend-up"></i></div>
                 <div class="card-info">
-                    <h3 class="en-text">৳ ১৫,০০০</h3>
+                    <h3 class="en-text">৳ 0</h3>
                     <p>বর্তমান মুনাফা</p>
                 </div>
             </div>
             <div class="card">
                 <div class="card-icon"><i class="fa-solid fa-money-bill-transfer"></i></div>
                 <div class="card-info">
-                    <h3 class="en-text">৳ ৫,০০০</h3>
+                    <h3 class="en-text" id="totalExpense">৳ 0</h3>
                     <p>মোট খরচ</p>
                 </div>
             </div>
             <div class="card highlight-card">
                 <div class="card-icon"><i class="fa-solid fa-wallet"></i></div>
                 <div class="card-info">
-                    <h3 class="en-text">৳ ৩,১০,০০০</h3>
+                    <h3 class="en-text" id="currentBalance">৳ 0</h3>
                     <p>বর্তমান ব্যালেন্স</p>
                 </div>
             </div>
@@ -470,14 +472,14 @@
             <div class="card">
                 <div class="card-icon"><i class="fa-solid fa-users"></i></div>
                 <div class="card-info">
-                    <h3 class="en-text">৪৫ জন</h3>
+                    <h3 class="en-text" id="totalMembers">0 জন</h3>
                     <p>মোট সদস্য</p>
                 </div>
             </div>
             <div class="card">
                 <div class="card-icon"><i class="fa-solid fa-circle-dollar-to-slot"></i></div>
                 <div class="card-info">
-                    <h3 class="en-text">৳ ২৫,০০০</h3>
+                    <h3 class="en-text" id="todayIncome">৳ 0</h3>
                     <p>নতুন জমা (আজ)</p>
                 </div>
             </div>
@@ -486,14 +488,7 @@
         <!-- গ্রুপ ৩: লেনদেন ও ফিল্টার টেবিল -->
         <div class="recent-section">
             <div class="table-header-flex">
-                <h3>আজকের লেনদেন</h3>
-                
-                <div class="date-filter">
-                    <input type="date" title="শুরুর তারিখ">
-                    <span>-</span>
-                    <input type="date" title="শেষ তারিখ">
-                    <button class="filter-btn"><i class="fa-solid fa-magnifying-glass"></i> খুঁজুন</button>
-                </div>
+                <h3>সাম্প্রতিক লেনদেন</h3>
             </div>
 
             <table>
@@ -506,28 +501,8 @@
                         <th>স্ট্যাটাস</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td class="en-text">28 Aug, 2026</td>
-                        <td>আব্দুর রহিম</td>
-                        <td>মাসিক জমা (আগস্ট)</td>
-                        <td class="en-text">৳ ১০০০</td>
-                        <td><span class="status success">জমা হয়েছে</span></td>
-                    </tr>
-                    <tr>
-                        <td class="en-text">28 Aug, 2026</td>
-                        <td>অফিস খরচ</td>
-                        <td>স্টেশনারি ক্রয়</td>
-                        <td class="en-text">৳ ৫০০</td>
-                        <td><span class="status expense">খরচ</span></td>
-                    </tr>
-                    <tr>
-                        <td class="en-text">28 Aug, 2026</td>
-                        <td>করিমুল ইসলাম</td>
-                        <td>শেয়ার ক্রয় (২টি)</td>
-                        <td class="en-text">৳ ২০০০</td>
-                        <td><span class="status success">জমা হয়েছে</span></td>
-                    </tr>
+                <tbody id="recentTrxBody">
+                    <tr><td colspan="5" style="text-align: center;">লোড হচ্ছে...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -539,6 +514,118 @@
             document.getElementById('sidebar').classList.toggle('show');
             document.getElementById('sidebarOverlay').classList.toggle('show');
         }
+
+        // লগআউট ফাংশন
+        function logout(e) {
+            e.preventDefault();
+            localStorage.removeItem("userRole");
+            localStorage.removeItem("loggedInMemberId");
+            window.location.href = "login.html";
+        }
+    </script>
+
+    <!-- Firebase Connection Script -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+        // ==========================================
+        // আপনার Firebase Config
+        // ==========================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyDqSsaNPqrWQfSeGvh0IuPxGaOJ7S4y4Qo",
+            authDomain: "darul-ittihad-foundation.firebaseapp.com",
+            projectId: "darul-ittihad-foundation",
+            storageBucket: "darul-ittihad-foundation.firebasestorage.app",
+            messagingSenderId: "1068343055365",
+            appId: "1:1068343055365:web:a42b6545e7fcd449de786c"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // Security Lock: Check if user is admin
+        const role = localStorage.getItem("userRole");
+        if (role !== "admin") {
+            alert("আপনি এই পেজে প্রবেশ করার অনুমতি পাননি।");
+            window.location.href = "login.html";
+        }
+
+        // =====================================
+        // ড্যাশবোর্ড ডেটা লোড
+        // =====================================
+
+        // ১. মোট সদস্য সংখ্যা
+        onValue(ref(db, 'members'), (snapshot) => {
+            const data = snapshot.val();
+            let count = data ? Object.keys(data).length : 0;
+            document.getElementById('totalMembers').innerText = count + " জন";
+        });
+
+        // ২. ট্রানজেকশন ডেটা (আয়, ব্যয়, বর্তমান ব্যালেন্স, আজকের জমা এবং সাম্প্রতিক তালিকা)
+        onValue(ref(db, 'transactions'), (snapshot) => {
+            const data = snapshot.val();
+            let totalIncome = 0;
+            let totalExpense = 0;
+            let todayIncome = 0;
+            let allTrx = [];
+
+            // আজকের তারিখ YYYY-MM-DD ফরম্যাটে
+            const todayStr = new Date().toISOString().split('T')[0];
+
+            if (data) {
+                Object.keys(data).forEach(key => {
+                    const trx = data[key];
+                    trx.id = key;
+                    allTrx.push(trx);
+
+                    if (trx.type === 'income') {
+                        totalIncome += trx.amount;
+                        if (trx.date === todayStr) {
+                            todayIncome += trx.amount;
+                        }
+                    } else if (trx.type === 'expense') {
+                        totalExpense += trx.amount;
+                    }
+                });
+            }
+
+            // আপডেট কার্ডস
+            document.getElementById('totalFund').innerText = "৳ " + totalIncome;
+            document.getElementById('totalExpense').innerText = "৳ " + totalExpense;
+            document.getElementById('currentBalance').innerText = "৳ " + (totalIncome - totalExpense);
+            document.getElementById('todayIncome').innerText = "৳ " + todayIncome;
+
+            // সাম্প্রতিক লেনদেন (শেষ ৫টি)
+            const tbody = document.getElementById('recentTrxBody');
+            tbody.innerHTML = '';
+            
+            allTrx.sort((a, b) => b.timestamp - a.timestamp).slice(0, 5).forEach(trx => {
+                let dObj = new Date(trx.date);
+                let dStr = dObj.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+                
+                let isIncome = trx.type === 'income';
+                let name = isIncome ? (trx.payerName || 'অজ্ঞাত') : (trx.spender || 'অজ্ঞাত');
+                let desc = trx.items ? trx.items.map(i => i.category).join(', ') : 'বিবরণ নেই';
+                let statusClass = isIncome ? 'success' : 'expense';
+                let statusText = isIncome ? 'জমা হয়েছে' : 'খরচ';
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="en-text">${dStr}</td>
+                    <td>${name}</td>
+                    <td>${desc}</td>
+                    <td class="en-text">৳ ${trx.amount}</td>
+                    <td><span class="status ${statusClass}">${statusText}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            if (allTrx.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">কোনো লেনদেন পাওয়া যায়নি।</td></tr>';
+            }
+        });
+
     </script>
 </body>
 </html>
