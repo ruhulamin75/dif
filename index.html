@@ -92,63 +92,79 @@
             box-shadow: 0 4px 10px rgba(11, 158, 74, 0.2);
         }
 
-        /* মূল কন্টেন্ট (ফাউন্ডেশনের তথ্য) */
+        /* মূল কন্টেন্ট */
         main {
-            flex: 1; /* ফুটারকে নিচে রাখার জন্য */
+            flex: 1; 
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 60px 20px;
+            padding: 50px 20px;
         }
 
         .info-container {
             background: var(--white);
-            max-width: 800px;
-            padding: 50px 40px;
+            max-width: 900px;
+            width: 100%;
+            padding: 40px;
             border-radius: 16px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.04);
             border-top: 5px solid var(--primary-green);
             text-align: center;
         }
 
-        .info-container i.main-icon {
-            font-size: 50px;
-            color: var(--primary-green);
-            margin-bottom: 20px;
-            background: var(--light-green);
-            padding: 20px;
-            border-radius: 50%;
-        }
-
         .info-container h2 {
             font-size: 32px;
             color: var(--dark-green);
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
 
-        .info-container p {
+        .info-container > p {
             font-size: 18px;
             color: var(--text-gray);
-            line-height: 1.8;
-            margin-bottom: 30px;
+            margin-bottom: 35px;
         }
 
-        .main-login-btn {
-            display: inline-block;
-            background-color: var(--white);
+        /* সুবিধার গ্রিড */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            text-align: left;
+        }
+
+        .feature-card {
+            background: #f9fbf9;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary-green);
+            transition: 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .feature-card i {
+            font-size: 26px;
             color: var(--primary-green);
-            border: 2px solid var(--primary-green);
-            padding: 12px 30px;
+            margin-bottom: 12px;
+            background: var(--light-green);
+            padding: 12px;
             border-radius: 8px;
-            text-decoration: none;
-            font-size: 18px;
-            font-weight: 600;
-            transition: all 0.3s ease;
         }
 
-        .main-login-btn:hover {
-            background-color: var(--primary-green);
-            color: var(--white);
+        .feature-card h3 {
+            font-size: 18px;
+            color: var(--dark-green);
+            margin-bottom: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px !important;
+            color: var(--text-gray) !important;
+            margin-bottom: 0 !important;
+            line-height: 1.6 !important;
         }
 
         /* ফুটার অংশ */
@@ -182,13 +198,14 @@
             margin-bottom: 10px;
         }
 
-        .footer-links ul li a {
+        .footer-links ul li a, .footer-links ul li span {
             color: #d1e8da;
             text-decoration: none;
             transition: color 0.3s;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            font-size: 15px;
         }
 
         .footer-links ul li a:hover {
@@ -203,27 +220,39 @@
 
         /* রেসপন্সিভ ডিজাইন */
         @media (max-width: 768px) {
+            /* হেডারের লেআউট ঠিক রাখা হয়েছে */
             header {
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
+                padding: 15px 20px;
             }
-            
+
+            .logo-section img {
+                width: 40px;
+            }
+
+            .logo-section h1 {
+                font-size: 15px;
+            }
+
+            .header-login-btn {
+                padding: 8px 15px;
+                font-size: 13px;
+            }
+
             .info-container {
                 padding: 30px 20px;
             }
 
             .info-container h2 {
-                font-size: 26px;
+                font-size: 24px;
+            }
+
+            .info-container > p {
+                font-size: 15px;
             }
 
             .footer-content {
                 flex-direction: column;
-                text-align: center;
-            }
-            
-            .footer-links ul li a {
-                justify-content: center;
+                text-align: left;
             }
         }
     </style>
@@ -241,25 +270,46 @@
         
         <!-- হেডারে লগিন বাটন -->
         <a href="login.html" class="header-login-btn">
-            <i class="fa-solid fa-user-lock"></i> লগিন
+            <i class="fa-solid fa-user-lock"></i> লগইন
         </a>
     </header>
 
-    <!-- মূল কন্টেন্ট (ফাউন্ডেশন ইনফো) -->
+    <!-- মূল কন্টেন্ট -->
     <main>
         <div class="info-container">
-            <i class="fa-solid fa-handshake-angle main-icon"></i>
-            <h2>দারুল ইত্তিহাদ ফাউন্ডেশন সম্পর্কে</h2>
-            <p>আমাদের ফাউন্ডেশনটি মূলত একটি সেবামূলক ও সমবায় ভিত্তিক প্রতিষ্ঠান। এর মূল লক্ষ্য হলো সদস্যদের মাঝে পারস্পরিক বন্ধন ও সহযোগিতা বৃদ্ধি করা এবং শতভাগ স্বচ্ছতার সাথে আর্থিক লেনদেন ও সঞ্চয়ের হিসাব সংরক্ষণ করা। আমরা একটি সুন্দর ও স্বনির্ভর সমাজ গঠনে প্রতিশ্রুতিবদ্ধ।</p>
+            <h2>দারুল ইত্তিহাদ ফাউন্ডেশনে স্বাগতম</h2>
+            <p>একটি ডিজিটাল এবং স্বচ্ছ সমবায় ব্যবস্থাপনা</p>
             
-            <!-- বড় লগিন বাটন -->
-            <a href="login.html" class="main-login-btn">
-                <i class="fa-solid fa-arrow-right-to-bracket"></i> ড্যাশবোর্ডে প্রবেশ করুন
-            </a>
+            <!-- ওয়েবসাইটের সুবিধাসমূহ -->
+            <div class="features-grid">
+                <div class="feature-card">
+                    <i class="fa-solid fa-mobile-screen"></i>
+                    <h3>ডিজিটাল প্রোফাইল</h3>
+                    <p>সদস্যরা তাদের নিজস্ব একাউন্টে লগইন করে ব্যক্তিগত তথ্য, ছবি এবং বর্তমান স্ট্যাটাস দেখতে পারবেন।</p>
+                </div>
+                
+                <div class="feature-card">
+                    <i class="fa-solid fa-file-invoice-dollar"></i>
+                    <h3>রিয়েল-টাইম লেজার</h3>
+                    <p>মাসিক জমা, এককালীন জমা এবং শেয়ার ফান্ডের সকল হিসাব এবং পূর্ববর্তী লেনদেনের ইতিহাস দেখা যাবে।</p>
+                </div>
+                
+                <div class="feature-card">
+                    <i class="fa-solid fa-receipt"></i>
+                    <h3>ডিজিটাল মানি রিসিট</h3>
+                    <p>প্রতিটি জমার বিপরীতে অটোমেটিক ডিজিটাল রিসিট তৈরি হবে যা খুব সহজেই প্রিন্ট বা ডাউনলোড করা যাবে।</p>
+                </div>
+                
+                <div class="feature-card">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <h3>স্বচ্ছতা ও নিরাপত্তা</h3>
+                    <p>যেকোনো সময়, যেকোনো স্থান থেকে নিজের একাউন্টের আপডেট চেক করার সুবিধা, যা শতভাগ নিরাপদ।</p>
+                </div>
+            </div>
         </div>
     </main>
 
-    <!-- ফুটার (বটম লিংকস) -->
+    <!-- ফুটার -->
     <footer>
         <div class="footer-content">
             <div class="footer-links">
@@ -274,9 +324,9 @@
             <div class="footer-links">
                 <h3>যোগাযোগ</h3>
                 <ul>
-                    <li><a href="#"><i class="fa-solid fa-envelope"></i> info@darulittihad.com</a></li>
-                    <li><a href="#"><i class="fa-solid fa-phone"></i> +880 1XXX-XXXXXX</a></li>
-                    <li><a href="#"><i class="fa-solid fa-location-dot"></i> ঢাকা, বাংলাদেশ</a></li>
+                    <li><a href="mailto:darulittihadfoundation@gmail.com"><i class="fa-solid fa-envelope"></i> <span class="en-text">darulittihadfoundation@gmail.com</span></a></li>
+                    <li><a href="tel:+8801925306004"><i class="fa-solid fa-phone"></i> <span class="en-text">+880 1925-306004</span></a></li>
+                    <li><span><i class="fa-solid fa-location-dot"></i> নয়নপুর, কসবা, ব্রাহ্মণবাড়িয়া</span></li>
                 </ul>
             </div>
         </div>
