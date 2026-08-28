@@ -77,12 +77,16 @@
         table td.amount-col { text-align: right; font-weight: 600; font-family: 'Poppins', sans-serif;}
         table th.amount-col { text-align: right; }
 
-        /* Category Summary Table */
-        .cat-summary-table { width: 50%; border-collapse: collapse; margin-top: 20px; float: right;}
+        /* Category Summary Table (Responsive Wrapper Added) */
+        .cat-summary-wrapper { width: 50%; float: right; overflow-x: auto; margin-top: 10px; border-radius: 8px;}
+        .cat-summary-table { width: 100%; border-collapse: collapse; min-width: 300px;}
         .cat-summary-table th, .cat-summary-table td { padding: 8px 12px; border: 1px solid #ddd; font-size: 14px;}
         .cat-summary-table th { background: var(--light-green); text-align: left; color: var(--dark-green);}
         .cat-summary-table td.amount-col { text-align: right; font-weight: 600; font-family: 'Poppins', sans-serif;}
         .cat-total-row { background: #eaf6ee; font-weight: bold;}
+        
+        /* Signature Section Fix */
+        .signature-box { margin-top: 80px; border-top: 1px solid #ccc; padding-top: 10px; width: 300px; float: right; text-align: center; font-weight: 600; color: var(--text-dark);}
         
         .clearfix::after { content: ""; clear: both; display: table; }
 
@@ -93,7 +97,9 @@
             .main-content { display: block !important; margin: 0 !important; padding: 0 !important; width: 100% !important;}
             .report-container { display: block !important; position: absolute !important; left: 0 !important; top: 0 !important; width: 100% !important; padding: 0 !important; box-shadow: none !important; border-radius: 0 !important;}
             .topbar, .page-header, .filter-section, .btn-print { display: none !important; }
-            .report-table-wrapper { overflow-x: visible !important; }
+            .report-table-wrapper { overflow-x: visible !important; margin-bottom: 20px !important;}
+            .cat-summary-wrapper { overflow-x: visible !important; width: 50% !important; float: right !important;}
+            .signature-box { float: right !important; width: 300px !important; margin-top: 80px !important;}
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             .report-title { background: var(--light-green) !important;}
             .summary-box { background: #f9fbf9 !important;}
@@ -101,7 +107,17 @@
             .cat-summary-table th { background: var(--light-green) !important;}
         }
 
-        @media (max-width: 992px) { .sidebar { transform: translateX(-100%); } .sidebar.show { transform: translateX(0); } .sidebar-overlay.show { display: block; } .main-content { margin-left: 0; width: 100%; padding: 15px; } .menu-toggle { display: block; } .cat-summary-table { width: 100%; float: none;} }
+        /* মোবাইল রেসপন্সিভ ফিক্স */
+        @media (max-width: 992px) { 
+            .sidebar { transform: translateX(-100%); } 
+            .sidebar.show { transform: translateX(0); } 
+            .sidebar-overlay.show { display: block; } 
+            .main-content { margin-left: 0; width: 100%; padding: 15px; } 
+            .menu-toggle { display: block; } 
+            .report-container { padding: 20px; } /* Padding reduced for small screens */
+            .cat-summary-wrapper { width: 100%; float: none; margin-top: 20px;} 
+            .signature-box { width: 100%; float: none; max-width: 250px; margin: 50px auto 0 auto; } /* Centered signature on mobile */
+        }
     </style>
 </head>
 <body>
@@ -222,21 +238,25 @@
             </div>
 
             <div class="clearfix">
-                <table class="cat-summary-table" id="catSummaryTable" style="display: none;">
-                    <thead>
-                        <tr>
-                            <th>খাতের নাম</th>
-                            <th class="amount-col">মোট পরিমাণ</th>
-                        </tr>
-                    </thead>
-                    <tbody id="catSummaryBody">
-                        <!-- Category summary will be injected via JS -->
-                    </tbody>
-                </table>
+                <!-- Responsive wrapper added here -->
+                <div class="cat-summary-wrapper">
+                    <table class="cat-summary-table" id="catSummaryTable" style="display: none;">
+                        <thead>
+                            <tr>
+                                <th>খাতের নাম</th>
+                                <th class="amount-col">মোট পরিমাণ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="catSummaryBody">
+                            <!-- Category summary will be injected via JS -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
             
-            <div style="margin-top: 80px; display: flex; justify-content: space-between; border-top: 1px solid #ccc; padding-top: 10px; width: 300px; float: right;">
-                <div style="text-align: center; width: 100%; font-weight: 600;">অনুমোদিত স্বাক্ষর</div>
+            <!-- Responsive Signature section -->
+            <div class="signature-box">
+                অনুমোদিত স্বাক্ষর
             </div>
             <div class="clearfix"></div>
         </div>
