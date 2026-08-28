@@ -4,16 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>লগইন - Darul Ittihad Foundation</title>
+    
+    <!-- PWA Setup -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0b9e4a">
+    <link rel="apple-touch-icon" href="1000123161.png">
+    
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root { --primary-green: #0b9e4a; --dark-green: #077033; --light-green: #eaf6ee; --white: #ffffff; --bg-color: #f4f7f6; --text-dark: #2c3e50; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Hind Siliguri', sans-serif; background-color: var(--bg-color); display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        body { font-family: 'Hind Siliguri', sans-serif; background-color: var(--bg-color); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
         .en-text { font-family: 'Poppins', sans-serif; }
 
-        .login-container { background: var(--white); width: 100%; max-width: 420px; padding: 40px 30px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center; }
-        .logo-box { margin-bottom: 25px; }
+        .login-container { background: var(--white); width: 100%; max-width: 420px; padding: 40px 30px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center; position: relative; }
+        
+        /* Back to Home Button */
+        .back-home { position: absolute; top: 15px; left: 15px; color: var(--text-gray); text-decoration: none; font-size: 14px; display: flex; align-items: center; gap: 5px; transition: 0.3s; padding: 8px 12px; border-radius: 6px; background: #f5f5f5;}
+        .back-home:hover { color: var(--primary-green); background: var(--light-green); }
+
+        .logo-box { margin-bottom: 25px; margin-top: 10px; }
         .logo-box img { width: 80px; margin-bottom: 10px;}
         .logo-box h2 { font-size: 20px; color: var(--dark-green); margin: 0; font-family: 'Poppins', sans-serif; font-weight: 700; line-height: 1.2;}
         
@@ -45,6 +56,9 @@
 <body>
 
     <div class="login-container">
+        <!-- হোমপেজে ফিরে যাওয়ার বাটন -->
+        <a href="index.html" class="back-home"><i class="fa-solid fa-arrow-left"></i> হোম</a>
+
         <div class="logo-box">
             <img src="1000123161.png" alt="Logo">
             <h2 class="en-text">DARUL ITTIHAD FOUNDATION</h2>
@@ -156,22 +170,17 @@
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> যাচাই করা হচ্ছে...';
             btn.disabled = true;
 
-            const identity = document.getElementById('loginIdentity').value.trim(); // এটি ইমেইল বা ফোন নম্বর হতে পারে
+            const identity = document.getElementById('loginIdentity').value.trim(); 
             const password = document.getElementById('loginPassword').value.trim();
 
             try {
-                // ============================================
-                // ১. অ্যাডমিন লগইন লজিক (Firebase Auth)
-                // ============================================
+                // ১. অ্যাডমিন লগইন লজিক
                 if (loginMode === 'admin') {
                     const userCredential = await signInWithEmailAndPassword(auth, identity, password);
-                    // লগইন সফল হলে
                     localStorage.setItem("userRole", "admin");
                     window.location.href = "admin_dashboard.html";
                 } 
-                // ============================================
-                // ২. মেম্বার লগইন লজিক (Database Check)
-                // ============================================
+                // ২. মেম্বার লগইন লজিক
                 else {
                     const memberQuery = query(ref(db, 'members'), orderByChild('phone'), equalTo(identity));
                     const snapshot = await get(memberQuery);
@@ -215,6 +224,21 @@
                 btn.disabled = false;
             }
         });
+    </script>
+    
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(registration => {
+                        console.log('PWA ServiceWorker registered successfully!');
+                    })
+                    .catch(err => {
+                        console.log('PWA ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
     </script>
 </body>
 </html>
