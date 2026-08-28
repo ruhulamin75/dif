@@ -16,13 +16,26 @@
         .en-text { font-family: 'Poppins', sans-serif; }
 
         .member-topbar { background: var(--white); padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100;}
+        
         .brand { display: flex; align-items: center; gap: 10px; }
         .brand img { width: 40px; }
-        .brand h2 { font-size: 18px; color: var(--primary-green); margin: 0; font-weight: 700; line-height: 1.2;}
+        /* ব্র্যান্ডের নাম রেসপন্সিভ করা হয়েছে */
+        .brand h2 { font-size: 16px; color: var(--primary-green); margin: 0; font-weight: 700; line-height: 1.2; white-space: normal; word-wrap: break-word; max-width: 200px;}
         
+        @media (min-width: 768px) {
+            .brand h2 { font-size: 18px; max-width: 100%; white-space: nowrap;}
+        }
+
         .user-menu { display: flex; gap: 15px; align-items: center;}
         .btn-profile { background: var(--light-green); color: var(--dark-green); border: none; padding: 8px 15px; border-radius: 20px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.3s;}
         .btn-profile:hover { background: var(--primary-green); color: white;}
+        
+        /* প্রোফাইল টেক্সট মোবাইলের জন্য লুকানো */
+        .profile-text { display: none; }
+        @media (min-width: 481px) {
+            .profile-text { display: inline; }
+        }
+
         .btn-logout { color: #d32f2f; background: #ffeaea; border: none; padding: 8px 15px; border-radius: 20px; font-weight: 600; cursor: pointer; transition: 0.3s;}
 
         .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
@@ -107,7 +120,17 @@
             .sig-line { border-top: 1px solid #333; width: 150px; text-align: center; font-size: 14px; padding-top: 5px; font-weight: 600; color: #555;}
         }
 
-        @media (max-width: 768px) { .dashboard-grid { grid-template-columns: 1fr; } .form-grid { grid-template-columns: 1fr; } .welcome-card { flex-direction: column; text-align: center; gap: 15px; } }
+        /* মোবাইল এবং রেসপন্সিভ স্টাইল */
+        @media (max-width: 768px) { 
+            .dashboard-grid { grid-template-columns: 1fr; } 
+            .form-grid { grid-template-columns: 1fr; } 
+            .welcome-card { flex-direction: column; text-align: center; gap: 15px; } 
+        }
+        
+        @media (min-width: 769px) and (max-width: 991px) {
+            /* 3টি কলামের গ্রিডে 4র্থ কার্ডটি একা থাকলে ফুল উইডথ নিয়ে নিবে */
+            .fund-card.total-card { grid-column: 1 / -1; }
+        }
     </style>
 </head>
 <body>
@@ -123,10 +146,13 @@
     <header class="member-topbar">
         <div class="brand">
             <img src="1000123161.png" alt="Logo">
-            <h2 class="en-text">DARUL ITTIHAD<br><span style="font-size: 12px; color: #555;">MEMBER PORTAL</span></h2>
+            <h2 class="en-text">DARUL ITTIHAD FOUNDATION<br><span style="font-size: 12px; color: #555;">MEMBER PORTAL</span></h2>
         </div>
         <div class="user-menu">
-            <button class="btn-profile" onclick="openProfileModal()"><i class="fa-solid fa-user-pen"></i> প্রোফাইল এডিট</button>
+            <button class="btn-profile" onclick="openProfileModal()">
+                <i class="fa-solid fa-user-pen"></i> 
+                <span class="profile-text">প্রোফাইল</span>
+            </button>
             <button class="btn-logout" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i></button>
         </div>
     </header>
@@ -145,7 +171,7 @@
             <div class="fund-card"><h3>মাসিক জমা</h3><div class="amount en-text" id="tMonthly">৳ 0</div></div>
             <div class="fund-card"><h3>এককালীন/বাৎসরিক</h3><div class="amount en-text" id="tYearly">৳ 0</div></div>
             <div class="fund-card"><h3>শেয়ার ফান্ড</h3><div class="amount en-text" id="tShare">৳ 0</div></div>
-            <div class="fund-card" style="background: #eaf6ee; border-color: var(--dark-green);">
+            <div class="fund-card total-card" style="background: #eaf6ee; border-color: var(--dark-green);">
                 <h3 style="color: var(--dark-green);">ব্যক্তিগত সর্বমোট জমা</h3>
                 <div class="amount en-text" id="tTotal">৳ 0</div>
             </div>
@@ -296,7 +322,7 @@
                             let validItems = [];
                             let personalAmount = 0;
 
-                            // শুধুমাত্র ব্যক্তিগত ফান্ড কাউন্ট করা হচ্ছে (প্রতিষ্ঠানের ফান্ড ফিল্টার আউট)
+                            // শুধুমাত্র ব্যক্তিগত ফান্ড কাউন্ট করা হচ্ছে
                             trx.items.forEach(item => {
                                 if(item.category === 'মাসিক জমা') { 
                                     mSum += item.amount; validItems.push(item); personalAmount += item.amount; 
@@ -314,7 +340,7 @@
                                     id: k,
                                     date: trx.date,
                                     timestamp: trx.timestamp,
-                                    items: validItems, // Only filtered items
+                                    items: validItems,
                                     personalAmount: personalAmount
                                 });
                             }
