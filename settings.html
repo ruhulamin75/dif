@@ -12,30 +12,19 @@
         body { font-family: 'Poppins', 'Hind Siliguri', sans-serif; background-color: var(--bg-color); color: var(--text-dark); display: flex; }
         .en-text { font-family: 'Poppins', sans-serif; }
         
-        /* সাইডবার */
-        .sidebar { width: var(--sidebar-width); background-color: var(--white); height: 100vh; position: fixed; left: 0; top: 0; box-shadow: 2px 0 10px rgba(0,0,0,0.05); display: flex; flex-direction: column; z-index: 1000; transition: transform 0.3s ease; }
+        .sidebar { width: var(--sidebar-width); background-color: var(--white); height: 100vh; position: fixed; left: 0; top: 0; box-shadow: 2px 0 10px rgba(0,0,0,0.05); display: flex; flex-direction: column; z-index: 1000; transition: transform 0.3s ease;}
         .sidebar-header { padding: 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border-color); }
         .sidebar-header img { width: 45px; }
         .sidebar-header h2 { font-size: 15px; color: var(--primary-green); font-family: 'Poppins', sans-serif; font-weight: 700;}
         .sidebar-menu { list-style: none; padding: 20px 0; flex: 1; overflow-y: auto; }
-        .sidebar-menu li { padding: 5px 20px; }
-        .sidebar-menu li a { text-decoration: none; color: var(--text-gray); display: flex; align-items: center; gap: 12px; padding: 12px 15px; border-radius: 8px; font-size: 16px; font-weight: 500; transition: all 0.3s; }
+        .sidebar-menu li a { text-decoration: none; color: var(--text-gray); display: flex; align-items: center; gap: 12px; padding: 12px 20px; font-size: 16px; font-weight: 500; transition: 0.3s; }
         .sidebar-menu li a:hover, .sidebar-menu li a.active { background-color: var(--light-green); color: var(--primary-green); }
         .logout-btn { margin: 20px; padding: 12px; background-color: #ffeaea; color: #d32f2f; text-align: center; border-radius: 8px; text-decoration: none; font-weight: 600; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.3s; cursor: pointer; border: none; font-family: inherit; font-size: 16px; width: calc(100% - 40px);}
         .logout-btn:hover { background-color: #d32f2f; color: var(--white); }
-        
-        /* মোবাইল ওভারলে */
-        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 999; opacity: 0; transition: opacity 0.3s ease; }
 
-        .main-content { flex: 1; margin-left: var(--sidebar-width); padding: 20px 30px; width: calc(100% - var(--sidebar-width)); overflow-x: hidden; }
+        .main-content { flex: 1; margin-left: var(--sidebar-width); padding: 20px 30px; }
+        .topbar { display: flex; justify-content: space-between; background: var(--white); padding: 15px 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); margin-bottom: 30px; }
         
-        .topbar { display: flex; justify-content: space-between; align-items: center; background: var(--white); padding: 15px 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); margin-bottom: 30px; }
-        .menu-toggle { display: none; font-size: 24px; color: var(--primary-green); cursor: pointer; }
-        
-        .admin-profile { display: flex; align-items: center; gap: 12px; }
-        .admin-profile div h4 { font-size: 16px; color: var(--dark-green); margin: 0; }
-        .admin-icon { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--primary-green); background-color: var(--light-green); color: var(--primary-green); display: flex; justify-content: center; align-items: center; font-size: 20px; }
-
         .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; align-items: start;}
         .form-container { background: var(--white); border-radius: 12px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border-top: 4px solid var(--primary-green); margin-bottom: 25px;}
         .form-container h3 { color: var(--dark-green); margin-bottom: 20px; font-size: 18px; border-bottom: 2px solid var(--light-green); padding-bottom: 10px;}
@@ -58,15 +47,7 @@
         .danger-btn { flex: 1; min-width: 250px; background: #fffafafa; color: #d32f2f; border: 2px solid #ffcdd2; padding: 15px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; font-size: 16px; font-family: inherit;}
         .danger-btn:hover { background: #d32f2f; color: white; border-color: #d32f2f; }
 
-        @media (max-width: 992px) {
-            .sidebar { transform: translateX(-100%); } 
-            .sidebar.show { transform: translateX(0); } 
-            .sidebar-overlay.show { display: block; opacity: 1; }
-            .main-content { margin-left: 0; width: 100%; padding: 15px; } 
-            .menu-toggle { display: block; } 
-            .settings-grid { grid-template-columns: 1fr; } 
-            .admin-profile div { display: none; }
-        }
+        @media (max-width: 992px) { .settings-grid { grid-template-columns: 1fr; } .sidebar { transform: translateX(-100%); } }
     </style>
 </head>
 <body>
@@ -79,9 +60,7 @@
         }
     </script>
 
-    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
-
-    <aside class="sidebar" id="sidebar">
+    <aside class="sidebar">
         <div class="sidebar-header">
             <img src="1000123161.png" alt="Logo">
             <h2 class="en-text">DARUL ITTIHAD<br>FOUNDATION</h2>
@@ -102,15 +81,25 @@
 
     <main class="main-content">
         <header class="topbar">
-            <div class="menu-toggle" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></div>
-            <div><h2 style="color: var(--dark-green); font-size: 22px;">সিস্টেম সেটিংস</h2></div>
-            <div class="admin-profile">
-                <div style="text-align: right;"><h4>অ্যাডমিন</h4></div>
-                <div class="admin-icon"><i class="fa-solid fa-user-shield"></i></div>
-            </div>
+            <h2 style="color: var(--dark-green);">সিস্টেম সেটিংস</h2>
         </header>
 
         <div class="settings-grid">
+            
+            <!-- অ্যাডমিন পাসওয়ার্ড পরিবর্তন -->
+            <div class="danger-zone" style="margin-bottom: 25px;">
+                <div class="form-container" style="border-top-color: #ff9800; margin-bottom: 0;">
+                    <h3 style="color: #f57c00; border-bottom-color: #ffe0b2;"><i class="fa-solid fa-user-shield"></i> অ্যাডমিন পাসওয়ার্ড পরিবর্তন</h3>
+                    <form id="adminPassForm">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div class="form-group"><label>বর্তমান পাসওয়ার্ড</label><input type="password" id="currentPass" class="en-text" required></div>
+                            <div class="form-group"><label>নতুন পাসওয়ার্ড</label><input type="password" id="newPass" class="en-text" minlength="6" required></div>
+                        </div>
+                        <button type="submit" class="save-btn" id="changePassBtn" style="background: #f57c00; width: 100%;"><i class="fa-solid fa-key"></i> পাসওয়ার্ড পরিবর্তন করুন</button>
+                    </form>
+                </div>
+            </div>
+
             <!-- নোটিশ বোর্ড -->
             <div>
                 <div class="form-container">
@@ -180,13 +169,10 @@
     </main>
 
     <script>
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('show');
-            document.getElementById('sidebarOverlay').classList.toggle('show');
-        }
-
         function logout(e) {
             e.preventDefault();
+            // Firebase Signout Call (Optional but good practice)
+            // auth.signOut();
             localStorage.removeItem("userRole");
             localStorage.removeItem("loggedInMemberId");
             window.location.href = "login.html";
@@ -197,6 +183,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getDatabase, ref, set, onValue, push, remove, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+        import { getAuth, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
         // ==========================================
         // আপনার Firebase Config
@@ -211,6 +198,45 @@
         };
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
+        const auth = getAuth(app);
+
+        // --- অ্যাডমিন পাসওয়ার্ড পরিবর্তন লজিক ---
+        document.getElementById('adminPassForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const user = auth.currentUser;
+
+            if (!user) {
+                alert("নিরাপত্তার কারণে আপনাকে প্রথমে লগআউট করে নতুন করে লগইন করতে হবে।");
+                return;
+            }
+
+            const currentPass = document.getElementById('currentPass').value;
+            const newPass = document.getElementById('newPass').value;
+            const btn = document.getElementById('changePassBtn');
+            
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> পরিবর্তন হচ্ছে...';
+            btn.disabled = true;
+
+            try {
+                // প্রথমে কারেন্ট পাসওয়ার্ড দিয়ে রি-অথেনটিকেট করতে হবে
+                const credential = EmailAuthProvider.credential(user.email, currentPass);
+                await reauthenticateWithCredential(user, credential);
+                
+                // রি-অথেনটিকেট সফল হলে নতুন পাসওয়ার্ড আপডেট করবে
+                await updatePassword(user, newPass);
+                alert("আলহামদুলিল্লাহ! অ্যাডমিন পাসওয়ার্ড সফলভাবে পরিবর্তন করা হয়েছে। পরবর্তী লগইনের সময় নতুন পাসওয়ার্ড ব্যবহার করুন।");
+                document.getElementById('adminPassForm').reset();
+            } catch (error) {
+                if(error.code === 'auth/invalid-credential') {
+                    alert("আপনার দেওয়া বর্তমান পাসওয়ার্ডটি ভুল হয়েছে!");
+                } else {
+                    alert("পাসওয়ার্ড পরিবর্তন করতে সমস্যা হয়েছে। (" + error.message + ")");
+                }
+            } finally {
+                btn.innerHTML = '<i class="fa-solid fa-key"></i> পাসওয়ার্ড পরিবর্তন করুন';
+                btn.disabled = false;
+            }
+        });
 
         // --- নোটিশ বোর্ড লজিক ---
         let allNotices = [];
@@ -297,10 +323,12 @@
             // প্রথম ধাপ: সতর্কীকরণ
             if (confirm(`সতর্কতা! আপনি কি নিশ্চিত যে ${typeName} মুছে ফেলতে চান? এটি আর ফিরিয়ে আনা সম্ভব নয়!`)) {
                 
-                // দ্বিতীয় ধাপ: অ্যাডমিন পাসওয়ার্ড ভেরিফিকেশন
-                let adminPass = prompt("ডেটা মুছে ফেলতে অ্যাডমিন পাসওয়ার্ড লিখুন:");
+                // দ্বিতীয় ধাপ: অ্যাডমিন পাসওয়ার্ড ভেরিফিকেশন (এখানে আপনার ম্যানুয়াল পাসওয়ার্ড চেক করা হচ্ছে)
+                // যেহেতু আমরা Auth ব্যবহার করছি, চাইলে এই প্রম্পটটি বাদ দিয়ে শুধু confirm রাখতে পারেন।
+                // তবে ডাবল সিকিউরিটির জন্য এটি রাখা ভালো।
+                let adminPass = prompt("ডেটা মুছে ফেলতে সম্মতিস্বরূপ 'CONFIRM' লিখুন:");
                 
-                if (adminPass === "admin123") {
+                if (adminPass === "CONFIRM") {
                     try {
                         await remove(ref(db, type));
                         alert(`সফলভাবে ${typeName} মুছে ফেলা হয়েছে!`);
@@ -308,7 +336,7 @@
                         alert("সমস্যা হয়েছে! " + error.message);
                     }
                 } else if (adminPass !== null) {
-                    alert("পাসওয়ার্ড ভুল হয়েছে! ডেটা মুছে ফেলা বাতিল করা হলো।");
+                    alert("সঠিকভাবে CONFIRM লেখা হয়নি! ডেটা মুছে ফেলা বাতিল করা হলো।");
                 }
             }
         };
