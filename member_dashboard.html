@@ -45,7 +45,6 @@
         .notice-item p { margin: 0; color: var(--text-gray); font-size: 14px; line-height: 1.5;}
         .notice-date { font-size: 12px; color: #888; display: block; margin-top: 8px;}
 
-        /* ব্যাংক লিস্ট আপডেট */
         .bank-item { padding: 15px; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 15px; display: flex; align-items: flex-start; gap: 15px;}
         .bank-icon { width: 45px; height: 45px; background: #e3f2fd; color: #1976d2; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 20px; flex-shrink: 0;}
         .bank-info h4 { margin: 0 0 5px 0; color: #1976d2; font-size: 16px;}
@@ -73,9 +72,7 @@
         .pic-wrapper img { width: 100%; height: 100%; object-fit: cover;}
         .save-btn { grid-column: 1/-1; background: var(--primary-green); color: white; border: none; padding: 12px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 16px; margin-top: 10px;}
 
-        /* =================================================
-           প্রিমিয়াম রিসিট প্রিন্ট স্টাইল (A4 Size)
-           ================================================= */
+        /* রিসিট প্রিন্ট স্টাইল */
         .receipt-print-area { display: none; }
         
         @media print {
@@ -115,6 +112,14 @@
 </head>
 <body>
 
+    <!-- Security Lock -->
+    <script>
+        if (localStorage.getItem("userRole") !== "member") {
+            alert("সিস্টেমে প্রবেশ করতে অনুগ্রহ করে আপনার নম্বর দিয়ে লগইন করুন।");
+            window.location.href = "login.html";
+        }
+    </script>
+
     <header class="member-topbar">
         <div class="brand">
             <img src="1000123161.png" alt="Logo">
@@ -122,7 +127,7 @@
         </div>
         <div class="user-menu">
             <button class="btn-profile" onclick="openProfileModal()"><i class="fa-solid fa-user-pen"></i> প্রোফাইল এডিট</button>
-            <button class="btn-logout" onclick="window.location.href='login.html'"><i class="fa-solid fa-right-from-bracket"></i></button>
+            <button class="btn-logout" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i></button>
         </div>
     </header>
 
@@ -141,7 +146,7 @@
             <div class="fund-card"><h3>এককালীন/বাৎসরিক</h3><div class="amount en-text" id="tYearly">৳ 0</div></div>
             <div class="fund-card"><h3>শেয়ার ফান্ড</h3><div class="amount en-text" id="tShare">৳ 0</div></div>
             <div class="fund-card" style="background: #eaf6ee; border-color: var(--dark-green);">
-                <h3 style="color: var(--dark-green);">সর্বমোট জমা</h3>
+                <h3 style="color: var(--dark-green);">ব্যক্তিগত সর্বমোট জমা</h3>
                 <div class="amount en-text" id="tTotal">৳ 0</div>
             </div>
         </div>
@@ -163,7 +168,7 @@
             <!-- কলাম ২ -->
             <div>
                 <div class="section-card">
-                    <h3><i class="fa-solid fa-clock-rotate-left"></i> সাম্প্রতিক জমা (ইতিহাস)</h3>
+                    <h3><i class="fa-solid fa-clock-rotate-left"></i> সাম্প্রতিক জমা (ব্যক্তিগত হিসাব)</h3>
                     <div style="overflow-x: auto;">
                         <table>
                             <thead>
@@ -222,7 +227,7 @@
         </div>
     </div>
 
-    <!-- রিসিট প্রিন্ট এরিয়া (শুধুমাত্র প্রিন্টের সময় দেখা যাবে) -->
+    <!-- রিসিট প্রিন্ট এরিয়া -->
     <div class="receipt-print-area" id="printableReceipt"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
@@ -230,42 +235,30 @@
     <!-- Firebase Scripts -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getDatabase, ref, onValue, update, query, limitToFirst, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+        import { getDatabase, ref, onValue, update, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-        // ==========================================
-        // আপনার Firebase Config বসান
-        // ==========================================
-       const firebaseConfig = {
-  apiKey: "AIzaSyDqSsaNPqrWQfSeGvh0IuPxGaOJ7S4y4Qo",
-  authDomain: "darul-ittihad-foundation.firebaseapp.com",
-  projectId: "darul-ittihad-foundation",
-  storageBucket: "darul-ittihad-foundation.firebasestorage.app",
-  messagingSenderId: "1068343055365",
-  appId: "1:1068343055365:web:a42b6545e7fcd449de786c"
-};
+        const firebaseConfig = {
+          apiKey: "AIzaSyDqSsaNPqrWQfSeGvh0IuPxGaOJ7S4y4Qo",
+          authDomain: "darul-ittihad-foundation.firebaseapp.com",
+          projectId: "darul-ittihad-foundation",
+          storageBucket: "darul-ittihad-foundation.firebasestorage.app",
+          messagingSenderId: "1068343055365",
+          appId: "1:1068343055365:web:a42b6545e7fcd449de786c"
+        };
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
         let loggedInUserId = localStorage.getItem('loggedInMemberId');
         let currentMemberData = null;
 
-        // অটো ডেমো লগইন 
-        async function checkLogin() {
-            if(!loggedInUserId) {
-                const snapshot = await get(query(ref(db, 'members'), limitToFirst(1)));
-                if(snapshot.exists()) {
-                    loggedInUserId = Object.keys(snapshot.val())[0];
-                    localStorage.setItem('loggedInMemberId', loggedInUserId);
-                    loadDashboardData();
-                } else {
-                    alert("ডাটাবেসে কোনো মেম্বার পাওয়া যায়নি।");
-                }
-            } else {
-                loadDashboardData();
-            }
+        // Logout Logic
+        window.logout = function() {
+            localStorage.removeItem("userRole");
+            localStorage.removeItem("loggedInMemberId");
+            window.location.href = "login.html";
         }
-        checkLogin();
 
+        // Data Loading Logic
         function loadDashboardData() {
             onValue(ref(db, 'members/' + loggedInUserId), (snapshot) => {
                 const m = snapshot.val();
@@ -292,26 +285,44 @@
 
             onValue(ref(db, 'transactions'), (snapshot) => {
                 const data = snapshot.val();
-                let mSum = 0, ySum = 0, sSum = 0, totalSum = 0;
+                let mSum = 0, ySum = 0, sSum = 0;
                 let myTrxs = [];
 
                 if(data) {
                     Object.keys(data).forEach(k => {
                         let trx = data[k];
-                        if(trx.type === 'income' && trx.payerId === loggedInUserId) {
-                            trx.id = k;
-                            myTrxs.push(trx);
-                            if(trx.items) {
-                                trx.items.forEach(item => {
-                                    if(item.category === 'মাসিক জমা') mSum += item.amount;
-                                    if(item.category === 'এককালীন/বাৎসরিক জমা') ySum += item.amount;
-                                    if(item.category === 'শেয়ার') sSum += item.amount;
+                        if(trx.type === 'income' && trx.payerId === loggedInUserId && trx.items) {
+                            
+                            let validItems = [];
+                            let personalAmount = 0;
+
+                            // শুধুমাত্র ব্যক্তিগত ফান্ড কাউন্ট করা হচ্ছে (প্রতিষ্ঠানের ফান্ড ফিল্টার আউট)
+                            trx.items.forEach(item => {
+                                if(item.category === 'মাসিক জমা') { 
+                                    mSum += item.amount; validItems.push(item); personalAmount += item.amount; 
+                                }
+                                else if(item.category === 'এককালীন/বাৎসরিক জমা') { 
+                                    ySum += item.amount; validItems.push(item); personalAmount += item.amount; 
+                                }
+                                else if(item.category === 'শেয়ার') { 
+                                    sSum += item.amount; validItems.push(item); personalAmount += item.amount; 
+                                }
+                            });
+
+                            if(validItems.length > 0) {
+                                myTrxs.push({
+                                    id: k,
+                                    date: trx.date,
+                                    timestamp: trx.timestamp,
+                                    items: validItems, // Only filtered items
+                                    personalAmount: personalAmount
                                 });
                             }
-                            totalSum += trx.amount;
                         }
                     });
                 }
+
+                let totalSum = mSum + ySum + sSum;
 
                 document.getElementById('tMonthly').innerText = '৳ ' + mSum;
                 document.getElementById('tYearly').innerText = '৳ ' + ySum;
@@ -320,17 +331,19 @@
 
                 const tbody = document.getElementById('trxContainer');
                 tbody.innerHTML = '';
+                
                 myTrxs.sort((a,b) => b.timestamp - a.timestamp).slice(0, 10).forEach(trx => { 
                     let d = new Date(trx.date).toLocaleDateString('en-GB');
-                    let cats = trx.items ? trx.items.map(i=>i.category).join(', ') : '-';
+                    let cats = trx.items.map(i=>i.category).join(', ');
                     tbody.innerHTML += `<tr>
                         <td class="en-text">${d}</td>
                         <td>${cats}</td>
-                        <td class="en-text" style="text-align:right; font-weight:bold; color:var(--primary-green);">৳ ${trx.amount}</td>
+                        <td class="en-text" style="text-align:right; font-weight:bold; color:var(--primary-green);">৳ ${trx.personalAmount}</td>
                         <td><button class="btn-view-receipt" onclick="printReceipt('${trx.id}')"><i class="fa-solid fa-download"></i></button></td>
                     </tr>`;
                 });
-                if(myTrxs.length === 0) tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">কোনো জমা নেই</td></tr>';
+                
+                if(myTrxs.length === 0) tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">কোনো ব্যক্তিগত জমা নেই</td></tr>';
             });
 
             onValue(ref(db, 'notices'), (snapshot) => {
@@ -367,6 +380,8 @@
                 } else { cont.innerHTML = '<div style="color:gray;">কোনো একাউন্ট নেই</div>'; }
             });
         }
+        
+        loadDashboardData();
 
         window.openProfileModal = () => document.getElementById('profileModal').style.display = 'block';
 
@@ -414,7 +429,7 @@
         });
 
         // ==========================================
-        // প্রিমিয়াম রিসিট প্রিন্ট জেনারেটর (A4)
+        // রিসিট প্রিন্ট জেনারেটর (মেইন ডাটাবেস থেকে ফুল রিসিট)
         // ==========================================
         window.printReceipt = async (trxId) => {
             const snap = await get(ref(db, 'transactions/' + trxId));
