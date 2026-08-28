@@ -75,8 +75,13 @@
             line-height: 1.2;
             letter-spacing: 0.5px;
         }
+        
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
 
-        .header-login-btn {
+        .header-btn {
             background-color: var(--primary-green);
             color: var(--white);
             padding: 10px 22px;
@@ -88,11 +93,24 @@
             align-items: center;
             gap: 8px;
             transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-family: 'Hind Siliguri', sans-serif;
         }
 
-        .header-login-btn:hover {
+        .header-btn:hover {
             background-color: var(--dark-green);
             box-shadow: 0 4px 10px rgba(11, 158, 74, 0.2);
+        }
+        
+        #installAppBtn {
+            background-color: #1976d2;
+            display: none; /* Initially hidden */
+        }
+        
+        #installAppBtn:hover {
+            background-color: #115293;
+            box-shadow: 0 4px 10px rgba(25, 118, 210, 0.2);
         }
 
         /* মূল কন্টেন্ট */
@@ -236,8 +254,8 @@
                 font-size: 15px;
             }
 
-            .header-login-btn {
-                padding: 8px 15px;
+            .header-btn {
+                padding: 8px 12px;
                 font-size: 13px;
             }
 
@@ -258,6 +276,13 @@
                 text-align: left;
             }
         }
+        
+        /* Very small screens */
+        @media (max-width: 380px) {
+             .header-btn span {
+                 display: none; /* Hide text, show only icon on very small screens to save space */
+             }
+        }
     </style>
 </head>
 <body>
@@ -271,10 +296,17 @@
             </div>
         </div>
         
-        <!-- হেডারে লগিন বাটন -->
-        <a href="login.html" class="header-login-btn">
-            <i class="fa-solid fa-user-lock"></i> লগইন
-        </a>
+        <div class="header-actions">
+            <!-- অ্যাপ ইনস্টল বাটন -->
+            <button id="installAppBtn" class="header-btn">
+                <i class="fa-solid fa-download"></i> <span>অ্যাপ ইনস্টল</span>
+            </button>
+            
+            <!-- হেডারে লগিন বাটন -->
+            <a href="login.html" class="header-btn">
+                <i class="fa-solid fa-user-lock"></i> <span>লগইন</span>
+            </a>
+        </div>
     </header>
 
     <!-- মূল কন্টেন্ট -->
@@ -337,8 +369,10 @@
             <p>&copy; 2026 <span class="en-text">Darul Ittihad Foundation</span>. সর্বস্বত্ব সংরক্ষিত।</p>
         </div>
     </footer>
-    <!-- Service Worker Registration -->
+    
+    <!-- PWA Install & Service Worker Logic -->
     <script>
+        // Service Worker Registration
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
@@ -348,6 +382,47 @@
                     .catch(err => {
                         console.log('PWA ServiceWorker registration failed: ', err);
                     });
+            });
+        }
+
+        // App Install Button Logic
+        let deferredPrompt;
+        const installBtn = document.getElementById('installAppBtn');
+
+        // Check if the app is already running as a standalone app (installed)
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+
+        if (!isStandalone) {
+            window.addEventListener('beforeinstallprompt', (e) => {
+                // Prevent the mini-infobar from appearing on mobile
+                e.preventDefault();
+                // Stash the event so it can be triggered later.
+                deferredPrompt = e;
+                // Update UI notify the user they can install the PWA
+                installBtn.style.display = 'flex';
+            });
+
+            installBtn.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    // Show the install prompt
+                    deferredPrompt.prompt();
+                    // Wait for the user to respond to the prompt
+                    const { outcome } = await deferredPrompt.userChoice;
+                    if (outcome === 'accepted') {
+                        console.log('User accepted the install prompt');
+                    } else {
+                        console.log('User dismissed the install prompt');
+                    }
+                    // We've used the prompt, and can't use it again, throw it away
+                    deferredPrompt = null;
+                    installBtn.style.display = 'none';
+                }
+            });
+
+            window.addEventListener('appinstalled', (evt) => {
+                // Log install to analytics
+                console.log('INSTALL: Success');
+                installBtn.style.display = 'none';
             });
         }
     </script>
