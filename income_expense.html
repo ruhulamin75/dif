@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>আয়/ব্যয় এন্ট্রি - Darul Ittihad Foundation</title>
+    <title>জমা/উত্তোলন এন্ট্রি - Darul Ittihad Foundation</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -214,7 +214,7 @@
             <li><a href="monthly_collection.html"><i class="fa-solid fa-calendar-check"></i> মাসিক জমা</a></li>
             <li><a href="shares.html"><i class="fa-solid fa-chart-pie"></i> শেয়ার</a></li>
             <li><a href="yearly_deposit.html"><i class="fa-solid fa-sack-dollar"></i> এককালীন/বাৎসরিক জমা</a></li>
-            <li><a href="income_expense.html" class="active"><i class="fa-solid fa-scale-balanced"></i> আয়/ব্যয়</a></li>
+            <li><a href="income_expense.html" class="active"><i class="fa-solid fa-scale-balanced"></i> জমা/উত্তোলন</a></li>
             <li><a href="investment_profit.html"><i class="fa-solid fa-chart-line"></i> বিনিয়োগ/মুনাফা</a></li>
             <li><a href="reports.html"><i class="fa-solid fa-file-invoice"></i> রিপোর্টস</a></li>
             <li><a href="settings.html"><i class="fa-solid fa-gear"></i> সেটিংস</a></li>
@@ -225,19 +225,23 @@
     <main class="main-content">
         <header class="topbar">
             <div class="menu-toggle" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></div>
-            <div><h2 style="color: var(--dark-green); font-size: 22px;">আয়/ব্যয় এন্ট্রি</h2></div>
+            <div><h2 style="color: var(--dark-green); font-size: 22px;">জমা/উত্তোলন এন্ট্রি</h2></div>
             <div class="admin-profile">
                 <div style="text-align: right;"><h4>অ্যাডমিন</h4></div>
                 <div class="admin-icon"><i class="fa-solid fa-user-shield"></i></div>
             </div>
         </header>
 
+        <div class="page-header">
+            <h2>জমা/উত্তোলন এন্ট্রি</h2>
+        </div>
+
         <div class="form-container">
             <div class="form-group">
                 <label>লেনদেনের ধরন নির্বাচন করুন</label>
                 <select id="trxType" onchange="toggleFormType()">
-                    <option value="income">আয় (Income)</option>
-                    <option value="expense">ব্যয় (Expense)</option>
+                    <option value="income">জমা (Deposit)</option>
+                    <option value="expense">উত্তোলন (Withdraw)</option>
                 </select>
             </div>
 
@@ -249,53 +253,53 @@
                     <input type="date" id="trxDate" class="en-text" required>
                 </div>
 
-                <!-- ================== আয় (Income) ================== -->
+                <!-- ================== জমা (Deposit) ================== -->
                 <div id="incomeSection">
                     <div class="form-group">
-                        <label>আয়ের খাতসমূহ (যেকোনোটিতে টিক দিন ও পরিমাণ লিখুন)</label>
+                        <label>জমার খাতসমূহ (যেকোনোটিতে টিক দিন ও পরিমাণ লিখুন)</label>
                         <div class="category-grid">
                             <div class="category-item">
                                 <label class="checkbox-row"><input type="checkbox" id="chk-1" value="ভর্তি ফি" onchange="toggleIncAmt(this, 'inc-box-1')"> ভর্তি ফি</label>
-                                <div class="amount-input" id="inc-box-1"><input type="number" id="amt-1" class="inc-amt-val en-text" data-cat="ভর্তি ফি" placeholder="পরিমাণ (৳)" oninput="calcTotalIncome()"></div>
+                                <div class="amount-input" id="inc-box-1"><input type="number" step="0.01" id="amt-1" class="inc-amt-val en-text" data-cat="ভর্তি ফি" placeholder="পরিমাণ (৳)" oninput="restrictDecimal(this); calcTotalIncome()"></div>
                             </div>
                             <div class="category-item">
                                 <label class="checkbox-row"><input type="checkbox" id="chk-2" value="এককালীন/বাৎসরিক জমা" onchange="toggleIncAmt(this, 'inc-box-2')"> এককালীন/বাৎসরিক জমা</label>
-                                <div class="amount-input" id="inc-box-2"><input type="number" id="amt-2" class="inc-amt-val en-text" data-cat="এককালীন/বাৎসরিক জমা" placeholder="পরিমাণ (৳)" oninput="calcTotalIncome()"></div>
+                                <div class="amount-input" id="inc-box-2"><input type="number" step="0.01" id="amt-2" class="inc-amt-val en-text" data-cat="এককালীন/বাৎসরিক জমা" placeholder="পরিমাণ (৳)" oninput="restrictDecimal(this); calcTotalIncome()"></div>
                             </div>
                             <div class="category-item">
                                 <label class="checkbox-row"><input type="checkbox" id="chk-3" value="মাসিক জমা" onchange="toggleIncAmt(this, 'inc-box-3')"> মাসিক জমা</label>
-                                <div class="amount-input" id="inc-box-3"><input type="number" id="amt-3" class="inc-amt-val en-text" data-cat="মাসিক জমা" placeholder="পরিমাণ (৳)" oninput="calcTotalIncome()"></div>
+                                <div class="amount-input" id="inc-box-3"><input type="number" step="0.01" id="amt-3" class="inc-amt-val en-text" data-cat="মাসিক জমা" placeholder="পরিমাণ (৳)" oninput="restrictDecimal(this); calcTotalIncome()"></div>
                             </div>
                             <div class="category-item">
                                 <label class="checkbox-row"><input type="checkbox" id="chk-4" value="সার্ভিস চার্জ" onchange="toggleIncAmt(this, 'inc-box-4')"> সার্ভিস চার্জ</label>
-                                <div class="amount-input" id="inc-box-4"><input type="number" id="amt-4" class="inc-amt-val en-text" data-cat="সার্ভিস চার্জ" placeholder="পরিমাণ (৳)" oninput="calcTotalIncome()"></div>
+                                <div class="amount-input" id="inc-box-4"><input type="number" step="0.01" id="amt-4" class="inc-amt-val en-text" data-cat="সার্ভিস চার্জ" placeholder="পরিমাণ (৳)" oninput="restrictDecimal(this); calcTotalIncome()"></div>
                             </div>
                             <div class="category-item">
                                 <label class="checkbox-row"><input type="checkbox" id="chk-5" value="শেয়ার" onchange="toggleIncAmt(this, 'inc-box-5')"> শেয়ার</label>
-                                <div class="amount-input" id="inc-box-5"><input type="number" id="amt-5" class="inc-amt-val en-text" data-cat="শেয়ার" placeholder="পরিমাণ (৳)" oninput="calcTotalIncome()"></div>
+                                <div class="amount-input" id="inc-box-5"><input type="number" step="0.01" id="amt-5" class="inc-amt-val en-text" data-cat="শেয়ার" placeholder="পরিমাণ (৳)" oninput="restrictDecimal(this); calcTotalIncome()"></div>
                             </div>
                             <div class="category-item">
                                 <label class="checkbox-row"><input type="checkbox" id="chk-6" value="ডোনেশন" onchange="toggleIncAmt(this, 'inc-box-6')"> ডোনেশন</label>
-                                <div class="amount-input" id="inc-box-6"><input type="number" id="amt-6" class="inc-amt-val en-text" data-cat="ডোনেশন" placeholder="পরিমাণ (৳)" oninput="calcTotalIncome()"></div>
+                                <div class="amount-input" id="inc-box-6"><input type="number" step="0.01" id="amt-6" class="inc-amt-val en-text" data-cat="ডোনেশন" placeholder="পরিমাণ (৳)" oninput="restrictDecimal(this); calcTotalIncome()"></div>
                             </div>
                             <div class="category-item">
                                 <label class="checkbox-row"><input type="checkbox" id="chk-7" value="জরিমানা" onchange="toggleIncAmt(this, 'inc-box-7')"> জরিমানা</label>
-                                <div class="amount-input" id="inc-box-7"><input type="number" id="amt-7" class="inc-amt-val en-text" data-cat="জরিমানা" placeholder="পরিমাণ (৳)" oninput="calcTotalIncome()"></div>
+                                <div class="amount-input" id="inc-box-7"><input type="number" step="0.01" id="amt-7" class="inc-amt-val en-text" data-cat="জরিমানা" placeholder="পরিমাণ (৳)" oninput="restrictDecimal(this); calcTotalIncome()"></div>
                             </div>
                             <div class="category-item">
                                 <label class="checkbox-row"><input type="checkbox" id="chk-other" value="অন্যান্য" onchange="toggleIncAmt(this, 'inc-box-other')"> অন্যান্য</label>
                                 <div class="amount-input" id="inc-box-other">
                                     <input type="text" id="incOtherText" placeholder="খাতের নাম লিখুন" style="margin-bottom: 8px;">
-                                    <input type="number" id="amt-other" class="inc-amt-val en-text" placeholder="পরিমাণ (৳)" oninput="calcTotalIncome()">
+                                    <input type="number" step="0.01" id="amt-other" class="inc-amt-val en-text" placeholder="পরিমাণ (৳)" oninput="restrictDecimal(this); calcTotalIncome()">
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="form-group" style="background: #eaf6ee; padding: 15px; border-radius: 8px; border: 1px solid var(--primary-green);">
-                        <label>সর্বমোট আয়ের পরিমাণ</label>
+                        <label>সর্বমোট জমার পরিমাণ</label>
                         <input type="text" id="incTotalAmount" class="en-text" value="0" readonly style="background: transparent; border: none; font-size: 20px; font-weight: bold; color: var(--dark-green); padding:0;">
-                        <div style="font-size: 14px; color: #d32f2f; margin-top: 5px; font-weight: 600;">কথায়: <span id="amountInWordsInc">শূন্য টাকা মাত্র</span></div>
+                        <div style="font-size: 14px; color: #d32f2f; margin-top: 5px; font-weight: 600;"><span id="amountInWordsInc">কথায়: শূন্য টাকা মাত্র</span></div>
                     </div>
 
                     <div class="form-group">
@@ -325,29 +329,29 @@
                     </div>
                 </div>
 
-                <!-- ================== ব্যয় (Expense) ================== -->
+                <!-- ================== উত্তোলন (Withdraw) ================== -->
                 <div id="expenseSection" style="display: none;">
                     <div class="form-group">
-                        <label>ব্যয়ের খাত ও পরিমাণ</label>
+                        <label>উত্তোলনের খাত ও পরিমাণ</label>
                         <div id="expenseRowsContainer">
                             <div class="expense-row">
                                 <input type="text" class="exp-cat" placeholder="খাতের নাম (যেমন: অফিস ভাড়া)">
-                                <input type="number" class="exp-amt en-text" placeholder="পরিমাণ (৳)" oninput="calculateExpenseTotal()">
+                                <input type="number" step="0.01" class="exp-amt en-text" placeholder="পরিমাণ (৳)" oninput="restrictDecimal(this); calculateExpenseTotal()">
                                 <button type="button" class="btn-add-row" onclick="addExpenseRow()"><i class="fa-solid fa-plus"></i></button>
                             </div>
                         </div>
                     </div>
 
                     <div class="form-group" style="background: #ffeaea; padding: 15px; border-radius: 8px; border: 1px solid #ffcdd2;">
-                        <label>সর্বমোট ব্যয়ের পরিমাণ</label>
+                        <label>সর্বমোট উত্তোলনের পরিমাণ</label>
                         <input type="text" id="expTotalAmount" class="en-text" value="0" readonly style="background: transparent; border: none; font-size: 20px; font-weight: bold; color: var(--expense-red); padding:0;">
-                        <div style="font-size: 14px; color: var(--dark-green); margin-top: 5px; font-weight: 600;">কথায়: <span id="amountInWordsExp">শূন্য টাকা মাত্র</span></div>
+                        <div style="font-size: 14px; color: var(--dark-green); margin-top: 5px; font-weight: 600;"><span id="amountInWordsExp">কথায়: শূন্য টাকা মাত্র</span></div>
                     </div>
 
                     <div class="form-group">
-                        <label>ব্যয়কারীর নাম</label>
+                        <label>উত্তোলনকারীর নাম</label>
                         <select id="expSpender">
-                            <option value="" disabled selected>ব্যয়কারী নির্বাচন করুন</option>
+                            <option value="" disabled selected>উত্তোলনকারী নির্বাচন করুন</option>
                         </select>
                     </div>
                     
@@ -470,6 +474,17 @@
             const val = document.getElementById('incMember').value;
             document.getElementById('incOtherMemberText').style.display = (val === 'other') ? 'block' : 'none';
         }
+        
+        // ডেসিমাল পয়েন্ট রেস্ট্রিক্ট করার ফাংশন (৩য় ঘরে গেলেই ২ ঘরে অটো-কাট হবে)
+        function restrictDecimal(inp) {
+            let val = inp.value;
+            if(val.includes('.')) {
+                let parts = val.split('.');
+                if(parts[1].length > 2) {
+                    inp.value = parts[0] + '.' + parts[1].substring(0, 2);
+                }
+            }
+        }
 
         function calcTotalIncome() {
             let total = 0;
@@ -482,8 +497,9 @@
             let amtO = document.getElementById('amt-other');
             if(chkO && chkO.checked && amtO.value) total += parseFloat(amtO.value);
 
+            total = parseFloat(total.toFixed(2));
             document.getElementById('incTotalAmount').value = total;
-            document.getElementById('amountInWordsInc').innerText = getBanglaWords(total) + " টাকা মাত্র";
+            document.getElementById('amountInWordsInc').innerText = "কথায়: " + getBanglaCurrency(total) + " মাত্র";
         }
 
         function addExpenseRow(cat = '', amt = '') {
@@ -491,8 +507,8 @@
             const row = document.createElement('div');
             row.className = 'expense-row';
             row.innerHTML = `
-                <input type="text" class="exp-cat" placeholder="খাতের নাম" value="${cat}">
-                <input type="number" class="exp-amt en-text" placeholder="পরিমাণ (৳)" value="${amt}" oninput="calculateExpenseTotal()">
+                <input type="text" class="exp-cat" placeholder="খাতের নাম (যেমন: অফিস ভাড়া)" value="${cat}">
+                <input type="number" step="0.01" class="exp-amt en-text" placeholder="পরিমাণ (৳)" value="${amt}" oninput="restrictDecimal(this); calculateExpenseTotal()">
                 <button type="button" class="btn-remove-row" onclick="this.parentElement.remove(); calculateExpenseTotal();"><i class="fa-solid fa-minus"></i></button>
             `;
             container.appendChild(row);
@@ -504,20 +520,41 @@
             document.querySelectorAll('.exp-amt').forEach(inp => {
                 if(inp.value) total += parseFloat(inp.value);
             });
+            total = parseFloat(total.toFixed(2));
             document.getElementById('expTotalAmount').value = total;
-            document.getElementById('amountInWordsExp').innerText = getBanglaWords(total) + " টাকা মাত্র";
+            document.getElementById('amountInWordsExp').innerText = "কথায়: " + getBanglaCurrency(total) + " মাত্র";
         }
 
         const banglaWords = { 0: 'শূন্য', 1: 'এক', 2: 'দুই', 3: 'তিন', 4: 'চার', 5: 'পাঁচ', 6: 'ছয়', 7: 'সাত', 8: 'আট', 9: 'নয়', 10: 'দশ', 11: 'এগারো', 12: 'বারো', 13: 'তেরো', 14: 'চোদ্দ', 15: 'পনেরো', 16: 'ষোলো', 17: 'সতেরো', 18: 'আঠারো', 19: 'উনিশ', 20: 'বিশ', 21: 'একুশ', 22: 'বাইশ', 23: 'তেইশ', 24: 'চব্বিশ', 25: 'পঁচিশ', 26: 'ছাব্বিশ', 27: 'সাতাশ', 28: 'আটাশ', 29: 'ঊনত্রিশ', 30: 'ত্রিশ', 31: 'একত্রিশ', 32: 'বত্রিশ', 33: 'তেত্রিশ', 34: 'চৌত্রিশ', 35: 'পঁয়ত্রিশ', 36: 'ছত্রিশ', 37: 'সাঁইত্রিশ', 38: 'আটত্রিশ', 39: 'ঊনচল্লিশ', 40: 'চল্লিশ', 41: 'একচল্লিশ', 42: 'বিয়াল্লিশ', 43: 'তেতাল্লিশ', 44: 'চুয়াল্লিশ', 45: 'পঁয়তাল্লিশ', 46: 'ছেচল্লিশ', 47: 'সাতচল্লিশ', 48: 'আটচল্লিশ', 49: 'ঊনপঞ্চাশ', 50: 'পঞ্চাশ', 51: 'একান্ন', 52: 'বায়ান্ন', 53: 'তিপ্পান্ন', 54: 'চুয়ান্ন', 55: 'পঞ্চান্ন', 56: 'ছাপ্পান্ন', 57: 'সাতান্ন', 58: 'আটান্ন', 59: 'ঊনষাট', 60: 'ষাট', 61: 'একষট্টি', 62: 'বাষট্টি', 63: 'তেষট্টি', 64: 'চৌষট্টি', 65: 'পঁয়ষট্টি', 66: 'ছেষট্টি', 67: 'সাতষট্টি', 68: 'আটষট্টি', 69: 'ঊনসত্তর', 70: 'সত্তর', 71: 'একাতর', 72: 'বাহাত্তর', 73: 'তিয়াত্তর', 74: 'চুয়াত্তর', 75: 'পঁচাত্তর', 76: 'ছিয়াত্তর', 77: 'সাতাত্তর', 78: 'আটাত্তর', 79: 'ঊনআশি', 80: 'আশি', 81: 'একাশি', 82: 'বিরাশি', 83: 'তিরাশি', 84: 'চুরাশি', 85: 'পঁচাশি', 86: 'ছিয়াশি', 87: 'সাতাশি', 88: 'আটাশি', 89: 'ঊননব্বই', 90: 'নব্বই', 91: 'একানব্বই', 92: 'বিরানব্বই', 93: 'তিরানব্বই', 94: 'চুরানব্বই', 95: 'পঁচানব্বই', 96: 'ছিয়ানব্বই', 97: 'সাতানব্বই', 98: 'আটানব্বই', 99: 'নিরানব্বই' };
-        function getBanglaWords(num) {
+        
+        function getBanglaWordsInt(num) {
             if (num === 0) return banglaWords[0];
             let words = "";
-            if (Math.floor(num / 10000000) > 0) { words += getBanglaWords(Math.floor(num / 10000000)) + " কোটি "; num %= 10000000; }
+            if (Math.floor(num / 10000000) > 0) { words += getBanglaWordsInt(Math.floor(num / 10000000)) + " কোটি "; num %= 10000000; }
             if (Math.floor(num / 100000) > 0) { words += banglaWords[Math.floor(num / 100000)] + " লক্ষ "; num %= 100000; }
             if (Math.floor(num / 1000) > 0) { words += banglaWords[Math.floor(num / 1000)] + " হাজার "; num %= 1000; }
             if (Math.floor(num / 100) > 0) { words += banglaWords[Math.floor(num / 100)] + " শত "; num %= 100; }
+            num = Math.floor(num); 
             if (num > 0) { words += banglaWords[num]; }
             return words.trim();
+        }
+
+        // ডেসিমাল সহ টাকা ও পয়সা হিসাব
+        function getBanglaCurrency(num) {
+            let intPart = Math.floor(num);
+            let decPart = Math.round((num - intPart) * 100);
+            let str = "";
+            if(intPart > 0) {
+                str += getBanglaWordsInt(intPart) + " টাকা";
+            } else if(intPart === 0 && decPart === 0) {
+                str += banglaWords[0] + " টাকা";
+            }
+            
+            if(decPart > 0) {
+                if(str !== "") str += " ও ";
+                str += getBanglaWordsInt(decPart) + " পয়সা";
+            }
+            return str;
         }
 
         function resetForm() {
@@ -530,7 +567,7 @@
             document.getElementById('expenseRowsContainer').innerHTML = `
                 <div class="expense-row">
                     <input type="text" class="exp-cat" placeholder="খাতের নাম">
-                    <input type="number" class="exp-amt en-text" placeholder="পরিমাণ (৳)" oninput="calculateExpenseTotal()">
+                    <input type="number" step="0.01" class="exp-amt en-text" placeholder="পরিমাণ (৳)" oninput="restrictDecimal(this); calculateExpenseTotal()">
                     <button type="button" class="btn-add-row" onclick="addExpenseRow()"><i class="fa-solid fa-plus"></i></button>
                 </div>`;
             calcTotalIncome();
@@ -573,7 +610,7 @@
             
             incMemSelect.innerHTML = '<option value="" disabled selected>সদস্য নির্বাচন করুন</option><option value="other">অন্যান্য (ম্যানুয়ালি লিখুন)</option>';
             incColSelect.innerHTML = '<option value="" disabled selected>আদায়কারী নির্বাচন করুন</option>';
-            expSpSelect.innerHTML = '<option value="" disabled selected>ব্যয়কারী নির্বাচন করুন</option>';
+            expSpSelect.innerHTML = '<option value="" disabled selected>উত্তোলনকারী নির্বাচন করুন</option>';
 
             if (data) {
                 Object.keys(data).forEach(key => {
@@ -600,17 +637,17 @@
                     let chk = document.getElementById('chk-'+i);
                     let amt = document.getElementById('amt-'+i);
                     if(chk && chk.checked && amt.value) {
-                        items.push({ category: chk.value, amount: parseInt(amt.value) });
+                        items.push({ category: chk.value, amount: parseFloat(amt.value) });
                     }
                 }
                 let chkO = document.getElementById('chk-other');
                 let amtO = document.getElementById('amt-other');
                 let txtO = document.getElementById('incOtherText');
                 if(chkO && chkO.checked && amtO.value) {
-                    items.push({ category: txtO.value || 'অন্যান্য', amount: parseInt(amtO.value) });
+                    items.push({ category: txtO.value || 'অন্যান্য', amount: parseFloat(amtO.value) });
                 }
 
-                if(items.length === 0) { alert("দয়া করে অন্তত একটি আয়ের খাত নির্বাচন করে পরিমাণ লিখুন।"); return; }
+                if(items.length === 0) { alert("দয়া করে অন্তত একটি জমার খাত নির্বাচন করে পরিমাণ লিখুন।"); return; }
                 if(!document.getElementById('incMember').value) { alert("প্রদানকারীর নাম নির্বাচন করুন।"); return; }
                 if(!document.getElementById('incCollector').value) { alert("আদায়কারীর নাম নির্বাচন করুন।"); return; }
             } else {
@@ -619,10 +656,10 @@
                 const amtInputs = document.querySelectorAll('.exp-amt');
                 for(let i=0; i<catInputs.length; i++){
                     if(!catInputs[i].value || !amtInputs[i].value) valid = false;
-                    else items.push({ category: catInputs[i].value, amount: parseInt(amtInputs[i].value) });
+                    else items.push({ category: catInputs[i].value, amount: parseFloat(amtInputs[i].value) });
                 }
-                if(!valid || items.length === 0) { alert('অনুগ্রহ করে ব্যয়ের খাত এবং পরিমাণ সঠিকভাবে দিন।'); return; }
-                if(!document.getElementById('expSpender').value) { alert("ব্যয়কারীর নাম নির্বাচন করুন।"); return; }
+                if(!valid || items.length === 0) { alert('অনুগ্রহ করে উত্তোলনের খাত এবং পরিমাণ সঠিকভাবে দিন।'); return; }
+                if(!document.getElementById('expSpender').value) { alert("উত্তোলনকারীর নাম নির্বাচন করুন।"); return; }
             }
 
             const btn = document.getElementById('saveTrxBtn');
@@ -638,13 +675,13 @@
                 trxData.payerId = (memVal === 'other') ? '' : memVal;
                 trxData.address = document.getElementById('incAddress').value;
                 trxData.description = document.getElementById('incDesc').value;
-                trxData.amount = parseInt(document.getElementById('incTotalAmount').value);
-                trxData.amountInWords = document.getElementById('amountInWordsInc').innerText;
+                trxData.amount = parseFloat(document.getElementById('incTotalAmount').value);
+                trxData.amountInWords = document.getElementById('amountInWordsInc').innerText.replace('কথায়: ', '');
                 trxData.collector = memberDict[document.getElementById('incCollector').value];
             } else {
                 trxData.description = document.getElementById('expDesc').value;
-                trxData.amount = parseInt(document.getElementById('expTotalAmount').value);
-                trxData.amountInWords = document.getElementById('amountInWordsExp').innerText;
+                trxData.amount = parseFloat(document.getElementById('expTotalAmount').value);
+                trxData.amountInWords = document.getElementById('amountInWordsExp').innerText.replace('কথায়: ', '');
                 trxData.spender = memberDict[document.getElementById('expSpender').value];
             }
 
@@ -680,7 +717,7 @@
                 allTransactions.forEach(trx => {
                     let dStr = new Date(trx.date).toLocaleDateString('en-GB');
                     let isIncome = trx.type === 'income';
-                    let badge = isIncome ? '<span class="badge income">আয়</span>' : '<span class="badge expense">ব্যয়</span>';
+                    let badge = isIncome ? '<span class="badge income">জমা</span>' : '<span class="badge expense">উত্তোলন</span>';
                     let nameTitle = isIncome ? (trx.payerName || 'অজ্ঞাত') : (trx.spender || 'অজ্ঞাত');
                     let cats = trx.items ? trx.items.map(i => i.category).join(', ') : 'খাত নেই';
 
@@ -717,14 +754,14 @@
             const wrapper = document.getElementById('receiptWrapper');
             if(isIncome) {
                 wrapper.className = "receipt-wrapper type-income";
-                document.getElementById('receiptTitle').innerText = "আয় রিসিট (Income Receipt)";
+                document.getElementById('receiptTitle').innerText = "জমা রিসিট (Deposit Receipt)";
                 document.getElementById('sigPayer').innerText = "প্রদানকারীর স্বাক্ষর";
                 document.getElementById('sigReceiver').innerText = "আদায়কারীর স্বাক্ষর";
             } else {
                 wrapper.className = "receipt-wrapper type-expense";
-                document.getElementById('receiptTitle').innerText = "ব্যয় রিসিট (Expense Receipt)";
+                document.getElementById('receiptTitle').innerText = "উত্তোলন রিসিট (Withdrawal Receipt)";
                 document.getElementById('sigPayer').innerText = "অ্যাডমিনের স্বাক্ষর";
-                document.getElementById('sigReceiver').innerText = "ব্যয়কারীর স্বাক্ষর";
+                document.getElementById('sigReceiver').innerText = "উত্তোলনকারীর স্বাক্ষর";
             }
 
             document.getElementById('rId').innerText = "#" + (trx.timestamp ? trx.timestamp.toString().slice(-6) : "000000");
@@ -737,7 +774,7 @@
                 uInfo += `<p><strong>আদায়কারী:</strong> ${trx.collector || '-'}</p>`;
                 if(trx.description) uInfo += `<p><strong>বিবরণ:</strong> ${trx.description}</p>`;
             } else {
-                uInfo += `<p><strong>ব্যয়কারীর নাম:</strong> ${trx.spender || '-'}</p>`;
+                uInfo += `<p><strong>উত্তোলনকারীর নাম:</strong> ${trx.spender || '-'}</p>`;
                 if(trx.description) uInfo += `<p><strong>বিবরণ:</strong> ${trx.description}</p>`;
             }
             document.getElementById('rUserInfo').innerHTML = uInfo;
@@ -758,7 +795,7 @@
 
             document.getElementById('rTotalAmt').innerText = "৳ " + trx.amount;
             
-            let words = trx.amountInWords || (getBanglaWords(trx.amount) + " টাকা মাত্র");
+            let words = trx.amountInWords || (getBanglaCurrency(trx.amount) + " মাত্র");
             document.getElementById('rWords').innerText = "কথায়: " + words;
 
             document.getElementById('receiptModal').style.display = 'block';
@@ -788,7 +825,7 @@
             if(trx.type === 'income') {
                 if(trx.items) {
                     trx.items.forEach(item => {
-                        const mapping = { "ভর্তি ফি": "1", "এককালীন/বাৎসরিক জমা": "2", "মাসিক জমা": "3", "সার্ভিস চার্জ": "4", "শেয়ার": "5", "ডোনেশন": "6", "জরিমানা": "7" };
+                        const mapping = { "ভর্তি ফি": "1", "এককালীন/বাৎসরিক জমা": "2", "মাসিক জমা": "3", "সার্ভিস চার্জ": "4", "শেয়ার": "5", "ডোনেশন": "6", "জ জরিমানা": "7" };
                         if(mapping[item.category]) {
                             let chk = document.getElementById('chk-' + mapping[item.category]);
                             if(chk) {
