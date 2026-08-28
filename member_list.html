@@ -37,7 +37,7 @@
         .sidebar-menu li { padding: 5px 20px; }
         .sidebar-menu li a { text-decoration: none; color: var(--text-gray); display: flex; align-items: center; gap: 12px; padding: 12px 15px; border-radius: 8px; font-size: 16px; font-weight: 500; transition: all 0.3s; }
         .sidebar-menu li a:hover, .sidebar-menu li a.active { background-color: var(--light-green); color: var(--primary-green); }
-        .logout-btn { margin: 20px; padding: 12px; background-color: #ffeaea; color: #d32f2f; text-align: center; border-radius: 8px; text-decoration: none; font-weight: 600; display: flex; justify-content: center; gap: 8px; transition: 0.3s; }
+        .logout-btn { margin: 20px; padding: 12px; background-color: #ffeaea; color: #d32f2f; text-align: center; border-radius: 8px; text-decoration: none; font-weight: 600; display: flex; justify-content: center; gap: 8px; transition: 0.3s; cursor: pointer; border: none; width: calc(100% - 40px);}
         .logout-btn:hover { background-color: #d32f2f; color: var(--white); }
         .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 999; opacity: 0; transition: opacity 0.3s ease; }
 
@@ -88,9 +88,7 @@
 
         .loading-data { text-align: center; padding: 30px; color: var(--text-gray); font-size: 16px; }
 
-        /* ====================================================
-           মোডাল (Modal) স্টাইল
-           ==================================================== */
+        /* মোডাল സ്റ്റাইল */
         .modal { 
             display: none; 
             position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
@@ -117,13 +115,11 @@
         .close-btn.dark { color: var(--text-gray); background: #f1f1f1; }
         .close-btn.dark:hover { background: #d32f2f; color: white; }
 
-        /* ১. ভিউ মোডাল (Photocard Style) */
         .view-modal-content { max-width: 450px; padding: 0; border-radius: 12px; }
         .photocard-header { background: linear-gradient(135deg, var(--primary-green), var(--dark-green)); padding: 40px 20px 60px; text-align: center; color: white; position: relative; border-top-left-radius: 12px; border-top-right-radius: 12px;}
         .photocard-header h3 { font-size: 24px; margin: 0; font-family: 'Hind Siliguri', sans-serif;}
         .photocard-header p { margin: 5px 0 0; opacity: 0.9;}
         
-        /* ছবি যেন কেটে না যায় সেজন্য position: relative এবং z-index: 2 যোগ করা হয়েছে */
         .photocard-body { 
             padding: 0 25px 30px; 
             text-align: center; 
@@ -139,7 +135,6 @@
         .info-label { color: var(--text-gray); font-size: 13px; margin-bottom: 2px;}
         .info-value { color: var(--text-dark); font-weight: 500;}
 
-        /* ২. এডিট মোডাল */
         .edit-modal-content { max-width: 800px; padding: 30px; margin-bottom: 40px;}
         .edit-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; }
         .edit-modal-header h3 { color: var(--dark-green); font-size: 22px; margin: 0;}
@@ -151,7 +146,6 @@
         .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 14px; font-family: inherit; outline: none;}
         .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--primary-green); }
         
-        /* Edit Profile Pic */
         .edit-pic-section { display: flex; flex-direction: column; align-items: center; margin-bottom: 20px; grid-column: 1 / -1;}
         .edit-pic-wrapper { width: 100px; height: 100px; border-radius: 50%; border: 2px dashed var(--primary-green); display: flex; justify-content: center; align-items: center; cursor: pointer; position: relative; overflow: hidden; background: #f9fbf9; }
         .edit-pic-wrapper img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; z-index: 2; }
@@ -160,7 +154,6 @@
         .save-btn { grid-column: 1 / -1; width: 100%; background: var(--primary-green); color: white; border: none; padding: 12px; border-radius: 8px; font-size: 16px; font-weight: 600; font-family: inherit; cursor: pointer; margin-top: 15px; display: flex; justify-content: center; align-items: center; gap: 8px;}
         .save-btn:hover { background: var(--dark-green); }
 
-        /* ক্রপার মোডাল */
         .cropper-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 10000; justify-content: center; align-items: center; padding:20px;}
         .cropper-content { background: var(--white); padding: 20px; border-radius: 12px; width: 100%; max-width: 400px; text-align: center; }
         .img-container { width: 100%; height: 300px; margin: 15px 0; background: #eee; }
@@ -172,6 +165,14 @@
 </head>
 <body>
 
+    <!-- Security Lock Script -->
+    <script>
+        if (localStorage.getItem("userRole") !== "admin") {
+            alert("অনুগ্রহ করে প্রথমে অ্যাডমিন হিসেবে লগইন করুন।");
+            window.location.href = "login.html";
+        }
+    </script>
+
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
     <aside class="sidebar" id="sidebar">
@@ -182,14 +183,14 @@
         <ul class="sidebar-menu">
             <li><a href="admin_dashboard.html"><i class="fa-solid fa-gauge"></i> ড্যাশবোর্ড</a></li>
             <li><a href="member_list.html" class="active"><i class="fa-solid fa-users"></i> সদস্য তালিকা</a></li>
-            <li><a href="#"><i class="fa-solid fa-calendar-check"></i> মাসিক জমা</a></li>
-            <li><a href="#"><i class="fa-solid fa-chart-pie"></i> শেয়ার</a></li>
-            <li><a href="#"><i class="fa-solid fa-sack-dollar"></i> এককালীন/বাৎসরিক জমা</a></li>
-            <li><a href="#"><i class="fa-solid fa-scale-balanced"></i> আয়/ব্যয়</a></li>
-            <li><a href="#"><i class="fa-solid fa-file-invoice"></i> রিপোর্টস</a></li>
-            <li><a href="#"><i class="fa-solid fa-gear"></i> সেটিংস</a></li>
+            <li><a href="monthly_collection.html"><i class="fa-solid fa-calendar-check"></i> মাসিক জমা</a></li>
+            <li><a href="shares.html"><i class="fa-solid fa-chart-pie"></i> শেয়ার</a></li>
+            <li><a href="yearly_deposit.html"><i class="fa-solid fa-sack-dollar"></i> এককালীন/বাৎসরিক জমা</a></li>
+            <li><a href="income_expense.html"><i class="fa-solid fa-scale-balanced"></i> আয়/ব্যয়</a></li>
+            <li><a href="reports.html"><i class="fa-solid fa-file-invoice"></i> রিপোর্টস</a></li>
+            <li><a href="settings.html"><i class="fa-solid fa-gear"></i> সেটিংস</a></li>
         </ul>
-        <a href="login.html" class="logout-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i> লগআউট</a>
+        <button class="logout-btn" onclick="logout(event)"><i class="fa-solid fa-arrow-right-from-bracket"></i> লগআউট</button>
     </aside>
 
     <main class="main-content">
@@ -242,23 +243,19 @@
         </div>
     </main>
 
-    <!-- ১. ভিউ মোডাল (Photocard Style) -->
+    <!-- ১. ভিউ মোডাল -->
     <div class="modal" id="viewModal">
         <div class="modal-content view-modal-content">
             <button class="close-btn" onclick="closeModal('viewModal')"><i class="fa-solid fa-xmark"></i></button>
-            
             <div class="photocard-header">
                 <h3 id="vNameBn">সদস্যের নাম</h3>
                 <p id="vNameEn">Member Name (En)</p>
             </div>
-            
             <div class="photocard-body">
                 <img id="vPhoto" src="https://via.placeholder.com/150?text=No+Photo" alt="Member Photo">
-                
                 <div style="margin-top: -5px; margin-bottom: 10px;">
                     <span id="vStatus" class="status active" style="font-size: 11px;">সক্রিয়</span>
                 </div>
-
                 <div class="info-grid">
                     <div class="info-item"><span class="info-label">সদস্য নং</span><span class="info-value" id="vMemberId"></span></div>
                     <div class="info-item"><span class="info-label">সদস্যের ধরণ</span><span class="info-value" id="vType"></span></div>
@@ -288,7 +285,7 @@
         </div>
     </div>
 
-    <!-- ২. এডিট মোডাল (A to Z Full Form) -->
+    <!-- ২. এডিট মোডাল -->
     <div class="modal" id="editModal">
         <div class="modal-content edit-modal-content">
             <div class="edit-modal-header">
@@ -309,10 +306,7 @@
                         <input type="file" id="editPicInput" accept="image/*" style="display:none;">
                     </div>
 
-                    <div class="form-group">
-                        <label>সদস্য নং</label>
-                        <input type="text" id="eMemberId" required>
-                    </div>
+                    <div class="form-group"><label>সদস্য নং</label><input type="text" id="eMemberId" required></div>
                     <div class="form-group">
                         <label>সদস্যের ধরণ</label>
                         <select id="eMemberType" required>
@@ -323,106 +317,46 @@
                             <option value="ব্যবসায়িক অস্থায়ী সদস্য">ব্যবসায়িক অস্থায়ী সদস্য</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label>নাম (ইংরেজি)</label>
-                        <input type="text" id="eNameEn" required>
-                    </div>
-                    <div class="form-group">
-                        <label>নাম (বাংলা)</label>
-                        <input type="text" id="eNameBn">
-                    </div>
-                    <div class="form-group">
-                        <label>পিতার নাম</label>
-                        <input type="text" id="eFather">
-                    </div>
-                    <div class="form-group">
-                        <label>মাতার নাম</label>
-                        <input type="text" id="eMother">
-                    </div>
-                    <div class="form-group">
-                        <label>জন্মতারিখ</label>
-                        <input type="date" id="eDob">
-                    </div>
+                    <div class="form-group"><label>নাম (ইংরেজি)</label><input type="text" id="eNameEn" required></div>
+                    <div class="form-group"><label>নাম (বাংলা)</label><input type="text" id="eNameBn"></div>
+                    <div class="form-group"><label>পিতার নাম</label><input type="text" id="eFather"></div>
+                    <div class="form-group"><label>মাতার নাম</label><input type="text" id="eMother"></div>
+                    <div class="form-group"><label>জন্মতারিখ</label><input type="date" id="eDob"></div>
                     <div class="form-group">
                         <label>লিঙ্গ</label>
-                        <select id="eGender">
-                            <option value="পুরুষ">পুরুষ</option>
-                            <option value="নারী">নারী</option>
-                        </select>
+                        <select id="eGender"><option value="পুরুষ">পুরুষ</option><option value="নারী">নারী</option></select>
                     </div>
-                    <div class="form-group">
-                        <label>পেশা</label>
-                        <input type="text" id="eProfession">
-                    </div>
-                    <div class="form-group">
-                        <label>শিক্ষাগত যোগ্যতা</label>
-                        <input type="text" id="eEducation">
-                    </div>
+                    <div class="form-group"><label>পেশা</label><input type="text" id="eProfession"></div>
+                    <div class="form-group"><label>শিক্ষাগত যোগ্যতা</label><input type="text" id="eEducation"></div>
                     <div class="form-group">
                         <label>ধর্ম</label>
-                        <select id="eReligion">
-                            <option value="ইসলাম">ইসলাম</option>
-                            <option value="হিন্দু">হিন্দু</option>
-                            <option value="বৌদ্ধ">বৌদ্ধ</option>
-                            <option value="খ্রিস্টান">খ্রিস্টান</option>
-                            <option value="অন্যান্য">অন্যান্য</option>
-                        </select>
+                        <select id="eReligion"><option value="ইসলাম">ইসলাম</option><option value="হিন্দু">হিন্দু</option><option value="বৌদ্ধ">বৌদ্ধ</option><option value="খ্রিস্টান">খ্রিস্টান</option><option value="অন্যান্য">অন্যান্য</option></select>
                     </div>
                     <div class="form-group">
                         <label>রক্তের গ্রুপ</label>
-                        <select id="eBlood">
-                            <option value="">Select</option>
-                            <option value="A+">A+</option> <option value="A-">A-</option>
-                            <option value="B+">B+</option> <option value="B-">B-</option>
-                            <option value="O+">O+</option> <option value="O-">O-</option>
-                            <option value="AB+">AB+</option> <option value="AB-">AB-</option>
-                        </select>
+                        <select id="eBlood"><option value="">Select</option><option value="A+">A+</option><option value="A-">A-</option><option value="B+">B+</option><option value="B-">B-</option><option value="O+">O+</option><option value="O-">O-</option><option value="AB+">AB+</option><option value="AB-">AB-</option></select>
                     </div>
-                    <div class="form-group">
-                        <label>মোবাইল নম্বর</label>
-                        <input type="tel" id="ePhone" required>
-                    </div>
-                    <div class="form-group">
-                        <label>জাতীয় পরিচয়পত্র / জন্মনিবন্ধন</label>
-                        <input type="text" id="eNid">
-                    </div>
-                    <div class="form-group">
-                        <label>পাসপোর্ট নম্বর</label>
-                        <input type="text" id="ePassport">
-                    </div>
-                    <div class="form-group">
-                        <label>পাসওয়ার্ড</label>
-                        <input type="text" id="ePassword">
-                    </div>
-                    <div class="form-group full-width">
-                        <label>বর্তমান ঠিকানা</label>
-                        <textarea id="ePresentAdd" rows="2"></textarea>
-                    </div>
-                    <div class="form-group full-width">
-                        <label>স্থায়ী ঠিকানা</label>
-                        <textarea id="ePermanentAdd" rows="2"></textarea>
-                    </div>
+                    <div class="form-group"><label>মোবাইল নম্বর</label><input type="tel" id="ePhone" required></div>
+                    <div class="form-group"><label>জাতীয় পরিচয়পত্র / জন্মনিবন্ধন</label><input type="text" id="eNid"></div>
+                    <div class="form-group"><label>পাসপোর্ট নম্বর</label><input type="text" id="ePassport"></div>
+                    <div class="form-group"><label>পাসওয়ার্ড</label><input type="text" id="ePassword"></div>
+                    <div class="form-group full-width"><label>বর্তমান ঠিকানা</label><textarea id="ePresentAdd" rows="2"></textarea></div>
+                    <div class="form-group full-width"><label>স্থায়ী ঠিকানা</label><textarea id="ePermanentAdd" rows="2"></textarea></div>
                     <div class="form-group full-width">
                         <label>স্ট্যাটাস</label>
-                        <select id="eStatus">
-                            <option value="active">সক্রিয় (Active)</option>
-                            <option value="inactive">নিষ্ক্রিয় (Inactive)</option>
-                        </select>
+                        <select id="eStatus"><option value="active">সক্রিয় (Active)</option><option value="inactive">নিষ্ক্রিয় (Inactive)</option></select>
                     </div>
-                    
                     <button type="submit" class="save-btn" id="editSubmitBtn"><i class="fa-solid fa-floppy-disk"></i> আপডেট সেভ করুন</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- ইমেজ ক্রপার মোডাল -->
+    <!-- ক্রপার মোডাল -->
     <div class="cropper-overlay" id="cropperModal">
         <div class="cropper-content">
             <h3>ছবি ক্রপ করুন</h3>
-            <div class="img-container">
-                <img id="imageToCrop" src="">
-            </div>
+            <div class="img-container"><img id="imageToCrop" src=""></div>
             <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
                 <button type="button" style="padding:10px 20px; border:none; border-radius:5px; cursor:pointer;" onclick="closeCropper()">বাতিল</button>
                 <button type="button" style="padding:10px 20px; border:none; border-radius:5px; background:var(--primary-green); color:white; cursor:pointer;" onclick="cropImage()">ক্রপ করুন</button>
@@ -440,8 +374,6 @@
         function closeModal(modalId) {
             document.getElementById(modalId).style.display = 'none';
         }
-
-        // মোডালের বাইরে ক্লিক করলে বন্ধ হওয়ার লজিক
         window.onclick = function(event) {
             const viewModal = document.getElementById('viewModal');
             const editModal = document.getElementById('editModal');
@@ -449,10 +381,8 @@
             if (event.target == editModal) { editModal.style.display = "none"; }
         }
 
-        // --- ইমেজ ক্রপার লজিক ---
         let cropper;
         let updatedImageBase64 = null; 
-        
         document.getElementById('editPicInput').addEventListener('change', function(e) {
             const files = e.target.files;
             if (files && files.length > 0) {
@@ -469,7 +399,6 @@
         });
 
         function closeCropper() { document.getElementById('cropperModal').style.display = 'none'; }
-
         function cropImage() {
             const canvas = cropper.getCroppedCanvas({ width: 200, height: 200 });
             updatedImageBase64 = canvas.toDataURL('image/jpeg', 0.8);
@@ -478,6 +407,13 @@
             document.getElementById('editCameraIcon').style.display = 'none';
             closeCropper();
         }
+
+        function logout(e) {
+            e.preventDefault();
+            localStorage.removeItem("userRole");
+            localStorage.removeItem("loggedInMemberId");
+            window.location.href = "login.html";
+        }
     </script>
 
     <!-- Firebase Connection Script -->
@@ -485,24 +421,20 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getDatabase, ref, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-        // ==========================================
-        // আপনার কপি করা firebaseConfig কোডটি ঠিক এখানে বসান
-        // ==========================================
-const firebaseConfig = {
-  apiKey: "AIzaSyDqSsaNPqrWQfSeGvh0IuPxGaOJ7S4y4Qo",
-  authDomain: "darul-ittihad-foundation.firebaseapp.com",
-  projectId: "darul-ittihad-foundation",
-  storageBucket: "darul-ittihad-foundation.firebasestorage.app",
-  messagingSenderId: "1068343055365",
-  appId: "1:1068343055365:web:a42b6545e7fcd449de786c"
-};
+        const firebaseConfig = {
+            apiKey: "AIzaSyDqSsaNPqrWQfSeGvh0IuPxGaOJ7S4y4Qo",
+            authDomain: "darul-ittihad-foundation.firebaseapp.com",
+            projectId: "darul-ittihad-foundation",
+            storageBucket: "darul-ittihad-foundation.firebasestorage.app",
+            messagingSenderId: "1068343055365",
+            appId: "1:1068343055365:web:a42b6545e7fcd449de786c"
+        };
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
         const tbody = document.getElementById('memberTableBody');
         let allMembers = [];
-
         const membersRef = ref(db, 'members');
         
         onValue(membersRef, (snapshot) => {
@@ -572,7 +504,6 @@ const firebaseConfig = {
             });
         }
 
-        // সার্চ এবং ফিল্টার
         const searchInput = document.getElementById('searchInput');
         const statusFilter = document.getElementById('statusFilter');
 
@@ -596,7 +527,6 @@ const firebaseConfig = {
         searchInput.addEventListener('input', filterData);
         statusFilter.addEventListener('change', filterData);
 
-        // ১. ভিউ (Photocard)
         window.viewMember = function(id) {
             const m = allMembers.find(x => x.id === id);
             if(m) {
@@ -633,7 +563,6 @@ const firebaseConfig = {
             }
         }
 
-        // ২. এডিট মোডাল ওপেন
         window.openEditModal = function(id) {
             const m = allMembers.find(x => x.id === id);
             if(m) {
@@ -675,7 +604,6 @@ const firebaseConfig = {
             }
         }
 
-        // ৩. এডিট সেভ করা
         document.getElementById('editForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const btn = document.getElementById('editSubmitBtn');
@@ -722,7 +650,6 @@ const firebaseConfig = {
             }
         });
 
-        // ৪. ডিলিট 
         window.deleteMemberData = async function(id) {
             if(confirm('সতর্কতা: আপনি কি নিশ্চিত যে এই সদস্যের সম্পূর্ণ ডাটা মুছে ফেলতে চান?')) {
                 try {
@@ -733,7 +660,6 @@ const firebaseConfig = {
             }
         }
 
-        // ৫. সিরিয়াল (Reorder)
         window.moveRow = async function(currentIndex, direction) {
             const targetIndex = currentIndex + direction;
             if (targetIndex < 0 || targetIndex >= allMembers.length) return;
