@@ -4,7 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Darul Ittihad Foundation</title>
-    
+        <!-- PWA Setup -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0b9e4a">
+    <link rel="apple-touch-icon" href="1000123161.png">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
     
@@ -334,6 +337,19 @@
             <p>&copy; 2026 <span class="en-text">Darul Ittihad Foundation</span>. সর্বস্বত্ব সংরক্ষিত।</p>
         </div>
     </footer>
-
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(registration => {
+                        console.log('PWA ServiceWorker registered successfully!');
+                    })
+                    .catch(err => {
+                        console.log('PWA ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
+    </script>
 </body>
 </html>
