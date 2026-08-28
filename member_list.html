@@ -37,7 +37,7 @@
         .sidebar-menu li { padding: 5px 20px; }
         .sidebar-menu li a { text-decoration: none; color: var(--text-gray); display: flex; align-items: center; gap: 12px; padding: 12px 15px; border-radius: 8px; font-size: 16px; font-weight: 500; transition: all 0.3s; }
         .sidebar-menu li a:hover, .sidebar-menu li a.active { background-color: var(--light-green); color: var(--primary-green); }
-        .logout-btn { margin: 20px; padding: 12px; background-color: #ffeaea; color: #d32f2f; text-align: center; border-radius: 8px; text-decoration: none; font-weight: 600; display: flex; justify-content: center; gap: 8px; transition: 0.3s; cursor: pointer; border: none; width: calc(100% - 40px);}
+        .logout-btn { margin: 20px; padding: 12px; background-color: #ffeaea; color: #d32f2f; text-align: center; border-radius: 8px; text-decoration: none; font-weight: 600; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.3s; cursor: pointer; border: none; font-family: inherit; font-size: 16px;}
         .logout-btn:hover { background-color: #d32f2f; color: var(--white); }
         .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 999; opacity: 0; transition: opacity 0.3s ease; }
 
@@ -187,6 +187,7 @@
             <li><a href="shares.html"><i class="fa-solid fa-chart-pie"></i> শেয়ার</a></li>
             <li><a href="yearly_deposit.html"><i class="fa-solid fa-sack-dollar"></i> এককালীন/বাৎসরিক জমা</a></li>
             <li><a href="income_expense.html"><i class="fa-solid fa-scale-balanced"></i> আয়/ব্যয়</a></li>
+            <li><a href="investment_profit.html"><i class="fa-solid fa-chart-line"></i> বিনিয়োগ/মুনাফা</a></li>
             <li><a href="reports.html"><i class="fa-solid fa-file-invoice"></i> রিপোর্টস</a></li>
             <li><a href="settings.html"><i class="fa-solid fa-gear"></i> সেটিংস</a></li>
         </ul>
@@ -259,12 +260,17 @@
                 <div class="info-grid">
                     <div class="info-item"><span class="info-label">সদস্য নং</span><span class="info-value" id="vMemberId"></span></div>
                     <div class="info-item"><span class="info-label">সদস্যের ধরণ</span><span class="info-value" id="vType"></span></div>
-                    <div class="info-item"><span class="info-label">পিতার নাম</span><span class="info-value" id="vFather"></span></div>
-                    <div class="info-item"><span class="info-label">মাতার নাম</span><span class="info-value" id="vMother"></span></div>
-                    <div class="info-item"><span class="info-label">মোবাইল নম্বর</span><span class="info-value" id="vPhone"></span></div>
                     
                     <div style="display: flex; gap: 10px; border-bottom: 1px dashed #e0e0e0; padding-bottom: 8px;">
-                        <div class="info-item" style="flex: 1; border:none; padding:0;"><span class="info-label">জন্মতারিখ</span><span class="info-value" id="vDob"></span></div>
+                        <div class="info-item" style="flex: 1; border:none; padding:0;"><span class="info-label">মোবাইল নম্বর</span><span class="info-value en-text" id="vPhone"></span></div>
+                        <div class="info-item" style="flex: 1; border:none; padding:0;"><span class="info-label">পাসওয়ার্ড</span><span class="info-value en-text" id="vPassword" style="color: #d32f2f; font-weight: 600;"></span></div>
+                    </div>
+
+                    <div class="info-item"><span class="info-label">পিতার নাম</span><span class="info-value" id="vFather"></span></div>
+                    <div class="info-item"><span class="info-label">মাতার নাম</span><span class="info-value" id="vMother"></span></div>
+                    
+                    <div style="display: flex; gap: 10px; border-bottom: 1px dashed #e0e0e0; padding-bottom: 8px;">
+                        <div class="info-item" style="flex: 1; border:none; padding:0;"><span class="info-label">জন্মতারিখ</span><span class="info-value en-text" id="vDob"></span></div>
                         <div class="info-item" style="flex: 1; border:none; padding:0;"><span class="info-label">লিঙ্গ</span><span class="info-value" id="vGender"></span></div>
                     </div>
                     
@@ -274,12 +280,12 @@
                     </div>
                     
                     <div class="info-item"><span class="info-label">শিক্ষাগত যোগ্যতা</span><span class="info-value" id="vEducation"></span></div>
-                    <div class="info-item"><span class="info-label">রক্তের গ্রুপ</span><span class="info-value" id="vBlood"></span></div>
-                    <div class="info-item"><span class="info-label">জাতীয় পরিচয়পত্র/জন্মনিবন্ধন</span><span class="info-value" id="vNid"></span></div>
-                    <div class="info-item"><span class="info-label">পাসপোর্ট নম্বর</span><span class="info-value" id="vPassport"></span></div>
+                    <div class="info-item"><span class="info-label">রক্তের গ্রুপ</span><span class="info-value en-text" id="vBlood"></span></div>
+                    <div class="info-item"><span class="info-label">জাতীয় পরিচয়পত্র/জন্মনিবন্ধন</span><span class="info-value en-text" id="vNid"></span></div>
+                    <div class="info-item"><span class="info-label">পাসপোর্ট নম্বর</span><span class="info-value en-text" id="vPassport"></span></div>
                     <div class="info-item"><span class="info-label">বর্তমান ঠিকানা</span><span class="info-value" id="vPresentAdd"></span></div>
                     <div class="info-item"><span class="info-label">স্থায়ী ঠিকানা</span><span class="info-value" id="vPermanentAdd"></span></div>
-                    <div class="info-item"><span class="info-label">যোগদানের তারিখ</span><span class="info-value" id="vJoinDate"></span></div>
+                    <div class="info-item"><span class="info-label">যোগদানের তারিখ</span><span class="info-value en-text" id="vJoinDate"></span></div>
                 </div>
             </div>
         </div>
@@ -306,7 +312,7 @@
                         <input type="file" id="editPicInput" accept="image/*" style="display:none;">
                     </div>
 
-                    <div class="form-group"><label>সদস্য নং</label><input type="text" id="eMemberId" required></div>
+                    <div class="form-group"><label>সদস্য নং</label><input type="text" id="eMemberId" class="en-text" required></div>
                     <div class="form-group">
                         <label>সদস্যের ধরণ</label>
                         <select id="eMemberType" required>
@@ -317,11 +323,11 @@
                             <option value="ব্যবসায়িক অস্থায়ী সদস্য">ব্যবসায়িক অস্থায়ী সদস্য</option>
                         </select>
                     </div>
-                    <div class="form-group"><label>নাম (ইংরেজি)</label><input type="text" id="eNameEn" required></div>
+                    <div class="form-group"><label>নাম (ইংরেজি)</label><input type="text" id="eNameEn" class="en-text" required></div>
                     <div class="form-group"><label>নাম (বাংলা)</label><input type="text" id="eNameBn"></div>
                     <div class="form-group"><label>পিতার নাম</label><input type="text" id="eFather"></div>
                     <div class="form-group"><label>মাতার নাম</label><input type="text" id="eMother"></div>
-                    <div class="form-group"><label>জন্মতারিখ</label><input type="date" id="eDob"></div>
+                    <div class="form-group"><label>জন্মতারিখ</label><input type="date" id="eDob" class="en-text"></div>
                     <div class="form-group">
                         <label>লিঙ্গ</label>
                         <select id="eGender"><option value="পুরুষ">পুরুষ</option><option value="নারী">নারী</option></select>
@@ -334,12 +340,12 @@
                     </div>
                     <div class="form-group">
                         <label>রক্তের গ্রুপ</label>
-                        <select id="eBlood"><option value="">Select</option><option value="A+">A+</option><option value="A-">A-</option><option value="B+">B+</option><option value="B-">B-</option><option value="O+">O+</option><option value="O-">O-</option><option value="AB+">AB+</option><option value="AB-">AB-</option></select>
+                        <select id="eBlood" class="en-text"><option value="">Select</option><option value="A+">A+</option><option value="A-">A-</option><option value="B+">B+</option><option value="B-">B-</option><option value="O+">O+</option><option value="O-">O-</option><option value="AB+">AB+</option><option value="AB-">AB-</option></select>
                     </div>
-                    <div class="form-group"><label>মোবাইল নম্বর</label><input type="tel" id="ePhone" required></div>
-                    <div class="form-group"><label>জাতীয় পরিচয়পত্র / জন্মনিবন্ধন</label><input type="text" id="eNid"></div>
-                    <div class="form-group"><label>পাসপোর্ট নম্বর</label><input type="text" id="ePassport"></div>
-                    <div class="form-group"><label>পাসওয়ার্ড</label><input type="text" id="ePassword"></div>
+                    <div class="form-group"><label>মোবাইল নম্বর</label><input type="tel" id="ePhone" class="en-text" required></div>
+                    <div class="form-group"><label>জাতীয় পরিচয়পত্র / জন্মনিবন্ধন</label><input type="text" id="eNid" class="en-text"></div>
+                    <div class="form-group"><label>পাসপোর্ট নম্বর</label><input type="text" id="ePassport" class="en-text"></div>
+                    <div class="form-group"><label>পাসওয়ার্ড</label><input type="text" id="ePassword" class="en-text"></div>
                     <div class="form-group full-width"><label>বর্তমান ঠিকানা</label><textarea id="ePresentAdd" rows="2"></textarea></div>
                     <div class="form-group full-width"><label>স্থায়ী ঠিকানা</label><textarea id="ePermanentAdd" rows="2"></textarea></div>
                     <div class="form-group full-width">
@@ -477,17 +483,17 @@
 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td><strong>${index + 1}</strong></td>
+                    <td class="en-text"><strong>${index + 1}</strong></td>
                     <td>
                         <div class="member-info">
                             <div class="member-avatar">${avatarHtml}</div>
                             <div class="member-details">
                                 <h4>${displayName}</h4>
-                                <span>ID: ${member.memberId || 'N/A'}</span>
+                                <span class="en-text">ID: ${member.memberId || 'N/A'}</span>
                             </div>
                         </div>
                     </td>
-                    <td>${member.phone}</td>
+                    <td class="en-text">${member.phone}</td>
                     <td>${member.memberType || 'সাধারণ সদস্য'}</td>
                     <td><span class="status ${statusClass}">${statusText}</span></td>
                     <td>
@@ -551,6 +557,7 @@
                 document.getElementById('vPresentAdd').innerText = m.presentAddress || '-';
                 document.getElementById('vPermanentAdd').innerText = m.permanentAddress || '-';
                 document.getElementById('vPhone').innerText = m.phone || '-';
+                document.getElementById('vPassword').innerText = m.password || '-';
                 
                 let jDate = '-';
                 if(m.joinDate) {
