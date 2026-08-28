@@ -38,13 +38,13 @@
         .sidebar-menu li a { text-decoration: none; color: var(--text-gray); display: flex; align-items: center; gap: 12px; padding: 12px 15px; border-radius: 8px; font-size: 16px; font-weight: 500; transition: all 0.3s; }
         .sidebar-menu li a:hover, .sidebar-menu li a.active { background-color: var(--light-green); color: var(--primary-green); }
         
-        .logout-btn { margin: 20px; padding: 12px; background-color: #ffeaea; color: #d32f2f; text-align: center; border-radius: 8px; text-decoration: none; font-weight: 600; display: flex; justify-content: center; gap: 8px; transition: 0.3s; cursor: pointer; border: none; font-family: inherit;}
+        .logout-btn { margin: 20px; padding: 12px; background-color: #ffeaea; color: #d32f2f; text-align: center; border-radius: 8px; text-decoration: none; font-weight: 600; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.3s; cursor: pointer; border: none; font-family: inherit; font-size: 16px; width: calc(100% - 40px);}
         .logout-btn:hover { background-color: #d32f2f; color: var(--white); }
 
         .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 999; opacity: 0; transition: opacity 0.3s ease; }
 
         /* মূল কন্টেন্ট এরিয়া */
-        .main-content { flex: 1; margin-left: var(--sidebar-width); padding: 20px 30px; width: calc(100% - var(--sidebar-width)); }
+        .main-content { flex: 1; margin-left: var(--sidebar-width); padding: 20px 30px; width: calc(100% - var(--sidebar-width)); overflow-x: hidden; }
         .topbar { display: flex; justify-content: space-between; align-items: center; background: var(--white); padding: 15px 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); margin-bottom: 30px; }
         .menu-toggle { display: none; font-size: 24px; color: var(--primary-green); cursor: pointer; }
         .admin-profile { display: flex; align-items: center; gap: 12px; }
@@ -100,7 +100,6 @@
             <h2 class="en-text">DARUL ITTIHAD<br>FOUNDATION</h2>
         </div>
         
-        <!-- মেনু লিংকিং আপডেট করা হয়েছে -->
         <ul class="sidebar-menu">
             <li><a href="admin_dashboard.html" class="active"><i class="fa-solid fa-gauge"></i> ড্যাশবোর্ড</a></li>
             <li><a href="member_list.html"><i class="fa-solid fa-users"></i> সদস্য তালিকা</a></li>
@@ -244,6 +243,26 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
+        // গ্লোবাল ভেরিয়েবল
+        let globalIncome = 0;
+        let globalExpense = 0;
+        let globalProfit = 0;
+        let globalInvestment = 0;
+        let globalReturn = 0;
+
+        // আপডেট UI ফাংশন (সব ডাটা একসাথে ক্যালকুলেট করে দেখানোর জন্য)
+        function updateDashboardUI() {
+            let totalFund = globalIncome + globalProfit;
+            let currentInvestment = globalInvestment - globalReturn;
+            let currentBalance = totalFund - (globalExpense + currentInvestment);
+
+            document.getElementById('totalFund').innerText = "৳ " + totalFund;
+            document.getElementById('totalExpense').innerText = "৳ " + globalExpense;
+            document.getElementById('totalProfit').innerText = "৳ " + globalProfit;
+            document.getElementById('totalInvestment').innerText = "৳ " + currentInvestment;
+            document.getElementById('currentBalance').innerText = "৳ " + currentBalance;
+        }
+
         // ১. মোট সদস্য সংখ্যা
         onValue(ref(db, 'members'), (snapshot) => {
             const data = snapshot.val();
@@ -251,11 +270,11 @@
             document.getElementById('totalMembers').innerText = count + " জন";
         });
 
-        // ২. ট্রানজেকশন ডেটা (আয়, ব্যয়, বর্তমান ব্যালেন্স, আজকের জমা এবং সাম্প্রতিক তালিকা)
+        // ২. ট্রানজেকশন ডেটা (আয়, ব্যয় এবং আজকের জমা)
         onValue(ref(db, 'transactions'), (snapshot) => {
             const data = snapshot.val();
-            let totalIncome = 0;
-            let totalExpense = 0;
+            globalIncome = 0;
+            globalExpense = 0;
             let todayIncome = 0;
             let allTrx = [];
 
@@ -268,21 +287,20 @@
                     allTrx.push(trx);
 
                     if (trx.type === 'income') {
-                        totalIncome += trx.amount;
+                        globalIncome += trx.amount;
                         if (trx.date === todayStr) {
                             todayIncome += trx.amount;
                         }
                     } else if (trx.type === 'expense') {
-                        totalExpense += trx.amount;
+                        globalExpense += trx.amount;
                     }
                 });
             }
 
-            document.getElementById('totalFund').innerText = "৳ " + totalIncome;
-            document.getElementById('totalExpense').innerText = "৳ " + totalExpense;
-            document.getElementById('currentBalance').innerText = "৳ " + (totalIncome - totalExpense);
             document.getElementById('todayIncome').innerText = "৳ " + todayIncome;
+            updateDashboardUI(); // UI আপডেট
 
+            // সাম্প্রতিক লেনদেন (শেষ ৫টি)
             const tbody = document.getElementById('recentTrxBody');
             tbody.innerHTML = '';
             
@@ -314,20 +332,29 @@
 
         // ৩. মোট বিনিয়োগ হিসাব
         onValue(ref(db, 'investments'), (snapshot) => {
-            let totalInv = 0;
+            globalInvestment = 0;
             if(snapshot.val()) {
-                Object.values(snapshot.val()).forEach(v => totalInv += parseFloat(v.amount || 0));
+                Object.values(snapshot.val()).forEach(v => globalInvestment += parseFloat(v.amount || 0));
             }
-            document.getElementById('totalInvestment').innerText = "৳ " + totalInv;
+            updateDashboardUI(); // UI আপডেট
         });
 
         // ৪. মোট মুনাফা হিসাব
         onValue(ref(db, 'profits'), (snapshot) => {
-            let totalProf = 0;
+            globalProfit = 0;
             if(snapshot.val()) {
-                Object.values(snapshot.val()).forEach(v => totalProf += parseFloat(v.amount || 0));
+                Object.values(snapshot.val()).forEach(v => globalProfit += parseFloat(v.amount || 0));
             }
-            document.getElementById('totalProfit').innerText = "৳ " + totalProf;
+            updateDashboardUI(); // UI আপডেট
+        });
+
+        // ৫. বিনিয়োগ ফেরত হিসাব
+        onValue(ref(db, 'returns'), (snapshot) => {
+            globalReturn = 0;
+            if(snapshot.val()) {
+                Object.values(snapshot.val()).forEach(v => globalReturn += parseFloat(v.amount || 0));
+            }
+            updateDashboardUI(); // UI আপডেট
         });
 
     </script>
