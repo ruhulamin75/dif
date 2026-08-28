@@ -23,6 +23,8 @@
         .sidebar-menu li { padding: 5px 20px; }
         .sidebar-menu li a { text-decoration: none; color: var(--text-gray); display: flex; align-items: center; gap: 12px; padding: 12px 15px; border-radius: 8px; font-size: 16px; font-weight: 500; transition: all 0.3s; }
         .sidebar-menu li a:hover, .sidebar-menu li a.active { background-color: var(--light-green); color: var(--primary-green); }
+        .logout-btn { margin: 20px; padding: 12px; background-color: #ffeaea; color: #d32f2f; text-align: center; border-radius: 8px; text-decoration: none; font-weight: 600; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.3s; cursor: pointer; border: none; font-family: inherit; font-size: 16px; width: calc(100% - 40px);}
+        .logout-btn:hover { background-color: #d32f2f; color: var(--white); }
         .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 999; }
 
         /* মূল কন্টেন্ট */
@@ -70,6 +72,14 @@
 </head>
 <body>
 
+    <!-- Security Lock -->
+    <script>
+        if (localStorage.getItem("userRole") !== "admin") {
+            alert("অনুগ্রহ করে প্রথমে অ্যাডমিন হিসেবে লগইন করুন।");
+            window.location.href = "login.html";
+        }
+    </script>
+
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
     <aside class="sidebar" id="sidebar">
@@ -84,10 +94,11 @@
             <li><a href="shares.html"><i class="fa-solid fa-chart-pie"></i> শেয়ার</a></li>
             <li><a href="yearly_deposit.html" class="active"><i class="fa-solid fa-sack-dollar"></i> এককালীন/বাৎসরিক জমা</a></li>
             <li><a href="income_expense.html"><i class="fa-solid fa-scale-balanced"></i> আয়/ব্যয়</a></li>
+            <li><a href="investment_profit.html"><i class="fa-solid fa-chart-line"></i> বিনিয়োগ/মুনাফা</a></li>
             <li><a href="reports.html"><i class="fa-solid fa-file-invoice"></i> রিপোর্টস</a></li>
             <li><a href="settings.html"><i class="fa-solid fa-gear"></i> সেটিংস</a></li>
         </ul>
-        <a href="login.html" class="logout-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i> লগআউট</a>
+        <button class="logout-btn" onclick="logout(event)"><i class="fa-solid fa-arrow-right-from-bracket"></i> লগআউট</button>
     </aside>
 
     <main class="main-content">
@@ -139,6 +150,13 @@
 
     <script>
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('show'); document.getElementById('sidebarOverlay').classList.toggle('show'); }
+        
+        function logout(e) {
+            e.preventDefault();
+            localStorage.removeItem("userRole");
+            localStorage.removeItem("loggedInMemberId");
+            window.location.href = "login.html";
+        }
     </script>
 
     <!-- Firebase Connection Script -->
@@ -147,16 +165,16 @@
         import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
         // ==========================================
-        // আপনার কপি করা firebaseConfig কোডটি ঠিক এখানে বসান
+        // আপনার Firebase Config
         // ==========================================
-       const firebaseConfig = {
-  apiKey: "AIzaSyDqSsaNPqrWQfSeGvh0IuPxGaOJ7S4y4Qo",
-  authDomain: "darul-ittihad-foundation.firebaseapp.com",
-  projectId: "darul-ittihad-foundation",
-  storageBucket: "darul-ittihad-foundation.firebasestorage.app",
-  messagingSenderId: "1068343055365",
-  appId: "1:1068343055365:web:a42b6545e7fcd449de786c"
-};
+        const firebaseConfig = {
+            apiKey: "AIzaSyDqSsaNPqrWQfSeGvh0IuPxGaOJ7S4y4Qo",
+            authDomain: "darul-ittihad-foundation.firebaseapp.com",
+            projectId: "darul-ittihad-foundation",
+            storageBucket: "darul-ittihad-foundation.firebasestorage.app",
+            messagingSenderId: "1068343055365",
+            appId: "1:1068343055365:web:a42b6545e7fcd449de786c"
+        };
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
