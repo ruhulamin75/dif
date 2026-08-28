@@ -1,9 +1,9 @@
-const CACHE_NAME = 'dif-app-v1';
+const CACHE_NAME = 'dif-app-v2';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/login.html',
-  '/1000123161.png'
+  './',
+  './index.html',
+  './login.html',
+  './1000123161.png'
 ];
 
 self.addEventListener('install', event => {
