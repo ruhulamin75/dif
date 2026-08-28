@@ -23,7 +23,7 @@
         .sidebar-menu li { padding: 5px 20px; }
         .sidebar-menu li a { text-decoration: none; color: var(--text-gray); display: flex; align-items: center; gap: 12px; padding: 12px 15px; border-radius: 8px; font-size: 16px; font-weight: 500; transition: all 0.3s; }
         .sidebar-menu li a:hover, .sidebar-menu li a.active { background-color: var(--light-green); color: var(--primary-green); }
-        .logout-btn { margin: 20px; padding: 12px; background-color: #ffeaea; color: #d32f2f; text-align: center; border-radius: 8px; text-decoration: none; font-weight: 600; display: flex; justify-content: center; gap: 8px; transition: 0.3s; }
+        .logout-btn { margin: 20px; padding: 12px; background-color: #ffeaea; color: #d32f2f; text-align: center; border-radius: 8px; text-decoration: none; font-weight: 600; display: flex; justify-content: center; gap: 8px; transition: 0.3s; cursor: pointer; border: none; font-family: inherit; font-size: 16px; width: calc(100% - 40px);}
         .logout-btn:hover { background-color: #d32f2f; color: var(--white); }
         .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 999; }
 
@@ -38,53 +38,48 @@
         .page-header { margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;}
         .page-header h2 { font-size: 24px; color: var(--dark-green); margin: 0;}
 
-        .filter-bar { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
-        .search-box { flex: 1; min-width: 250px; position: relative; }
+        /* ফিল্টার ও সামারি */
+        .filter-section { display: flex; justify-content: space-between; align-items: center; background: var(--white); padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 25px; flex-wrap: wrap; gap: 15px;}
+        .search-box { flex: 1; min-width: 250px; max-width: 400px; position: relative; }
         .search-box i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-gray); }
-        .search-box input { width: 100%; padding: 12px 15px 12px 45px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 15px; font-family: inherit; outline: none; transition: 0.3s;}
-        .search-box input:focus { border-color: var(--primary-green); box-shadow: 0 0 0 3px rgba(11, 158, 74, 0.1); }
+        .search-box input { width: 100%; padding: 12px 15px 12px 45px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 15px; font-family: inherit; outline: none; background: #fafafa; transition: 0.3s;}
+        .search-box input:focus { border-color: var(--primary-green); background: var(--white); box-shadow: 0 0 0 3px rgba(11, 158, 74, 0.1);}
+        
+        .summary-box { background: #f9fbf9; border: 1px solid var(--border-color); padding: 10px 20px; border-radius: 8px; text-align: center;}
+        .summary-box h4 { margin: 0; font-size: 14px; color: var(--text-gray); font-weight: 500;}
+        .summary-box .amount { font-size: 22px; font-weight: 700; color: var(--primary-green); font-family: 'Poppins', sans-serif;}
 
         /* প্রিমিয়াম টেবিল ডিজাইন */
         .table-container { background: var(--white); border-radius: 12px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); overflow-x: auto; }
-        table { width: 100%; border-collapse: separate; border-spacing: 0; min-width: 900px; }
+        table { width: 100%; border-collapse: separate; border-spacing: 0; min-width: 800px; }
         table th, table td { padding: 16px 15px; text-align: left; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
         table th { background-color: #f8fbf9; color: var(--dark-green); font-weight: 600; text-transform: uppercase; font-size: 13px; letter-spacing: 0.5px;}
         table tbody tr { transition: 0.2s ease; }
         table tbody tr:hover { background-color: #fcfdfc; transform: scale(1.002); box-shadow: 0 2px 10px rgba(0,0,0,0.02); border-radius: 8px;}
         table tbody tr:last-child td { border-bottom: none; }
 
+        .member-info { display: flex; align-items: center; gap: 15px; }
+        .member-avatar { width: 45px; height: 45px; border-radius: 50%; background-color: #e0e0e0; display: flex; justify-content: center; align-items: center; color: var(--text-gray); font-size: 18px; overflow: hidden; border: 2px solid var(--border-color); }
+        .member-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .member-details h4 { margin: 0 0 3px 0; font-size: 15px; color: var(--text-dark); }
         .member-details span { font-size: 13px; color: var(--text-gray); }
         
-        .amount-text { font-weight: 600; color: var(--primary-green); font-size: 15px;}
-        .date-text { color: var(--text-gray); font-size: 14px; display: block; margin-top: 3px;}
-
-        .btn-edit { border: none; background: var(--white); color: var(--primary-green); border: 1px solid var(--primary-green); cursor: pointer; font-size: 14px; padding: 8px 15px; border-radius: 6px; transition: 0.3s; display: inline-flex; align-items: center; gap: 6px; font-weight: 600; font-family: inherit; }
-        .btn-edit:hover { background: var(--primary-green); color: var(--white); }
-
+        .amount-text { font-weight: 700; color: var(--primary-green); font-size: 16px; font-family: 'Poppins', sans-serif;}
+        .date-text { color: var(--text-gray); font-size: 13px; display: block; margin-top: 4px; font-weight: 500;}
         .loading-data { text-align: center; padding: 40px; color: var(--text-gray); font-size: 16px; }
 
-        /* মোডাল */
-        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 9999; overflow-y: auto; padding: 40px 20px; text-align: center; }
-        .modal-content { background: var(--white); border-radius: 12px; width: 100%; max-width: 450px; position: relative; box-shadow: 0 10px 40px rgba(0,0,0,0.3); text-align: left; margin: 0 auto; padding: 30px; }
-        .close-btn { position: absolute; top: 15px; right: 20px; font-size: 24px; color: var(--text-gray); cursor: pointer; transition: 0.3s; background: none; border: none;}
-        .close-btn:hover { color: #d32f2f; }
-
-        .form-group { margin-bottom: 18px;}
-        .form-group label { font-size: 14px; color: var(--text-dark); font-weight: 500; margin-bottom: 6px; display: block;}
-        .form-group input { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 15px; font-family: inherit; outline: none; background: #fafafa;}
-        .form-group input:focus { border-color: var(--primary-green); background: var(--white); box-shadow: 0 0 0 3px rgba(11, 158, 74, 0.1);}
-        .input-with-icon { position: relative; }
-        .input-with-icon span { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-gray); font-weight: 600;}
-        .input-with-icon input { padding-left: 35px; }
-
-        .save-btn { width: 100%; background: var(--primary-green); color: white; border: none; padding: 12px; border-radius: 8px; font-size: 16px; font-weight: 600; font-family: inherit; cursor: pointer; margin-top: 10px; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.3s;}
-        .save-btn:hover { background: var(--dark-green); }
-
-        @media (max-width: 992px) { .sidebar { transform: translateX(-100%); } .sidebar.show { transform: translateX(0); } .sidebar-overlay.show { display: block; } .main-content { margin-left: 0; width: 100%; padding: 15px; } .menu-toggle { display: block; } .admin-profile div { display: none; } }
+        @media (max-width: 992px) { .sidebar { transform: translateX(-100%); } .sidebar.show { transform: translateX(0); } .sidebar-overlay.show { display: block; } .main-content { margin-left: 0; width: 100%; padding: 15px; } .menu-toggle { display: block; } .admin-profile div { display: none; } .filter-section { flex-direction: column; align-items: stretch;} }
     </style>
 </head>
 <body>
+
+    <!-- Security Lock -->
+    <script>
+        if (localStorage.getItem("userRole") !== "admin") {
+            alert("অনুগ্রহ করে প্রথমে অ্যাডমিন হিসেবে লগইন করুন।");
+            window.location.href = "login.html";
+        }
+    </script>
 
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
@@ -97,13 +92,14 @@
             <li><a href="admin_dashboard.html"><i class="fa-solid fa-gauge"></i> ড্যাশবোর্ড</a></li>
             <li><a href="member_list.html"><i class="fa-solid fa-users"></i> সদস্য তালিকা</a></li>
             <li><a href="monthly_collection.html" class="active"><i class="fa-solid fa-calendar-check"></i> মাসিক জমা</a></li>
-            <li><a href="#"><i class="fa-solid fa-chart-pie"></i> শেয়ার</a></li>
-            <li><a href="#"><i class="fa-solid fa-sack-dollar"></i> এককালীন/বাৎসরিক জমা</a></li>
-            <li><a href="#"><i class="fa-solid fa-scale-balanced"></i> আয়/ব্যয়</a></li>
-            <li><a href="#"><i class="fa-solid fa-file-invoice"></i> রিপোর্টস</a></li>
+            <li><a href="shares.html"><i class="fa-solid fa-chart-pie"></i> শেয়ার</a></li>
+            <li><a href="yearly_deposit.html"><i class="fa-solid fa-sack-dollar"></i> এককালীন/বাৎসরিক জমা</a></li>
+            <li><a href="income_expense.html"><i class="fa-solid fa-scale-balanced"></i> আয়/ব্যয়</a></li>
+            <li><a href="investment_profit.html"><i class="fa-solid fa-chart-line"></i> বিনিয়োগ/মুনাফা</a></li>
+            <li><a href="reports.html"><i class="fa-solid fa-file-invoice"></i> রিপোর্টস</a></li>
             <li><a href="settings.html"><i class="fa-solid fa-gear"></i> সেটিংস</a></li>
         </ul>
-        <a href="login.html" class="logout-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i> লগআউট</a>
+        <button class="logout-btn" onclick="logout(event)"><i class="fa-solid fa-arrow-right-from-bracket"></i> লগআউট</button>
     </aside>
 
     <main class="main-content">
@@ -120,10 +116,14 @@
             <h2>সদস্যদের জমার তালিকা</h2>
         </div>
 
-        <div class="filter-bar">
+        <div class="filter-section">
             <div class="search-box">
                 <i class="fa-solid fa-magnifying-glass"></i>
                 <input type="text" id="searchInput" placeholder="সদস্যের আইডি বা নাম দিয়ে খুঁজুন...">
+            </div>
+            <div class="summary-box">
+                <h4>সর্বমোট মাসিক জমা</h4>
+                <div class="amount" id="grandTotalText">৳ 0</div>
             </div>
         </div>
 
@@ -131,11 +131,11 @@
             <table>
                 <thead>
                     <tr>
-                        <th>সদস্য আইডি</th>
-                        <th>সদস্যের তথ্য</th>
-                        <th>মোট মাসিক জমা</th>
-                        <th>লাস্ট জমা বিবরণ</th>
-                        <th style="text-align: right;">অ্যাকশন</th>
+                        <th style="width: 10%;">ক্রমিক</th>
+                        <th style="width: 15%;">সদস্য আইডি</th>
+                        <th style="width: 40%;">সদস্যের তথ্য</th>
+                        <th style="width: 15%; text-align: right;">সর্বমোট জমা</th>
+                        <th style="width: 20%; text-align: right;">সর্বশেষ জমা ও তারিখ</th>
                     </tr>
                 </thead>
                 <tbody id="collectionTableBody">
@@ -149,98 +149,123 @@
         </div>
     </main>
 
-    <!-- এডিট কালেকশন মোডাল -->
-    <div class="modal" id="editCollectionModal">
-        <div class="modal-content">
-            <button class="close-btn" onclick="closeModal('editCollectionModal')"><i class="fa-solid fa-xmark"></i></button>
-            <h3 style="color: var(--dark-green); margin-bottom: 5px; font-size: 20px;">জমার তথ্য আপডেট করুন</h3>
-            <p id="modalMemberName" style="color: var(--primary-green); font-weight: 600; margin-bottom: 20px; font-size: 15px;">সদস্যের নাম (ID)</p>
-            
-            <form id="editCollectionForm">
-                <input type="hidden" id="editMemberKey">
-                
-                <div class="form-group">
-                    <label>মোট মাসিক জমা (সর্বমোট)</label>
-                    <div class="input-with-icon">
-                        <span>৳</span>
-                        <input type="number" id="eTotalCollection" class="en-text" required>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>লাস্ট জমা টাকা (পরিমাণ)</label>
-                    <div class="input-with-icon">
-                        <span>৳</span>
-                        <input type="number" id="eLastCollectionAmount" class="en-text" required>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>লাস্ট জমার তারিখ</label>
-                    <input type="date" id="eLastCollectionDate" class="en-text" required>
-                </div>
-                
-                <button type="submit" class="save-btn" id="saveCollectionBtn"><i class="fa-solid fa-floppy-disk"></i> আপডেট সেভ করুন</button>
-            </form>
-        </div>
-    </div>
-
     <script>
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('show'); document.getElementById('sidebarOverlay').classList.toggle('show'); }
-        function closeModal(modalId) { document.getElementById(modalId).style.display = 'none'; }
-        window.onclick = function(event) {
-            const editModal = document.getElementById('editCollectionModal');
-            if (event.target == editModal) { editModal.style.display = "none"; }
+        
+        function logout(e) {
+            e.preventDefault();
+            localStorage.removeItem("userRole");
+            localStorage.removeItem("loggedInMemberId");
+            window.location.href = "login.html";
         }
     </script>
 
     <!-- Firebase Connection Script -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-        // ==========================================
-        // আপনার কপি করা firebaseConfig কোডটি ঠিক এখানে বসান
-        // ==========================================
-const firebaseConfig = {
-  apiKey: "AIzaSyDqSsaNPqrWQfSeGvh0IuPxGaOJ7S4y4Qo",
-  authDomain: "darul-ittihad-foundation.firebaseapp.com",
-  projectId: "darul-ittihad-foundation",
-  storageBucket: "darul-ittihad-foundation.firebasestorage.app",
-  messagingSenderId: "1068343055365",
-  appId: "1:1068343055365:web:a42b6545e7fcd449de786c"
-};
+        // আপনার ফায়ারবেস কনফিগারেশন 
+        const firebaseConfig = {
+            apiKey: "AIzaSyDqSsaNPqrWQfSeGvh0IuPxGaOJ7S4y4Qo",
+            authDomain: "darul-ittihad-foundation.firebaseapp.com",
+            projectId: "darul-ittihad-foundation",
+            storageBucket: "darul-ittihad-foundation.firebasestorage.app",
+            messagingSenderId: "1068343055365",
+            appId: "1:1068343055365:web:a42b6545e7fcd449de786c"
+        };
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
+        const targetCategory = "মাসিক জমা";
         const tbody = document.getElementById('collectionTableBody');
-        let allMembers = [];
+        
+        let allMembersData = [];
+        let allTransactions = [];
 
-        // সদস্যদের ডাটা আনা
-        const membersRef = ref(db, 'members');
-        onValue(membersRef, (snapshot) => {
+        // ১. ট্রানজেকশন ডেটা লোড
+        onValue(ref(db, 'transactions'), (snapshot) => {
             const data = snapshot.val();
-            allMembers = []; 
+            allTransactions = [];
+            if(data) {
+                Object.keys(data).forEach(key => {
+                    allTransactions.push(data[key]);
+                });
+            }
+            calculateAndRender();
+        });
 
+        // ২. মেম্বার ডেটা লোড
+        onValue(ref(db, 'members'), (snapshot) => {
+            const data = snapshot.val();
+            allMembersData = [];
             if (data) {
                 Object.keys(data).forEach((key) => {
                     const member = data[key];
                     member.id = key; 
-                    allMembers.push(member);
+                    allMembersData.push(member);
                 });
-
-                allMembers.sort((a, b) => {
-                    let idA = a.memberId ? a.memberId.toString().toLowerCase() : 'zzz';
-                    let idB = b.memberId ? b.memberId.toString().toLowerCase() : 'zzz';
-                    return idA.localeCompare(idB);
-                });
-
-                renderTable(allMembers);
-            } else {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px;">কোনো সদস্য পাওয়া যায়নি।</td></tr>';
             }
+            calculateAndRender();
         });
+
+        // হিসাব করে টেবিলে দেখানো
+        function calculateAndRender() {
+            if (allMembersData.length === 0) return;
+
+            // ভেরিয়েবল রিসেট
+            allMembersData.forEach(m => {
+                m.totalMonthly = 0;
+                m.lastAmount = 0;
+                m.lastDateObj = 0; // তুলনার জন্য
+                m.lastDateStr = '-';
+            });
+
+            let grandTotal = 0;
+
+            // ট্রানজেকশন থেকে 'মাসিক জমা' খাতের হিসাব বের করা
+            allTransactions.forEach(trx => {
+                if (trx.type === 'income' && trx.items && trx.payerId) {
+                    let hasMonthly = false;
+                    let monthlyAmtInTrx = 0;
+                    
+                    trx.items.forEach(item => {
+                        if (item.category === targetCategory) {
+                            hasMonthly = true;
+                            monthlyAmtInTrx += item.amount;
+                        }
+                    });
+
+                    if (hasMonthly) {
+                        let mem = allMembersData.find(m => m.id === trx.payerId);
+                        if (mem) {
+                            mem.totalMonthly += monthlyAmtInTrx;
+                            grandTotal += monthlyAmtInTrx;
+
+                            // সর্বশেষ জমার তারিখ এবং পরিমাণ বের করা
+                            let trxTime = new Date(trx.date).getTime();
+                            if (trxTime >= mem.lastDateObj) {
+                                mem.lastDateObj = trxTime;
+                                mem.lastAmount = monthlyAmtInTrx;
+                                mem.lastDateStr = new Date(trx.date).toLocaleDateString('en-GB');
+                            }
+                        }
+                    }
+                }
+            });
+
+            document.getElementById('grandTotalText').innerText = "৳ " + grandTotal;
+
+            // আইডি অনুযায়ী সাজানো
+            allMembersData.sort((a, b) => {
+                let idA = a.memberId ? a.memberId.toString().toLowerCase() : 'zzz';
+                let idB = b.memberId ? b.memberId.toString().toLowerCase() : 'zzz';
+                return idA.localeCompare(idB);
+            });
+
+            renderTable(allMembersData);
+        }
 
         function renderTable(dataArray) {
             tbody.innerHTML = '';
@@ -249,38 +274,32 @@ const firebaseConfig = {
                 return;
             }
 
-            dataArray.forEach((member) => {
+            dataArray.forEach((member, index) => {
                 let displayName = member.nameBn ? member.nameBn : member.nameEn;
+                let avatarHtml = member.photo ? `<img src="${member.photo}" alt="Profile">` : `<i class="fa-solid fa-user"></i>`;
                 let mId = member.memberId || 'N/A';
                 
-                let totalColl = member.totalCollection ? parseFloat(member.totalCollection) : 0;
-                let lastAmt = member.lastCollectionAmount ? member.lastCollectionAmount : 0;
-                
-                let lastDateObj = member.lastCollectionDate;
-                let displayDate = '-';
-                if(lastDateObj) {
-                    let d = new Date(lastDateObj);
-                    displayDate = d.toLocaleDateString('en-GB');
-                }
+                let tAmount = member.totalMonthly || 0;
+                let lAmount = member.lastAmount || 0;
+                let lDate = member.lastDateStr !== '-' ? `<i class="fa-regular fa-calendar" style="margin-right:4px;"></i> ${member.lastDateStr}` : 'জমা নেই';
 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
+                    <td class="en-text" style="font-size: 15px;"><strong>${index + 1}</strong></td>
                     <td class="en-text" style="font-size: 16px;"><strong>${mId}</strong></td>
                     <td>
-                        <div class="member-details">
-                            <h4>${displayName}</h4>
-                            <span>${member.memberType || 'সাধারণ সদস্য'}</span>
+                        <div class="member-info">
+                            <div class="member-avatar">${avatarHtml}</div>
+                            <div class="member-details">
+                                <h4>${displayName}</h4>
+                                <span class="en-text">${member.phone || '-'}</span>
+                            </div>
                         </div>
                     </td>
-                    <td class="amount-text en-text">৳ ${totalColl}</td>
-                    <td>
-                        <span class="amount-text en-text" style="color: var(--text-dark);">৳ ${lastAmt}</span>
-                        <span class="date-text en-text"><i class="fa-regular fa-calendar" style="margin-right:4px;"></i> ${displayDate}</span>
-                    </td>
+                    <td style="text-align: right;"><span class="amount-text">৳ ${tAmount}</span></td>
                     <td style="text-align: right;">
-                        <button class="btn-edit" onclick="openCollectionModal('${member.id}')">
-                            <i class="fa-solid fa-pen-to-square"></i> আপডেট
-                        </button>
+                        <span class="amount-text" style="color: var(--text-dark);">৳ ${lAmount}</span>
+                        <span class="date-text en-text">${lDate}</span>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -290,7 +309,7 @@ const firebaseConfig = {
         // সার্চ ফাংশন
         document.getElementById('searchInput').addEventListener('input', function() {
             const searchTerm = this.value.toLowerCase();
-            const filteredMembers = allMembers.filter(member => {
+            const filteredMembers = allMembersData.filter(member => {
                 return (member.nameEn || '').toLowerCase().includes(searchTerm) || 
                        (member.nameBn || '').toLowerCase().includes(searchTerm) || 
                        (member.memberId || '').toLowerCase().includes(searchTerm);
@@ -298,43 +317,6 @@ const firebaseConfig = {
             renderTable(filteredMembers);
         });
 
-        window.openCollectionModal = function(id) {
-            const m = allMembers.find(x => x.id === id);
-            if(m) {
-                document.getElementById('editMemberKey').value = id;
-                document.getElementById('modalMemberName').innerText = `${m.nameBn || m.nameEn} (ID: ${m.memberId || 'N/A'})`;
-                
-                document.getElementById('eTotalCollection').value = m.totalCollection || '';
-                document.getElementById('eLastCollectionAmount').value = m.lastCollectionAmount || '';
-                document.getElementById('eLastCollectionDate').value = m.lastCollectionDate || '';
-                
-                document.getElementById('editCollectionModal').style.display = 'block'; 
-            }
-        }
-
-        document.getElementById('editCollectionForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const btn = document.getElementById('saveCollectionBtn');
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> সেভ হচ্ছে...';
-            btn.disabled = true;
-
-            const id = document.getElementById('editMemberKey').value;
-            const updates = {
-                totalCollection: document.getElementById('eTotalCollection').value,
-                lastCollectionAmount: document.getElementById('eLastCollectionAmount').value,
-                lastCollectionDate: document.getElementById('eLastCollectionDate').value
-            };
-            
-            try {
-                await update(ref(db, 'members/' + id), updates);
-                document.getElementById('editCollectionModal').style.display = 'none';
-            } catch(error) {
-                alert('আপডেট করতে সমস্যা হয়েছে!');
-            } finally {
-                btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> আপডেট সেভ করুন';
-                btn.disabled = false;
-            }
-        });
     </script>
 </body>
 </html>
