@@ -39,7 +39,7 @@
 
         .footer-text { margin-top: 25px; font-size: 13px; color: #888; }
         
-        #adminIcon { display: none; }
+        #adminIcon, #emailIcon { display: none; }
     </style>
 </head>
 <body>
@@ -50,7 +50,6 @@
             <h2 class="en-text">DARUL ITTIHAD FOUNDATION</h2>
         </div>
 
-        <!-- লগইন ট্যাব সিলেকশন -->
         <div class="login-toggle">
             <button type="button" id="tabMember" class="active" onclick="switchTab('member')"><i class="fa-solid fa-users"></i> সদস্য লগইন</button>
             <button type="button" id="tabAdmin" onclick="switchTab('admin')"><i class="fa-solid fa-user-shield"></i> অ্যাডমিন</button>
@@ -58,11 +57,12 @@
 
         <form id="loginForm">
             <div class="form-group">
-                <label id="phoneLabel">মোবাইল নম্বর</label>
+                <label id="identityLabel">মোবাইল নম্বর</label>
                 <div class="input-box">
                     <i class="fa-solid fa-phone" id="phoneIcon"></i>
+                    <i class="fa-solid fa-envelope" id="emailIcon"></i>
                     <i class="fa-solid fa-user-shield" id="adminIcon"></i>
-                    <input type="tel" id="loginPhone" class="en-text" placeholder="017XXXXXXXX" required>
+                    <input type="text" id="loginIdentity" class="en-text" placeholder="017XXXXXXXX" required>
                 </div>
             </div>
 
@@ -84,33 +84,33 @@
     </div>
 
     <script>
-        // বর্তমান লগইন মোড ট্র্যাক করা
         let loginMode = 'member';
 
         function switchTab(mode) {
             loginMode = mode;
             
-            // ট্যাব ডিজাইন পরিবর্তন
             document.getElementById('tabMember').classList.toggle('active', mode === 'member');
             document.getElementById('tabAdmin').classList.toggle('active', mode === 'admin');
             
-            // ফিল্ড ও টেক্সট পরিবর্তন
             if(mode === 'admin') {
-                document.getElementById('phoneLabel').innerText = "অ্যাডমিন আইডি / নম্বর";
-                document.getElementById('loginPhone').placeholder = "অ্যাডমিন নম্বর লিখুন";
+                document.getElementById('identityLabel').innerText = "অ্যাডমিন ইমেইল";
+                document.getElementById('loginIdentity').type = "email";
+                document.getElementById('loginIdentity').placeholder = "admin@dif.com";
                 document.getElementById('phoneIcon').style.display = 'none';
-                document.getElementById('adminIcon').style.display = 'block';
+                document.getElementById('emailIcon').style.display = 'block';
+                document.getElementById('adminIcon').style.display = 'none';
                 document.getElementById('footerText').innerText = "শুধুমাত্র অনুমোদিত অ্যাডমিনদের জন্য।";
             } else {
-                document.getElementById('phoneLabel').innerText = "মোবাইল নম্বর";
-                document.getElementById('loginPhone').placeholder = "017XXXXXXXX";
+                document.getElementById('identityLabel').innerText = "মোবাইল নম্বর";
+                document.getElementById('loginIdentity').type = "tel";
+                document.getElementById('loginIdentity').placeholder = "017XXXXXXXX";
                 document.getElementById('phoneIcon').style.display = 'block';
+                document.getElementById('emailIcon').style.display = 'none';
                 document.getElementById('adminIcon').style.display = 'none';
                 document.getElementById('footerText').innerText = "পাসওয়ার্ড ভুলে গেলে অ্যাডমিনের সাথে যোগাযোগ করুন।";
             }
             
-            // ফিল্ড খালি করা
-            document.getElementById('loginPhone').value = '';
+            document.getElementById('loginIdentity').value = '';
             document.getElementById('loginPassword').value = '';
         }
 
@@ -131,8 +131,11 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getDatabase, ref, query, orderByChild, equalTo, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-        // আপনার ফায়ারবেস কনফিগারেশন 
+        // ==========================================
+        // আপনার Firebase Config
+        // ==========================================
         const firebaseConfig = {
             apiKey: "AIzaSyDqSsaNPqrWQfSeGvh0IuPxGaOJ7S4y4Qo",
             authDomain: "darul-ittihad-foundation.firebaseapp.com",
@@ -144,6 +147,7 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
+        const auth = getAuth(app);
 
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -152,32 +156,24 @@
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> যাচাই করা হচ্ছে...';
             btn.disabled = true;
 
-            const phone = document.getElementById('loginPhone').value.trim();
+            const identity = document.getElementById('loginIdentity').value.trim(); // এটি ইমেইল বা ফোন নম্বর হতে পারে
             const password = document.getElementById('loginPassword').value.trim();
 
             try {
                 // ============================================
-                // ১. অ্যাডমিন লগইন লজিক
+                // ১. অ্যাডমিন লগইন লজিক (Firebase Auth)
                 // ============================================
                 if (loginMode === 'admin') {
-                    if(phone === "01700000000" && password === "admin123") {
-                        localStorage.setItem("userRole", "admin");
-                        window.location.href = "admin_dashboard.html";
-                    } else {
-                        alert("দুঃখিত, অ্যাডমিন নম্বর বা পাসওয়ার্ড ভুল হয়েছে!");
-                    }
+                    const userCredential = await signInWithEmailAndPassword(auth, identity, password);
+                    // লগইন সফল হলে
+                    localStorage.setItem("userRole", "admin");
+                    window.location.href = "admin_dashboard.html";
                 } 
                 // ============================================
-                // ২. মেম্বার লগইন লজিক
+                // ২. মেম্বার লগইন লজিক (Database Check)
                 // ============================================
                 else {
-                    // মেম্বার ট্যাব থেকে অ্যাডমিন লগইনের চেষ্টা ঠেকাতে
-                    if(phone === "01700000000" || password === "admin123") {
-                        alert("অ্যাডমিন হিসেবে লগইন করতে উপরের 'অ্যাডমিন' ট্যাব নির্বাচন করুন।");
-                        throw new Error("Admin login attempt from member tab");
-                    }
-
-                    const memberQuery = query(ref(db, 'members'), orderByChild('phone'), equalTo(phone));
+                    const memberQuery = query(ref(db, 'members'), orderByChild('phone'), equalTo(identity));
                     const snapshot = await get(memberQuery);
 
                     if (snapshot.exists()) {
@@ -205,7 +201,13 @@
                     }
                 }
             } catch(error) {
-                if (error.message !== "Admin login attempt from member tab") {
+                if (loginMode === 'admin') {
+                    if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
+                        alert("দুঃখিত, অ্যাডমিন ইমেইল বা পাসওয়ার্ড ভুল হয়েছে!");
+                    } else {
+                        alert("লগইন করতে সমস্যা হচ্ছে। দয়া করে আপনার ইন্টারনেট কানেকশন চেক করুন। (" + error.message + ")");
+                    }
+                } else {
                     alert("লগইন করতে সমস্যা হচ্ছে। দয়া করে আপনার ইন্টারনেট কানেকশন চেক করুন।");
                 }
             } finally {
