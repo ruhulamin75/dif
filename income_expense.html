@@ -177,10 +177,14 @@
                 width: 100% !important; 
                 border-radius: 0 !important; 
                 margin: 0 !important;
+                background: #fff !important;
             }
 
             .receipt-print-area { padding: 0 !important; }
-            .close-btn, .print-btn-container { display: none !important; }
+            
+            /* এই লাইনটি যোগ করা হয়েছে গাঢ় রঙের বক্স দূর করতে */
+            .print-btn-container { display: none !important; }
+            .close-btn { display: none !important; }
 
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             .receipt-wrapper.type-income .receipt-title { background-color: var(--primary-green) !important; color: white !important;}
@@ -429,6 +433,7 @@
                     <div class="sig-line" id="sigReceiver">আদায়কারীর স্বাক্ষর</div>
                 </div>
             </div>
+            <!-- প্রিন্ট বাটন কন্টেইনার -->
             <div class="print-btn-container">
                 <button class="print-btn" onclick="window.print()"><i class="fa-solid fa-print"></i> রিসিট প্রিন্ট করুন</button>
             </div>
