@@ -11,57 +11,85 @@
     <style>
         :root { --primary-green: #0b9e4a; --dark-green: #077033; --light-green: #eaf6ee; --white: #ffffff; --bg-color: #f4f7f6; --text-dark: #2c3e50; --text-gray: #666666; --border-color: #e0e0e0; --sidebar-width: 250px; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Poppins', 'Hind Siliguri', sans-serif; background-color: var(--bg-color); color: var(--text-dark); display: flex; }
+        body { font-family: 'Poppins', 'Hind Siliguri', sans-serif; background-color: var(--bg-color); color: var(--text-dark); display: flex; overflow-x: hidden;}
         .en-text { font-family: 'Poppins', sans-serif; }
+
+        /* =========================================
+           অ্যানিমেশন কি-ফ্রেমস (Keyframes)
+           ========================================= */
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes fadeUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.9) translateY(20px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
 
         /* সাইডবার */
         .sidebar { width: var(--sidebar-width); background-color: var(--white); height: 100vh; position: fixed; left: 0; top: 0; box-shadow: 2px 0 10px rgba(0,0,0,0.05); display: flex; flex-direction: column; z-index: 1000; transition: transform 0.3s ease; }
         .sidebar-header { padding: 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border-color); }
-        .sidebar-header img { width: 45px; }
+        .sidebar-header img { width: 45px; transition: transform 0.3s ease; }
+        .sidebar-header:hover img { transform: scale(1.1) rotate(5deg); }
         .sidebar-header h2 { font-size: 15px; color: var(--primary-green); line-height: 1.3; font-weight: 700; font-family: 'Poppins', sans-serif; }
         .sidebar-menu { list-style: none; padding: 20px 0; flex: 1; overflow-y: auto; }
         .sidebar-menu li { padding: 5px 20px; }
         .sidebar-menu li a { text-decoration: none; color: var(--text-gray); display: flex; align-items: center; gap: 12px; padding: 12px 15px; border-radius: 8px; font-size: 16px; font-weight: 500; transition: all 0.3s; }
-        .sidebar-menu li a:hover, .sidebar-menu li a.active { background-color: var(--light-green); color: var(--primary-green); }
+        .sidebar-menu li a:hover, .sidebar-menu li a.active { background-color: var(--light-green); color: var(--primary-green); transform: translateX(5px); }
         .logout-btn { margin: 20px; padding: 12px; background-color: #ffeaea; color: #d32f2f; text-align: center; border-radius: 8px; text-decoration: none; font-weight: 600; display: flex; justify-content: center; gap: 8px; transition: 0.3s; cursor: pointer; border: none; font-family: inherit; font-size: 16px; width: calc(100% - 40px);}
-        .logout-btn:hover { background-color: #d32f2f; color: var(--white); }
+        .logout-btn:hover { background-color: #d32f2f; color: var(--white); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(211,47,47,0.2); }
         .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 999; }
 
         /* মূল কন্টেন্ট */
-        .main-content { flex: 1; margin-left: var(--sidebar-width); padding: 20px 30px; width: calc(100% - var(--sidebar-width)); }
-        .topbar { display: flex; justify-content: space-between; align-items: center; background: var(--white); padding: 15px 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); margin-bottom: 30px; }
+        .main-content { flex: 1; margin-left: var(--sidebar-width); padding: 20px 30px; width: calc(100% - var(--sidebar-width)); overflow-x: hidden; }
+        
+        .topbar { display: flex; justify-content: space-between; align-items: center; background: var(--white); padding: 15px 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); margin-bottom: 30px; animation: slideDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         .menu-toggle { display: none; font-size: 24px; color: var(--primary-green); cursor: pointer; }
         .admin-profile { display: flex; align-items: center; gap: 12px; }
         .admin-profile div h4 { font-size: 16px; color: var(--dark-green); margin: 0; }
-        .admin-icon { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--primary-green); background-color: var(--light-green); color: var(--primary-green); display: flex; justify-content: center; align-items: center; font-size: 20px; }
+        .admin-icon { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--primary-green); background-color: var(--light-green); color: var(--primary-green); display: flex; justify-content: center; align-items: center; font-size: 20px; transition: transform 0.3s; }
+        .admin-profile:hover .admin-icon { transform: scale(1.1); }
 
-        .page-header { margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;}
+        .page-header { margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; opacity: 0; animation: fadeUp 0.6s ease forwards 0.2s;}
         .page-header h2 { font-size: 24px; color: var(--dark-green); margin: 0;}
 
         /* ফিল্টার ও সামারি */
-        .filter-section { display: flex; justify-content: space-between; align-items: center; background: var(--white); padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 25px; flex-wrap: wrap; gap: 15px;}
+        .filter-section { display: flex; justify-content: space-between; align-items: center; background: var(--white); padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 25px; flex-wrap: wrap; gap: 15px; opacity: 0; animation: fadeUp 0.6s ease forwards 0.3s;}
+        
         .search-box { flex: 1; min-width: 250px; max-width: 400px; position: relative; }
-        .search-box i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-gray); }
+        .search-box i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-gray); transition: color 0.3s;}
         .search-box input { width: 100%; padding: 12px 15px 12px 45px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 15px; font-family: inherit; outline: none; background: #fafafa; transition: 0.3s;}
         .search-box input:focus { border-color: var(--primary-green); background: var(--white); box-shadow: 0 0 0 3px rgba(11, 158, 74, 0.1);}
+        .search-box input:focus + i { color: var(--primary-green); }
         
-        .summary-box { background: #f9fbf9; border: 1px solid var(--border-color); padding: 10px 20px; border-radius: 8px; text-align: center;}
+        .summary-box { background: #f9fbf9; border: 1px solid var(--border-color); padding: 10px 20px; border-radius: 8px; text-align: center; transition: all 0.3s ease; cursor: default;}
+        .summary-box:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(11, 158, 74, 0.1); border-color: var(--primary-green);}
         .summary-box h4 { margin: 0; font-size: 14px; color: var(--text-gray); font-weight: 500;}
         .summary-box .amount { font-size: 22px; font-weight: 700; color: var(--primary-green); font-family: 'Poppins', sans-serif;}
 
         /* প্রিমিয়াম টেবিল ডিজাইন */
-        .table-container { background: var(--white); border-radius: 12px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); overflow-x: auto; }
+        .table-container { background: var(--white); border-radius: 12px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); overflow-x: auto; opacity: 0; animation: fadeUp 0.6s ease forwards 0.4s;}
         table { width: 100%; border-collapse: separate; border-spacing: 0; min-width: 800px; }
         table th, table td { padding: 16px 15px; text-align: left; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
         table th { background-color: #f8fbf9; color: var(--dark-green); font-weight: 600; text-transform: uppercase; font-size: 13px; letter-spacing: 0.5px;}
-        table tbody tr { transition: 0.2s ease; }
+        table tbody tr { transition: all 0.3s ease; }
         table tbody tr:hover { background-color: #fcfdfc; transform: scale(1.002); box-shadow: 0 2px 10px rgba(0,0,0,0.02); border-radius: 8px;}
         table tbody tr:last-child td { border-bottom: none; }
 
         .member-info { display: flex; align-items: center; gap: 15px; }
-        .member-avatar { width: 45px; height: 45px; border-radius: 50%; background-color: #e0e0e0; display: flex; justify-content: center; align-items: center; color: var(--text-gray); font-size: 18px; overflow: hidden; border: 2px solid var(--border-color); }
+        .member-avatar { width: 45px; height: 45px; border-radius: 50%; background-color: #e0e0e0; display: flex; justify-content: center; align-items: center; color: var(--text-gray); font-size: 18px; overflow: hidden; border: 2px solid var(--border-color); transition: transform 0.3s;}
         .member-avatar img { width: 100%; height: 100%; object-fit: cover; }
-        .member-details h4 { margin: 0 0 3px 0; font-size: 15px; color: var(--text-dark); }
+        
+        table tbody tr:hover .member-avatar { transform: scale(1.1); border-color: var(--primary-green); }
+
+        .member-details h4 { margin: 0 0 3px 0; font-size: 15px; color: var(--text-dark); transition: color 0.3s;}
+        table tbody tr:hover .member-details h4 { color: var(--primary-green); }
         .member-details span { font-size: 13px; color: var(--text-gray); }
         
         .amount-text { font-weight: 700; color: var(--primary-green); font-size: 16px; font-family: 'Poppins', sans-serif;}
@@ -148,6 +176,30 @@
             </table>
         </div>
     </main>
+
+    <!-- Number Counting Animation JS -->
+    <script>
+        function animateValue(element, start, end, duration, prefix = "৳ ") {
+            if (!element) return;
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                // Smooth deceleration
+                const easeProgress = 1 - Math.pow(1 - progress, 4);
+                let currentVal = Math.floor(easeProgress * (end - start) + start);
+                
+                element.innerText = prefix + currentVal;
+                
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                } else {
+                    element.innerText = prefix + end;
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+    </script>
 
     <script>
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('show'); document.getElementById('sidebarOverlay').classList.toggle('show'); }
@@ -255,7 +307,8 @@
                 }
             });
 
-            document.getElementById('grandTotalText').innerText = "৳ " + grandTotal;
+            // Number Counting Animation Call for Grand Total
+            animateValue(document.getElementById('grandTotalText'), 0, grandTotal, 1500);
 
             // আইডি অনুযায়ী সাজানো
             allMembersData.sort((a, b) => {
@@ -283,7 +336,12 @@
                 let lAmount = member.lastAmount || 0;
                 let lDate = member.lastDateStr !== '-' ? `<i class="fa-regular fa-calendar" style="margin-right:4px;"></i> ${member.lastDateStr}` : 'জমা নেই';
 
+                // Staggered Animation Delay for table rows
+                let animDelay = (index % 10) * 0.05;
+
                 const tr = document.createElement('tr');
+                tr.style.opacity = "0";
+                tr.style.animation = `fadeUp 0.4s ease forwards ${animDelay}s`;
                 tr.innerHTML = `
                     <td class="en-text" style="font-size: 15px;"><strong>${index + 1}</strong></td>
                     <td class="en-text" style="font-size: 16px;"><strong>${mId}</strong></td>
@@ -315,6 +373,11 @@
                        (member.memberId || '').toLowerCase().includes(searchTerm);
             });
             renderTable(filteredMembers);
+            
+            // Search Update Total
+            let searchTotal = 0;
+            filteredMembers.forEach(m => searchTotal += (m.totalMonthly || 0));
+            animateValue(document.getElementById('grandTotalText'), 0, searchTotal, 800);
         });
 
     </script>
