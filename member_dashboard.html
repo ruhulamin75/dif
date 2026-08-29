@@ -19,7 +19,6 @@
         
         .brand { display: flex; align-items: center; gap: 10px; }
         .brand img { width: 40px; }
-        /* ব্র্যান্ডের নাম রেসপন্সিভ করা হয়েছে */
         .brand h2 { font-size: 16px; color: var(--primary-green); margin: 0; font-weight: 700; line-height: 1.2; white-space: normal; word-wrap: break-word; max-width: 200px;}
         
         @media (min-width: 768px) {
@@ -30,7 +29,6 @@
         .btn-profile { background: var(--light-green); color: var(--dark-green); border: none; padding: 8px 15px; border-radius: 20px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.3s;}
         .btn-profile:hover { background: var(--primary-green); color: white;}
         
-        /* প্রোফাইল টেক্সট মোবাইলের জন্য লুকানো */
         .profile-text { display: none; }
         @media (min-width: 481px) {
             .profile-text { display: inline; }
@@ -89,11 +87,28 @@
         .receipt-print-area { display: none; }
         
         @media print {
-            @page { size: A4 portrait; margin: 15mm; }
+            @page { size: A4; margin: 0; }
+            body { margin: 0; padding: 0; background: #fff; }
             body > * { display: none !important; }
             
-            #printableReceipt { display: block !important; position: absolute; left: 0; top: 0; width: 100%; padding: 0;}
-            #printableReceipt * { visibility: visible !important; }
+            #printableReceipt { 
+                display: block !important; 
+                position: absolute; 
+                left: 0; 
+                top: 0; 
+                width: 100%; 
+                height: 100%;
+                background: white;
+            }
+            
+            .receipt-container-print {
+                width: 100%;
+                max-width: 800px; /* মার্জিন ও বর্ডার ক্লিয়ার করার জন্য */
+                margin: 0 auto;
+                padding: 40px; /* রিসিটের ভেতরের কন্টেন্টকে জায়গা দেওয়া হলো */
+                box-sizing: border-box;
+            }
+
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             
             .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.05; z-index: -1; }
@@ -128,7 +143,6 @@
         }
         
         @media (min-width: 769px) and (max-width: 991px) {
-            /* 3টি কলামের গ্রিডে 4র্থ কার্ডটি একা থাকলে ফুল উইডথ নিয়ে নিবে */
             .fund-card.total-card { grid-column: 1 / -1; }
         }
     </style>
@@ -322,7 +336,6 @@
                             let validItems = [];
                             let personalAmount = 0;
 
-                            // শুধুমাত্র ব্যক্তিগত ফান্ড কাউন্ট করা হচ্ছে
                             trx.items.forEach(item => {
                                 if(item.category === 'মাসিক জমা') { 
                                     mSum += item.amount; validItems.push(item); personalAmount += item.amount; 
@@ -481,46 +494,48 @@
             let words = trx.amountInWords || "টাকা মাত্র"; 
 
             const html = `
-                <div class="watermark"><img src="1000123161.png" alt="Watermark"></div>
-                <div class="receipt-header">
-                    <img src="1000123161.png" alt="Logo">
-                    <h1 class="en-text">DARUL ITTIHAD FOUNDATION</h1>
-                    <p>House: 12, Road: 5, Block: A, Dhaka-1212</p>
-                    <div class="receipt-title">আয় রিসিট (Income Receipt)</div>
-                </div>
-                
-                <div class="receipt-meta">
-                    <div><strong>রিসিট নং:</strong> <span class="en-text">${rId}</span></div>
-                    <div><strong>তারিখ:</strong> <span class="en-text">${d}</span></div>
-                </div>
-                
-                <div class="receipt-user-info">
-                    <p><strong>প্রদানকারীর নাম:</strong> ${trx.payerName || '-'}</p>
-                    <p><strong>আদায়কারী:</strong> ${trx.collector || '-'}</p>
-                </div>
-                
-                <table class="receipt-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 10%; text-align: center;">ক্রঃ নং</th>
-                            <th>খাতের বিবরণ</th>
-                            <th class="amount-col" style="width: 25%;">টাকার পরিমাণ</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${itemsHtml}
-                    </tbody>
-                </table>
-                
-                <div class="total-row">
-                    <span>সর্বমোট:</span>
-                    <span class="en-text">৳ ${trx.amount}</span>
-                </div>
-                <div class="words-text">কথায়: ${words}</div>
-                
-                <div class="signatures">
-                    <div class="sig-line">প্রদানকারীর স্বাক্ষর</div>
-                    <div class="sig-line">আদায়কারীর স্বাক্ষর</div>
+                <div class="receipt-container-print">
+                    <div class="watermark"><img src="1000123161.png" alt="Watermark"></div>
+                    <div class="receipt-header">
+                        <img src="1000123161.png" alt="Logo">
+                        <h1 class="en-text">DARUL ITTIHAD FOUNDATION</h1>
+                        <p>Nayanpur, Kasba, Brahmanbaria</p>
+                        <div class="receipt-title">আয় রিসিট (Income Receipt)</div>
+                    </div>
+                    
+                    <div class="receipt-meta">
+                        <div><strong>রিসিট নং:</strong> <span class="en-text">${rId}</span></div>
+                        <div><strong>তারিখ:</strong> <span class="en-text">${d}</span></div>
+                    </div>
+                    
+                    <div class="receipt-user-info">
+                        <p><strong>প্রদানকারীর নাম:</strong> ${trx.payerName || '-'}</p>
+                        <p><strong>আদায়কারী:</strong> ${trx.collector || '-'}</p>
+                    </div>
+                    
+                    <table class="receipt-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 10%; text-align: center;">ক্রঃ নং</th>
+                                <th>খাতের বিবরণ</th>
+                                <th class="amount-col" style="width: 25%;">টাকার পরিমাণ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${itemsHtml}
+                        </tbody>
+                    </table>
+                    
+                    <div class="total-row">
+                        <span>সর্বমোট:</span>
+                        <span class="en-text">৳ ${trx.amount}</span>
+                    </div>
+                    <div class="words-text">কথায়: ${words}</div>
+                    
+                    <div class="signatures">
+                        <div class="sig-line">প্রদানকারীর স্বাক্ষর</div>
+                        <div class="sig-line">আদায়কারীর স্বাক্ষর</div>
+                    </div>
                 </div>
             `;
             
@@ -528,7 +543,7 @@
             
             setTimeout(() => {
                 window.print();
-            }, 100);
+            }, 200);
         }
     </script>
 </body>
