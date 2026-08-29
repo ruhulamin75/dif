@@ -156,14 +156,8 @@
            ==================================================== */
         @media print {
             @page { size: A4 portrait; margin: 15mm; }
-            
-            /* মূল বডি ও এইচটিএমএল এর ব্যাকগ্রাউন্ড ১০০% সাদা করা হয়েছে */
             html, body { background-color: #ffffff !important; margin: 0 !important; padding: 0 !important; }
-            
-            /* রিসিট বাদে পেজের বাকি সব লুকিয়ে দেওয়া হয়েছে */
             body > * { display: none !important; }
-            
-            /* শুধুমাত্র রিসিট মোডালটি দৃশ্যমান থাকবে */
             #receiptModal { 
                 display: block !important; 
                 position: relative !important; 
@@ -174,8 +168,6 @@
                 margin: 0 !important;
                 overflow: visible !important;
             }
-            
-            /* রিসিটের র‍্যাপার থেকে শ্যাডো ও রাউন্ড শেপ বাদ দেওয়া হয়েছে */
             .receipt-wrapper { 
                 background-color: #ffffff !important;
                 box-shadow: none !important; 
@@ -184,11 +176,7 @@
                 border-radius: 0 !important; 
                 margin: 0 !important;
             }
-
-            /* মূল প্রিন্ট এরিয়ার ব্যাকগ্রাউন্ড সাদা করা হয়েছে */
             .receipt-print-area { background-color: #ffffff !important; padding: 0 !important; }
-            
-            /* ক্লোজ বাটন এবং নিচের প্রিন্ট বাটন কন্টেইনার সম্পূর্ণ গায়েব করে দেওয়া হয়েছে */
             .close-btn, .print-btn-container { display: none !important; }
 
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
@@ -700,10 +688,34 @@
             try {
                 if(editId) {
                     await update(ref(db, 'transactions/' + editId), trxData);
+                    
+                    // ==========================================
+                    // নতুন যুক্ত করা অংশ (Member Status Update)
+                    // ==========================================
+                    if(type === 'income' && trxData.payerId) {
+                        await update(ref(db, 'members/' + trxData.payerId), {
+                            lastPaymentDate: Date.now(),
+                            status: 'active'
+                        });
+                    }
+                    // ==========================================
+                    
                     alert('লেনদেনটি সফলভাবে আপডেট হয়েছে!');
                 } else {
                     trxData.timestamp = Date.now();
                     await set(push(ref(db, 'transactions')), trxData);
+                    
+                    // ==========================================
+                    // নতুন যুক্ত করা অংশ (Member Status Update)
+                    // ==========================================
+                    if(type === 'income' && trxData.payerId) {
+                        await update(ref(db, 'members/' + trxData.payerId), {
+                            lastPaymentDate: Date.now(),
+                            status: 'active'
+                        });
+                    }
+                    // ==========================================
+                    
                     alert('লেনদেন সফলভাবে সংরক্ষণ করা হয়েছে!');
                 }
                 resetForm();
@@ -837,7 +849,7 @@
             if(trx.type === 'income') {
                 if(trx.items) {
                     trx.items.forEach(item => {
-                        const mapping = { "ভর্তি ফি": "1", "এককালীন/বাৎসরিক জমা": "2", "মাসিক জমা": "3", "সার্ভিস চার্জ": "4", "শেয়ার": "5", "ডোনেশন": "6", "জ জরিমানা": "7" };
+                        const mapping = { "ভর্তি ফি": "1", "এককালীন/বাৎসরিক জমা": "2", "মাসিক জমা": "3", "সার্ভিস চার্জ": "4", "শেয়ার": "5", "ডোনেশন": "6", "জরিমানা": "7" };
                         if(mapping[item.category]) {
                             let chk = document.getElementById('chk-' + mapping[item.category]);
                             if(chk) {
