@@ -11,35 +11,51 @@
     <style>
         :root { --primary-green: #0b9e4a; --dark-green: #077033; --light-green: #eaf6ee; --expense-red: #d32f2f; --expense-light: #ffeaea; --white: #ffffff; --bg-color: #f4f7f6; --text-dark: #2c3e50; --text-gray: #666666; --border-color: #e0e0e0; --sidebar-width: 250px; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Poppins', 'Hind Siliguri', sans-serif; background-color: var(--bg-color); color: var(--text-dark); display: flex; }
+        body { font-family: 'Poppins', 'Hind Siliguri', sans-serif; background-color: var(--bg-color); color: var(--text-dark); display: flex; overflow-x: hidden;}
         .en-text { font-family: 'Poppins', sans-serif; }
+
+        /* =========================================
+           অ্যানিমেশন কি-ফ্রেমস (Keyframes)
+           ========================================= */
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes fadeUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
 
         /* সাইডবার */
         .sidebar { width: var(--sidebar-width); background-color: var(--white); height: 100vh; position: fixed; left: 0; top: 0; box-shadow: 2px 0 10px rgba(0,0,0,0.05); display: flex; flex-direction: column; z-index: 1000; transition: transform 0.3s ease; }
         .sidebar-header { padding: 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border-color); }
-        .sidebar-header img { width: 45px; }
+        .sidebar-header img { width: 45px; transition: transform 0.3s;}
+        .sidebar-header:hover img { transform: scale(1.1) rotate(5deg); }
         .sidebar-header h2 { font-size: 15px; color: var(--primary-green); line-height: 1.3; font-weight: 700; font-family: 'Poppins', sans-serif; }
         .sidebar-menu { list-style: none; padding: 20px 0; flex: 1; overflow-y: auto; }
         .sidebar-menu li { padding: 5px 20px; }
         .sidebar-menu li a { text-decoration: none; color: var(--text-gray); display: flex; align-items: center; gap: 12px; padding: 12px 15px; border-radius: 8px; font-size: 16px; font-weight: 500; transition: all 0.3s; }
-        .sidebar-menu li a:hover, .sidebar-menu li a.active { background-color: var(--light-green); color: var(--primary-green); }
+        .sidebar-menu li a:hover, .sidebar-menu li a.active { background-color: var(--light-green); color: var(--primary-green); transform: translateX(5px); }
         .logout-btn { margin: 20px; padding: 12px; background-color: #ffeaea; color: #d32f2f; text-align: center; border-radius: 8px; text-decoration: none; font-weight: 600; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.3s; cursor: pointer; border: none; font-family: inherit; font-size: 16px; width: calc(100% - 40px);}
-        .logout-btn:hover { background-color: #d32f2f; color: var(--white); }
+        .logout-btn:hover { background-color: #d32f2f; color: var(--white); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(211,47,47,0.2);}
         .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 999; }
 
         /* মূল কন্টেন্ট */
         .main-content { flex: 1; margin-left: var(--sidebar-width); padding: 20px 30px; width: calc(100% - var(--sidebar-width)); }
-        .topbar { display: flex; justify-content: space-between; align-items: center; background: var(--white); padding: 15px 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); margin-bottom: 30px; }
+        
+        .topbar { display: flex; justify-content: space-between; align-items: center; background: var(--white); padding: 15px 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); margin-bottom: 30px; animation: slideDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         .menu-toggle { display: none; font-size: 24px; color: var(--primary-green); cursor: pointer; }
         .admin-profile { display: flex; align-items: center; gap: 12px; }
         .admin-profile div h4 { font-size: 16px; color: var(--dark-green); margin: 0; }
-        .admin-icon { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--primary-green); background-color: var(--light-green); color: var(--primary-green); display: flex; justify-content: center; align-items: center; font-size: 20px; }
+        .admin-icon { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--primary-green); background-color: var(--light-green); color: var(--primary-green); display: flex; justify-content: center; align-items: center; font-size: 20px; transition: 0.3s;}
+        .admin-profile:hover .admin-icon { transform: scale(1.1); }
 
-        .page-header { margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;}
+        .page-header { margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; opacity: 0; animation: fadeUp 0.6s ease forwards 0.2s;}
         .page-header h2 { font-size: 24px; color: var(--dark-green); margin: 0;}
 
         /* ফর্ম কন্টেইনার */
-        .form-container { background: var(--white); border-radius: 12px; padding: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 30px;}
+        .form-container { background: var(--white); border-radius: 12px; padding: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 30px; opacity: 0; animation: fadeUp 0.6s ease forwards 0.3s;}
         .form-group { margin-bottom: 18px; }
         .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-dark); font-size: 15px;}
         .form-group input[type="text"], .form-group input[type="number"], .form-group input[type="date"], .form-group select, .form-group textarea { width: 100%; padding: 12px 15px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 15px; font-family: inherit; outline: none; background: #fafafa; transition: 0.3s;}
@@ -47,14 +63,14 @@
         
         .category-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin-bottom: 10px;}
         .category-item { background: #f9fbf9; border: 1px solid var(--border-color); padding: 12px; border-radius: 8px; display: flex; flex-direction: column; gap: 10px; transition: 0.2s;}
-        .category-item:hover { border-color: var(--primary-green); }
+        .category-item:hover { border-color: var(--primary-green); box-shadow: 0 4px 10px rgba(11, 158, 74, 0.05); }
         .category-item .checkbox-row { display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 15px; font-weight: 500;}
         .category-item .checkbox-row input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--primary-green); cursor: pointer;}
-        .category-item .amount-input { display: none; margin-top: 5px;}
+        .category-item .amount-input { display: none; margin-top: 5px; animation: fadeUp 0.3s ease forwards;}
         .category-item .amount-input input { padding: 8px 12px; font-size: 14px;}
 
         /* ব্যয়ের ডাইনামিক রো */
-        .expense-row { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; background: #fffafafa; padding: 10px; border-radius: 8px; border: 1px dashed #ccc;}
+        .expense-row { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; background: #fffafafa; padding: 10px; border-radius: 8px; border: 1px dashed #ccc; animation: fadeUp 0.3s ease forwards;}
         .expense-row input { flex: 1; padding: 10px; }
         .btn-add-row { background: var(--primary-green); color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-size: 16px; transition: 0.3s;}
         .btn-add-row:hover { background: var(--dark-green); }
@@ -63,15 +79,25 @@
 
         .action-buttons { display: flex; gap: 15px; margin-top: 25px; flex-wrap: wrap;}
         .save-btn { flex: 1; min-width: 200px; background: var(--primary-green); color: white; border: none; padding: 14px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.3s;}
-        .save-btn:hover { background: var(--dark-green); }
+        .save-btn:hover { background: var(--dark-green); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(11, 158, 74, 0.2);}
         .cancel-btn { flex: 1; min-width: 200px; background: #ffeaea; color: #d32f2f; border: none; padding: 14px 25px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.3s; display: none; justify-content: center; align-items: center; gap: 8px;}
         .cancel-btn:hover { background: #c62828; color: white;}
 
+        /* ফিল্টার সেকশন */
+        .filter-section { background: var(--white); border-radius: 12px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 20px; opacity: 0; animation: fadeUp 0.6s ease forwards 0.4s; }
+        .date-filters { display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap; }
+        .date-filters .form-group { flex: 1; min-width: 150px; margin-bottom: 0;}
+        .btn-filter { background: var(--primary-green); color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: 600; font-family: inherit; font-size: 15px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 6px;}
+        .btn-filter:hover { background: var(--dark-green); box-shadow: 0 4px 10px rgba(11, 158, 74, 0.2);}
+        .btn-clear { background: #eceff1; color: #546e7a; border: none; padding: 12px 20px; border-radius: 8px; font-weight: 600; font-family: inherit; font-size: 15px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 6px;}
+        .btn-clear:hover { background: #cfd8dc; color: #37474f; }
+
         /* টেবিল */
-        .table-container { background: var(--white); border-radius: 12px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; min-width: 900px; }
+        .table-container { background: var(--white); border-radius: 12px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); overflow-x: auto; opacity: 0; animation: fadeUp 0.6s ease forwards 0.5s; position: relative;}
+        table { width: 100%; border-collapse: collapse; min-width: 900px; margin-bottom: 20px;}
         table th, table td { padding: 15px; text-align: left; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
         table th { background-color: var(--light-green); color: var(--dark-green); font-weight: 600; }
+        table tbody tr { transition: background-color 0.3s, transform 0.2s; }
         table tbody tr:hover { background-color: #f9fbf9; }
         
         .badge { padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; display: inline-block;}
@@ -79,39 +105,24 @@
         .badge.expense { background: var(--expense-light); color: var(--expense-red); border: 1px solid var(--expense-red);}
 
         /* অ্যাকশন বাটন */
-        .action-icons { display: flex; gap: 8px; }
+        .action-icons { display: flex; gap: 8px; justify-content: center;}
         .action-icons button { border: none; background: none; cursor: pointer; font-size: 15px; padding: 8px 10px; border-radius: 6px; transition: 0.3s; display: flex; align-items: center; justify-content: center;}
-        .btn-view { color: #1976d2; background: #f0f8ff; font-weight: 600;} .btn-view:hover { background: #e3f2fd; }
-        .btn-edit { color: var(--primary-green); background: #eaf6ee; font-weight: 600;} .btn-edit:hover { background: #d4f0df; }
-        .btn-delete { color: #d32f2f; background: #ffeaea; font-weight: 600;} .btn-delete:hover { background: #fbdada; }
+        .btn-view { color: #1976d2; background: #f0f8ff; font-weight: 600;} .btn-view:hover { background: #1976d2; color: white; transform: translateY(-2px);}
+        .btn-edit { color: var(--primary-green); background: #eaf6ee; font-weight: 600;} .btn-edit:hover { background: var(--primary-green); color: white; transform: translateY(-2px);}
+        .btn-delete { color: #d32f2f; background: #ffeaea; font-weight: 600;} .btn-delete:hover { background: #d32f2f; color: white; transform: translateY(-2px);}
+
+        /* আরও দেখুন বাটন */
+        .load-more-container { text-align: center; margin-top: 10px; }
+        .btn-load-more { background: var(--light-green); color: var(--dark-green); border: 2px solid var(--primary-green); padding: 10px 25px; border-radius: 30px; font-size: 15px; font-family: inherit; font-weight: 600; cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-load-more:hover { background: var(--primary-green); color: white; transform: translateY(-3px); box-shadow: 0 4px 10px rgba(11, 158, 74, 0.2); }
 
         /* ====================================================
            মোডাল (স্ক্রল ফিক্স)
            ==================================================== */
-        .modal { 
-            display: none; 
-            position: fixed; 
-            top: 0; left: 0; right: 0; bottom: 0; 
-            background: rgba(0,0,0,0.7); 
-            z-index: 9999; 
-            overflow-y: auto; 
-            padding: 40px 20px; 
-        }
-        
-        .receipt-wrapper { 
-            background: var(--white); 
-            width: 100%; 
-            max-width: 700px; 
-            margin: 0 auto; 
-            position: relative; 
-            box-shadow: 0 10px 40px rgba(0,0,0,0.4); 
-            border-radius: 8px; 
-            overflow: hidden; 
-        }
-
+        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 9999; overflow-y: auto; padding: 40px 20px; }
+        .receipt-wrapper { background: var(--white); width: 100%; max-width: 700px; margin: 0 auto; position: relative; box-shadow: 0 10px 40px rgba(0,0,0,0.4); border-radius: 8px; overflow: hidden; animation: fadeUp 0.4s ease forwards;}
         .close-btn { position: absolute; top: 15px; right: 20px; font-size: 26px; color: var(--text-dark); cursor: pointer; background: rgba(255,255,255,0.8); width: 40px; height: 40px; border-radius: 50%; border: none; display: flex; justify-content: center; align-items: center; z-index: 10; transition: 0.3s;}
         .close-btn:hover { background: #d32f2f; color: white;}
-        
         .receipt-print-area { position: relative; background: #ffffff; padding: 40px; font-family: 'Hind Siliguri', sans-serif; color: #333; z-index: 1;}
         .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.05; z-index: -1; pointer-events: none; }
         .watermark img { width: 300px; height: auto;}
@@ -152,33 +163,16 @@
         .print-btn:hover { background: #115293; }
 
         /* ====================================================
-           প্রিন্ট মিডিয়া কোয়েরি ফিক্স (A4 Size Fix - 100% White Background)
+           প্রিন্ট মিডিয়া কোয়েরি ফিক্স
            ==================================================== */
         @media print {
             @page { size: A4 portrait; margin: 15mm; }
             html, body { background-color: #ffffff !important; margin: 0 !important; padding: 0 !important; }
             body > * { display: none !important; }
-            #receiptModal { 
-                display: block !important; 
-                position: relative !important; 
-                width: 100% !important;
-                height: auto !important;
-                background-color: #ffffff !important; 
-                padding: 0 !important; 
-                margin: 0 !important;
-                overflow: visible !important;
-            }
-            .receipt-wrapper { 
-                background-color: #ffffff !important;
-                box-shadow: none !important; 
-                max-width: 100% !important; 
-                width: 100% !important; 
-                border-radius: 0 !important; 
-                margin: 0 !important;
-            }
+            #receiptModal { display: block !important; position: relative !important; width: 100% !important; height: auto !important; background-color: #ffffff !important; padding: 0 !important; margin: 0 !important; overflow: visible !important; }
+            .receipt-wrapper { background-color: #ffffff !important; box-shadow: none !important; max-width: 100% !important; width: 100% !important; border-radius: 0 !important; margin: 0 !important; }
             .receipt-print-area { background-color: #ffffff !important; padding: 0 !important; }
             .close-btn, .print-btn-container { display: none !important; }
-
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             .receipt-wrapper.type-income .receipt-title { background-color: var(--primary-green) !important; color: white !important;}
             .receipt-wrapper.type-expense .receipt-title { background-color: var(--expense-red) !important; color: white !important;}
@@ -366,6 +360,26 @@
         </div>
 
         <h3 style="color: var(--dark-green); margin-bottom: 15px;">সাম্প্রতিক লেনদেন</h3>
+        
+        <!-- তারিখ ফিল্টার সেকশন -->
+        <div class="filter-section">
+            <div class="date-filters">
+                <div class="form-group">
+                    <label>শুরুর তারিখ</label>
+                    <input type="date" id="filterFromDate" class="en-text">
+                </div>
+                <div class="form-group">
+                    <label>শেষ তারিখ</label>
+                    <input type="date" id="filterToDate" class="en-text">
+                </div>
+                <div style="display: flex; gap: 10px; align-items: flex-end;">
+                    <button type="button" class="btn-filter" onclick="applyDateFilter()"><i class="fa-solid fa-filter"></i> খুঁজুন</button>
+                    <button type="button" class="btn-clear" onclick="clearDateFilter()"><i class="fa-solid fa-rotate-right"></i> মুছুন</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- টেবিল সেকশন -->
         <div class="table-container">
             <table>
                 <thead>
@@ -379,9 +393,14 @@
                     </tr>
                 </thead>
                 <tbody id="trxTableBody">
-                    <tr><td colspan="6" class="loading-data"><i class="fa-solid fa-spinner fa-spin"></i> ডাটা লোড হচ্ছে...</td></tr>
+                    <tr><td colspan="6" style="text-align: center;">লোড হচ্ছে...</td></tr>
                 </tbody>
             </table>
+            
+            <!-- Load More Button -->
+            <div class="load-more-container" id="loadMoreContainer" style="display: none;">
+                <button type="button" class="btn-load-more" onclick="loadMoreTrx()"><i class="fa-solid fa-chevron-down"></i> আরও দেখুন</button>
+            </div>
         </div>
     </main>
 
@@ -600,6 +619,8 @@
 
         let memberDict = {}; 
         let allTransactions = [];
+        let filteredTransactions = [];
+        let displayCount = 5;
 
         // সদস্য লিস্ট ড্রপডাউনে
         onValue(ref(db, 'members'), (snapshot) => {
@@ -626,7 +647,7 @@
             }
         });
 
-        // ফর্ম সাবমিট (JS Validation সহ)
+        // ফর্ম সাবমিট
         document.getElementById('trxForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const type = document.getElementById('trxType').value;
@@ -688,34 +709,22 @@
             try {
                 if(editId) {
                     await update(ref(db, 'transactions/' + editId), trxData);
-                    
-                    // ==========================================
-                    // নতুন যুক্ত করা অংশ (Member Status Update)
-                    // ==========================================
                     if(type === 'income' && trxData.payerId) {
                         await update(ref(db, 'members/' + trxData.payerId), {
                             lastPaymentDate: Date.now(),
                             status: 'active'
                         });
                     }
-                    // ==========================================
-                    
                     alert('লেনদেনটি সফলভাবে আপডেট হয়েছে!');
                 } else {
                     trxData.timestamp = Date.now();
                     await set(push(ref(db, 'transactions')), trxData);
-                    
-                    // ==========================================
-                    // নতুন যুক্ত করা অংশ (Member Status Update)
-                    // ==========================================
                     if(type === 'income' && trxData.payerId) {
                         await update(ref(db, 'members/' + trxData.payerId), {
                             lastPaymentDate: Date.now(),
                             status: 'active'
                         });
                     }
-                    // ==========================================
-                    
                     alert('লেনদেন সফলভাবে সংরক্ষণ করা হয়েছে!');
                 }
                 resetForm();
@@ -730,42 +739,106 @@
         // টেবিল ডাটা লোড
         onValue(ref(db, 'transactions'), (snapshot) => {
             const data = snapshot.val();
-            const tbody = document.getElementById('trxTableBody');
-            tbody.innerHTML = '';
             allTransactions = [];
 
             if(data) {
                 Object.keys(data).forEach(key => { let d = data[key]; d.id = key; allTransactions.push(d); });
                 allTransactions.sort((a,b) => b.timestamp - a.timestamp); 
-
-                allTransactions.forEach(trx => {
-                    let dStr = new Date(trx.date).toLocaleDateString('en-GB');
-                    let isIncome = trx.type === 'income';
-                    let badge = isIncome ? '<span class="badge income">জমা</span>' : '<span class="badge expense">উত্তোলন</span>';
-                    let nameTitle = isIncome ? (trx.payerName || 'অজ্ঞাত') : (trx.spender || 'অজ্ঞাত');
-                    let cats = trx.items ? trx.items.map(i => i.category).join(', ') : 'খাত নেই';
-
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td class="en-text">${dStr}</td>
-                        <td>${badge}</td>
-                        <td><strong>${nameTitle}</strong></td>
-                        <td>${cats}</td>
-                        <td class="en-text" style="font-weight:bold; color: ${isIncome ? 'var(--primary-green)' : 'var(--expense-red)'};">৳ ${trx.amount}</td>
-                        <td style="text-align: center;">
-                            <div class="action-icons">
-                                <button class="btn-view" title="রিসিট দেখুন" onclick="window.showReceipt('${trx.id}')"><i class="fa-solid fa-receipt"></i></button>
-                                <button class="btn-edit" title="এডিট করুন" onclick="window.editTrx('${trx.id}')"><i class="fa-solid fa-pen-to-square"></i></button>
-                                <button class="btn-delete" title="ডিলিট করুন" onclick="window.deleteTrx('${trx.id}')"><i class="fa-solid fa-trash-can"></i></button>
-                            </div>
-                        </td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-            } else {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">কোনো লেনদেন পাওয়া যায়নি।</td></tr>';
-            }
+            } 
+            
+            // ফিল্টার এবং টেবিল রেন্ডার আপডেট করা
+            filteredTransactions = [...allTransactions];
+            window.applyDateFilter(false); // background update doesn't reset count
         });
+
+        // ==========================================
+        // Pagination & Filter Logic
+        // ==========================================
+        window.applyDateFilter = function(resetCount = true) {
+            if(resetCount) displayCount = 5;
+            
+            const fromDateVal = document.getElementById('filterFromDate').value;
+            const toDateVal = document.getElementById('filterToDate').value;
+            
+            filteredTransactions = allTransactions.filter(trx => {
+                let trxDate = new Date(trx.date).getTime();
+                let isValid = true;
+                
+                if (fromDateVal) {
+                    let fDate = new Date(fromDateVal).getTime();
+                    if (trxDate < fDate) isValid = false;
+                }
+                if (toDateVal) {
+                    let tDate = new Date(toDateVal).getTime();
+                    if (trxDate > tDate) isValid = false;
+                }
+                return isValid;
+            });
+            
+            renderTrxTable();
+        };
+
+        window.clearDateFilter = function() {
+            document.getElementById('filterFromDate').value = '';
+            document.getElementById('filterToDate').value = '';
+            displayCount = 5;
+            window.applyDateFilter();
+        };
+
+        window.loadMoreTrx = function() {
+            displayCount += 10;
+            renderTrxTable();
+        };
+
+        function renderTrxTable() {
+            const tbody = document.getElementById('trxTableBody');
+            tbody.innerHTML = '';
+
+            if(filteredTransactions.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">কোনো লেনদেন পাওয়া যায়নি।</td></tr>';
+                document.getElementById('loadMoreContainer').style.display = 'none';
+                return;
+            }
+
+            const itemsToShow = filteredTransactions.slice(0, displayCount);
+
+            itemsToShow.forEach((trx, index) => {
+                let dStr = new Date(trx.date).toLocaleDateString('en-GB');
+                let isIncome = trx.type === 'income';
+                let badge = isIncome ? '<span class="badge income">জমা</span>' : '<span class="badge expense">উত্তোলন</span>';
+                let nameTitle = isIncome ? (trx.payerName || 'অজ্ঞাত') : (trx.spender || 'অজ্ঞাত');
+                let cats = trx.items ? trx.items.map(i => i.category).join(', ') : 'খাত নেই';
+
+                // Staggered Animation Delay for table rows
+                let animDelay = (index % 10) * 0.05;
+
+                const tr = document.createElement('tr');
+                tr.style.opacity = "0";
+                tr.style.animation = `fadeUp 0.4s ease forwards ${animDelay}s`;
+                tr.innerHTML = `
+                    <td class="en-text">${dStr}</td>
+                    <td>${badge}</td>
+                    <td><strong>${nameTitle}</strong></td>
+                    <td>${cats}</td>
+                    <td class="en-text" style="font-weight:bold; color: ${isIncome ? 'var(--primary-green)' : 'var(--expense-red)'};">৳ ${trx.amount}</td>
+                    <td style="text-align: center;">
+                        <div class="action-icons">
+                            <button class="btn-view" title="রিসিট দেখুন" onclick="window.showReceipt('${trx.id}')"><i class="fa-solid fa-receipt"></i></button>
+                            <button class="btn-edit" title="এডিট করুন" onclick="window.editTrx('${trx.id}')"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button class="btn-delete" title="ডিলিট করুন" onclick="window.deleteTrx('${trx.id}')"><i class="fa-solid fa-trash-can"></i></button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // Load More button visibility
+            if(displayCount >= filteredTransactions.length) {
+                document.getElementById('loadMoreContainer').style.display = 'none';
+            } else {
+                document.getElementById('loadMoreContainer').style.display = 'block';
+            }
+        }
 
         // রিসিট তৈরি ফাংশন
         window.showReceipt = function(id) {
