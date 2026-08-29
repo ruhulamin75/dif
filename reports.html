@@ -11,47 +11,68 @@
     <style>
         :root { --primary-green: #0b9e4a; --dark-green: #077033; --light-green: #eaf6ee; --expense-red: #d32f2f; --expense-light: #ffeaea; --white: #ffffff; --bg-color: #f4f7f6; --text-dark: #2c3e50; --text-gray: #666666; --border-color: #e0e0e0; --sidebar-width: 250px; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Poppins', 'Hind Siliguri', sans-serif; background-color: var(--bg-color); color: var(--text-dark); display: flex; }
+        body { font-family: 'Poppins', 'Hind Siliguri', sans-serif; background-color: var(--bg-color); color: var(--text-dark); display: flex; overflow-x: hidden; }
         .en-text { font-family: 'Poppins', sans-serif; }
+
+        /* =========================================
+           অ্যানিমেশন কি-ফ্রেমস (Keyframes)
+           ========================================= */
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes fadeUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.95) translateY(15px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
 
         /* সাইডবার */
         .sidebar { width: var(--sidebar-width); background-color: var(--white); height: 100vh; position: fixed; left: 0; top: 0; box-shadow: 2px 0 10px rgba(0,0,0,0.05); display: flex; flex-direction: column; z-index: 1000; transition: transform 0.3s ease; }
         .sidebar-header { padding: 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border-color); }
-        .sidebar-header img { width: 45px; }
+        .sidebar-header img { width: 45px; transition: transform 0.3s ease;}
+        .sidebar-header:hover img { transform: scale(1.1) rotate(5deg); }
         .sidebar-header h2 { font-size: 15px; color: var(--primary-green); line-height: 1.3; font-weight: 700; font-family: 'Poppins', sans-serif; }
         .sidebar-menu { list-style: none; padding: 20px 0; flex: 1; overflow-y: auto; }
         .sidebar-menu li { padding: 5px 20px; }
         .sidebar-menu li a { text-decoration: none; color: var(--text-gray); display: flex; align-items: center; gap: 12px; padding: 12px 15px; border-radius: 8px; font-size: 16px; font-weight: 500; transition: all 0.3s; }
-        .sidebar-menu li a:hover, .sidebar-menu li a.active { background-color: var(--light-green); color: var(--primary-green); }
+        .sidebar-menu li a:hover, .sidebar-menu li a.active { background-color: var(--light-green); color: var(--primary-green); transform: translateX(5px); }
         .logout-btn { margin: 20px; padding: 12px; background-color: #ffeaea; color: #d32f2f; text-align: center; border-radius: 8px; text-decoration: none; font-weight: 600; display: flex; justify-content: center; gap: 8px; transition: 0.3s; cursor: pointer; border: none; font-family: inherit; font-size: 16px; width: calc(100% - 40px);}
-        .logout-btn:hover { background-color: #d32f2f; color: var(--white); }
-        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 999; }
+        .logout-btn:hover { background-color: #d32f2f; color: var(--white); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(211,47,47,0.2);}
+        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 999; opacity: 0; transition: opacity 0.3s ease;}
 
         /* মূল কন্টেন্ট */
         .main-content { flex: 1; margin-left: var(--sidebar-width); padding: 20px 30px; width: calc(100% - var(--sidebar-width)); overflow-x: hidden;}
-        .topbar { display: flex; justify-content: space-between; align-items: center; background: var(--white); padding: 15px 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); margin-bottom: 30px; }
+        
+        .topbar { display: flex; justify-content: space-between; align-items: center; background: var(--white); padding: 15px 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); margin-bottom: 30px; animation: slideDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;}
         .menu-toggle { display: none; font-size: 24px; color: var(--primary-green); cursor: pointer; }
         .admin-profile { display: flex; align-items: center; gap: 12px; }
         .admin-profile div h4 { font-size: 16px; color: var(--dark-green); margin: 0; }
-        .admin-icon { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--primary-green); background-color: var(--light-green); color: var(--primary-green); display: flex; justify-content: center; align-items: center; font-size: 20px; }
+        .admin-icon { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--primary-green); background-color: var(--light-green); color: var(--primary-green); display: flex; justify-content: center; align-items: center; font-size: 20px; transition: transform 0.3s;}
+        .admin-profile:hover .admin-icon { transform: scale(1.1); }
 
-        .page-header { margin-bottom: 25px; }
+        .page-header { margin-bottom: 25px; opacity: 0; animation: fadeUp 0.6s ease forwards 0.2s;}
         .page-header h2 { font-size: 24px; color: var(--dark-green); margin: 0;}
 
         /* ফিল্টার সেকশন */
-        .filter-section { background: var(--white); padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 25px; display: flex; flex-wrap: wrap; gap: 15px; align-items: flex-end; }
+        .filter-section { background: var(--white); padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 25px; display: flex; flex-wrap: wrap; gap: 15px; align-items: flex-end; opacity: 0; animation: fadeUp 0.6s ease forwards 0.3s;}
         .form-group { display: flex; flex-direction: column; flex: 1; min-width: 200px;}
         .form-group label { font-size: 14px; font-weight: 600; margin-bottom: 5px; color: var(--text-dark); }
-        .form-group select, .form-group input { padding: 10px 15px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 15px; font-family: inherit; outline: none; background: #fafafa;}
-        .form-group select:focus, .form-group input:focus { border-color: var(--primary-green); background: var(--white);}
+        .form-group select, .form-group input { padding: 10px 15px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 15px; font-family: inherit; outline: none; background: #fafafa; transition: 0.3s;}
+        .form-group select:focus, .form-group input:focus { border-color: var(--primary-green); background: var(--white); box-shadow: 0 0 0 3px rgba(11, 158, 74, 0.1);}
         
-        .btn-generate { background: var(--primary-green); color: var(--white); border: none; padding: 12px 25px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; font-family: inherit; transition: 0.3s; white-space: nowrap; height: 45px;}
-        .btn-generate:hover { background: var(--dark-green); }
-        .btn-print { background: #1976d2; color: var(--white); border: none; padding: 12px 25px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; font-family: inherit; transition: 0.3s; white-space: nowrap; height: 45px; display: none;}
-        .btn-print:hover { background: #115293; }
+        .btn-generate { background: var(--primary-green); color: var(--white); border: none; padding: 12px 25px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.3s ease; white-space: nowrap; height: 45px;}
+        .btn-generate:hover { background: var(--dark-green); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(11, 158, 74, 0.25);}
+        .btn-print { background: #1976d2; color: var(--white); border: none; padding: 12px 25px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.3s ease; white-space: nowrap; height: 45px; display: none;}
+        .btn-print:hover { background: #115293; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(25, 118, 210, 0.25);}
 
         /* প্রিন্ট এরিয়া (Report Container) */
-        .report-container { background: var(--white); border-radius: 12px; padding: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); min-height: 400px; display: none; position: relative; z-index: 1;}
+        .report-container { background: var(--white); border-radius: 12px; padding: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); min-height: 400px; display: none; position: relative; z-index: 1; animation: popIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;}
         .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.04; z-index: -1; pointer-events: none; }
         .watermark img { width: 350px; height: auto;}
 
@@ -64,7 +85,8 @@
         .report-meta { display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 15px; font-weight: 500;}
         
         /* Summary Box */
-        .summary-box { background: #f9fbf9; border: 1px solid var(--border-color); padding: 15px 20px; border-radius: 8px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center;}
+        .summary-box { background: #f9fbf9; border: 1px solid var(--border-color); padding: 15px 20px; border-radius: 8px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; transition: 0.3s;}
+        .summary-box:hover { box-shadow: 0 4px 12px rgba(11, 158, 74, 0.08); border-color: var(--primary-green);}
         .summary-item { text-align: center; }
         .summary-item h4 { margin: 0; font-size: 14px; color: var(--text-gray); font-weight: 500;}
         .summary-item .amount { font-size: 22px; font-weight: 700; color: var(--primary-green); font-family: 'Poppins', sans-serif;}
@@ -74,6 +96,8 @@
         table { width: 100%; border-collapse: collapse; min-width: 600px;}
         table th, table td { padding: 12px 15px; border: 1px solid #ddd; text-align: left; font-size: 15px;}
         table th { background: #f5f5f5; color: var(--text-dark); font-weight: 600; text-transform: uppercase; font-size: 14px;}
+        table tbody tr { transition: background-color 0.3s ease; }
+        table tbody tr:hover { background-color: #f9fbf9; }
         table td.amount-col { text-align: right; font-weight: 600; font-family: 'Poppins', sans-serif;}
         table th.amount-col { text-align: right; }
 
@@ -95,33 +119,15 @@
            ==================================================== */
         @media print {
             @page { size: A4 portrait; margin: 15mm; }
-            
-            /* মূল বডি ও এইচটিএমএল এর ব্যাকগ্রাউন্ড ১০০% সাদা করা হয়েছে */
             html, body { background-color: #ffffff !important; margin: 0 !important; padding: 0 !important; }
-            
-            /* রিপোর্ট কন্টেইনার ছাড়া পেজের বাকি সব অংশ (সাইডবার, হেডার, ফিল্টার ইত্যাদি) লুকিয়ে দেওয়া হয়েছে */
             body > * { display: none !important; }
-            
             .main-content { display: block !important; margin: 0 !important; padding: 0 !important; width: 100% !important; background-color: #ffffff !important;}
-            
-            /* শুধুমাত্র রিপোর্ট কন্টেইনারটি দৃশ্যমান থাকবে */
-            .report-container { 
-                display: block !important; 
-                position: relative !important; 
-                width: 100% !important; 
-                padding: 0 !important; 
-                box-shadow: none !important; 
-                border-radius: 0 !important;
-                background-color: #ffffff !important;
-            }
-            
+            .report-container { display: block !important; position: relative !important; width: 100% !important; padding: 0 !important; box-shadow: none !important; border-radius: 0 !important; background-color: #ffffff !important;}
             .topbar, .page-header, .filter-section, .btn-print { display: none !important; }
-            
             .report-table-wrapper { overflow-x: visible !important; margin-bottom: 20px !important;}
             .cat-summary-wrapper { overflow-x: visible !important; width: 50% !important; float: right !important;}
             .signature-box { float: right !important; width: 300px !important; margin-top: 80px !important;}
-            
-            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; animation: none !important; transition: none !important; } /* Disable animations for print */
             .report-title { background: var(--light-green) !important;}
             .summary-box { background: #ffffff !important; border: 1px solid #ddd !important;}
             table th { background: #f5f5f5 !important; }
@@ -132,7 +138,7 @@
         @media (max-width: 992px) { 
             .sidebar { transform: translateX(-100%); } 
             .sidebar.show { transform: translateX(0); } 
-            .sidebar-overlay.show { display: block; } 
+            .sidebar-overlay.show { display: block; opacity: 1;} 
             .main-content { margin-left: 0; width: 100%; padding: 15px; } 
             .menu-toggle { display: block; } 
             .report-container { padding: 20px; }
@@ -436,9 +442,13 @@
             if(filteredItems.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">এই সময়ে কোনো ডেটা পাওয়া যায়নি।</td></tr>`;
             } else {
-                filteredItems.forEach(item => {
+                filteredItems.forEach((item, index) => {
+                    let animDelay = (index % 15) * 0.05; // Table Row Staggered Animation Delay
                     let dStr = new Date(item.date).toLocaleDateString('en-GB');
                     let tr = document.createElement('tr');
+                    
+                    tr.style.opacity = "0";
+                    tr.style.animation = `fadeUp 0.4s ease forwards ${animDelay}s`;
                     
                     if(type === 'ledger') {
                         tr.innerHTML = `<td class="en-text">${dStr}</td><td>${item.category}</td><td class="amount-col en-text">৳ ${item.amount}</td>`;
@@ -449,21 +459,24 @@
                 });
             }
 
+            // Number Counting and Summary Animation Update
             document.getElementById('sumValue1').innerText = filteredItems.length;
             document.getElementById('sumValue2').innerText = "৳ " + grandTotal;
 
             const catTbody = document.getElementById('catSummaryBody');
             catTbody.innerHTML = '';
             if(Object.keys(categoryTotals).length > 0) {
-                Object.keys(categoryTotals).forEach(cat => {
-                    catTbody.innerHTML += `<tr><td>${cat}</td><td class="amount-col en-text">৳ ${categoryTotals[cat]}</td></tr>`;
+                Object.keys(categoryTotals).forEach((cat, index) => {
+                    let animDelay = (index % 10) * 0.05;
+                    catTbody.innerHTML += `<tr style="opacity:0; animation: fadeUp 0.4s ease forwards ${animDelay}s"><td>${cat}</td><td class="amount-col en-text">৳ ${categoryTotals[cat]}</td></tr>`;
                 });
-                catTbody.innerHTML += `<tr class="cat-total-row"><td>সর্বমোট</td><td class="amount-col en-text" style="color:var(--dark-green);">৳ ${grandTotal}</td></tr>`;
+                catTbody.innerHTML += `<tr class="cat-total-row" style="opacity:0; animation: fadeUp 0.4s ease forwards ${Object.keys(categoryTotals).length * 0.05}s"><td>সর্বমোট</td><td class="amount-col en-text" style="color:var(--dark-green);">৳ ${grandTotal}</td></tr>`;
                 document.getElementById('catSummaryTable').style.display = 'table';
             } else {
                 document.getElementById('catSummaryTable').style.display = 'none';
             }
 
+            // Display Report Container and trigger its Pop-in animation
             document.getElementById('reportContainer').style.display = 'block';
             document.getElementById('btnPrint').style.display = 'inline-block';
         }
