@@ -176,6 +176,7 @@
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
     <aside class="sidebar" id="sidebar">
+        <!-- ... (সাইডবারের আগের কোড ঠিক আছে) ... -->
         <div class="sidebar-header">
             <img src="1000123161.png" alt="DIF Logo">
             <h2>DARUL ITTIHAD<br>FOUNDATION</h2>
@@ -195,6 +196,7 @@
     </aside>
 
     <main class="main-content">
+        <!-- ... (আগের মেইন কন্টেন্ট ঠিক আছে) ... -->
         <header class="topbar">
             <div class="menu-toggle" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></div>
             <div><h2 style="color: var(--dark-green); font-size: 22px;">সদস্য পরিচালনা</h2></div>
@@ -246,6 +248,7 @@
 
     <!-- ১. ভিউ মোডাল -->
     <div class="modal" id="viewModal">
+        <!-- ... (আগের কোড) ... -->
         <div class="modal-content view-modal-content">
             <button class="close-btn" onclick="closeModal('viewModal')"><i class="fa-solid fa-xmark"></i></button>
             <div class="photocard-header">
@@ -293,6 +296,7 @@
 
     <!-- ২. এডিট মোডাল -->
     <div class="modal" id="editModal">
+        <!-- ... (আগের কোড) ... -->
         <div class="modal-content edit-modal-content">
             <div class="edit-modal-header">
                 <h3>তথ্য আপডেট করুন</h3>
@@ -360,6 +364,7 @@
 
     <!-- ক্রপার মোডাল -->
     <div class="cropper-overlay" id="cropperModal">
+        <!-- ... (আগের কোড) ... -->
         <div class="cropper-content">
             <h3>ছবি ক্রপ করুন</h3>
             <div class="img-container"><img id="imageToCrop" src=""></div>
@@ -447,14 +452,35 @@
             const data = snapshot.val();
             tbody.innerHTML = ''; 
             allMembers = []; 
+            
+            let dbUpdatesNeeded = {}; // স্বয়ংক্রিয় স্ট্যাটাস আপডেটের জন্য
 
             if (data) {
+                const now = Date.now();
+                const SIXTY_DAYS_MS = 60 * 24 * 60 * 60 * 1000;
+
                 Object.keys(data).forEach((key) => {
                     const member = data[key];
                     member.id = key; 
+                    
+                    // অটোমেটিক ইনঅ্যাক্টিভ করার লজিক
+                    let lastPayment = member.lastPaymentDate || 0; // যদি কোনো পেমেন্ট রেকর্ড না থাকে তবে ডিফল্ট 0
+                    let timeSinceLastPayment = now - lastPayment;
+
+                    // যদি ৬০ দিন পার হয়ে যায় এবং বর্তমান স্ট্যাটাস 'active' থাকে
+                    if (timeSinceLastPayment > SIXTY_DAYS_MS && member.status !== 'inactive') {
+                        dbUpdatesNeeded[`members/${key}/status`] = 'inactive';
+                        member.status = 'inactive'; // তাৎক্ষণিক দেখার জন্য লোকাল আপডেট
+                    }
+
                     if (!member.sortOrder) member.sortOrder = new Date(member.joinDate || Date.now()).getTime();
                     allMembers.push(member);
                 });
+
+                // যদি ডাটাবেসে কাউকে নিষ্ক্রিয় করার প্রয়োজন হয়, তবে একবারে আপডেট করে দেবে
+                if (Object.keys(dbUpdatesNeeded).length > 0) {
+                    update(ref(db), dbUpdatesNeeded);
+                }
 
                 allMembers.sort((a, b) => a.sortOrder - b.sortOrder);
                 renderTable(allMembers);
@@ -618,6 +644,8 @@
             btn.disabled = true;
 
             const id = document.getElementById('editMemberKey').value;
+            const originalMember = allMembers.find(x => x.id === id);
+            const newStatus = document.getElementById('eStatus').value;
             
             const updates = {
                 memberId: document.getElementById('eMemberId').value,
@@ -638,8 +666,13 @@
                 password: document.getElementById('ePassword').value,
                 presentAddress: document.getElementById('ePresentAdd').value,
                 permanentAddress: document.getElementById('ePermanentAdd').value,
-                status: document.getElementById('eStatus').value
+                status: newStatus
             };
+
+            // অ্যাডমিন যদি নিষ্ক্রিয় সদস্যকে ম্যানুয়ালি সক্রিয় করেন, তবে পেমেন্টের টাইমার রিসেট হবে (যাতে সাথে সাথে আবার নিষ্ক্রিয় না হয়)
+            if (newStatus === 'active' && originalMember.status === 'inactive') {
+                updates.lastPaymentDate = Date.now();
+            }
 
             if (updatedImageBase64) {
                 updates.photo = updatedImageBase64;
