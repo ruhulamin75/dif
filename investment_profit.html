@@ -132,13 +132,8 @@
         @media print {
             @page { size: A4 portrait; margin: 15mm; }
             
-            /* মূল বডি ও এইচটিএমএল এর ব্যাকগ্রাউন্ড ১০০% সাদা করা হয়েছে */
             html, body { background-color: #ffffff !important; margin: 0 !important; padding: 0 !important; }
-            
-            /* রিসিট বাদে পেজের বাকি সব লুকিয়ে দেওয়া হয়েছে */
             body > * { display: none !important; }
-            
-            /* শুধুমাত্র রিসিট মোডালটি দৃশ্যমান থাকবে */
             #receiptModal { 
                 display: block !important; 
                 position: relative !important; 
@@ -149,8 +144,6 @@
                 margin: 0 !important;
                 overflow: visible !important;
             }
-            
-            /* রিসিটের র‍্যাপার থেকে শ্যাডো ও রাউন্ড শেপ বাদ দেওয়া হয়েছে */
             .receipt-wrapper { 
                 background-color: #ffffff !important;
                 box-shadow: none !important; 
@@ -159,11 +152,7 @@
                 border-radius: 0 !important; 
                 margin: 0 !important;
             }
-
-            /* মূল প্রিন্ট এরিয়ার ব্যাকগ্রাউন্ড সাদা করা হয়েছে */
             .receipt-print-area { background-color: #ffffff !important; padding: 0 !important; }
-            
-            /* ক্লোজ বাটন এবং নিচের প্রিন্ট বাটন কন্টেইনার সম্পূর্ণ গায়েব করে দেওয়া হয়েছে */
             .close-btn, .print-btn-container { display: none !important; }
 
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
@@ -271,9 +260,11 @@
                 <div id="profitSection" style="display: none;">
                     <div class="form-group">
                         <label>বিনিয়োগ খাত নির্বাচন করুন (যেখান থেকে মুনাফা এসেছে)</label>
-                        <select id="profSource">
+                        <select id="profSource" onchange="checkOtherProfSource()">
                             <option value="" disabled selected>খাত নির্বাচন করুন</option>
                         </select>
+                        <!-- অন্যান্য খাতের জন্য টেক্সট বক্স -->
+                        <input type="text" id="profOtherSourceText" placeholder="ম্যানুয়ালি খাতের নাম লিখুন" style="display: none; margin-top: 8px;">
                     </div>
                     <div class="form-group">
                         <label>বিস্তারিত বিবরণ</label>
@@ -444,6 +435,12 @@
             }
         }
         
+        // অন্যান্য খাত নির্বাচন করলে ইনপুট ফিল্ড দেখানোর ফাংশন
+        function checkOtherProfSource() {
+            const val = document.getElementById('profSource').value;
+            document.getElementById('profOtherSourceText').style.display = (val === 'other') ? 'block' : 'none';
+        }
+        
         function restrictDecimal(inp) {
             let val = inp.value;
             if(val.includes('.')) {
@@ -488,6 +485,10 @@
             document.getElementById('invProfForm').reset();
             document.getElementById('editId').value = "";
             document.getElementById('entryDate').valueAsDate = new Date();
+            
+            document.getElementById('profOtherSourceText').style.display = 'none';
+            document.getElementById('profOtherSourceText').value = '';
+
             document.getElementById('cancelEditBtn').style.display = 'none';
             document.getElementById('saveBtn').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> সংরক্ষণ করুন';
             document.getElementById('entryType').disabled = false;
@@ -541,6 +542,9 @@
                 profSource.appendChild(new Option(text, inv.id));
                 returnSource.appendChild(new Option(text, inv.id));
             });
+
+            // মুনাফা এন্ট্রির জন্য "অন্যান্য" অপশন যুক্ত করা হলো
+            profSource.appendChild(new Option("অন্যান্য (ম্যানুয়ালি লিখুন)", "other"));
         }
 
         function loadData() {
@@ -680,8 +684,23 @@
 
                 } else if(type === 'profit') {
                     let sourceSel = document.getElementById('profSource');
-                    data.invId = sourceSel.value;
-                    data.invName = sourceSel.options[sourceSel.selectedIndex].text.split(' (')[0];
+                    let selValue = sourceSel.value;
+                    
+                    data.invId = selValue;
+                    
+                    if(selValue === 'other') {
+                        let otherText = document.getElementById('profOtherSourceText').value;
+                        if(!otherText) {
+                            alert("অনুগ্রহ করে খাতের নাম লিখুন।");
+                            btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> সংরক্ষণ করুন';
+                            btn.disabled = false;
+                            return;
+                        }
+                        data.invName = otherText;
+                    } else {
+                        data.invName = sourceSel.options[sourceSel.selectedIndex].text.split(' (')[0];
+                    }
+                    
                     data.details = document.getElementById('profDetails').value;
 
                     if(editId) await update(ref(db, 'profits/' + editId), data);
@@ -733,7 +752,20 @@
                 let prof = allProfits.find(p => p.id === id);
                 document.getElementById('entryDate').value = prof.date;
                 document.getElementById('entryAmount').value = prof.amount;
-                document.getElementById('profSource').value = prof.invId;
+                
+                let sourceSel = document.getElementById('profSource');
+                let optionExists = Array.from(sourceSel.options).some(opt => opt.value === prof.invId);
+                
+                // যদি খাতটি "অন্যান্য" হয় অথবা বর্তমান লিস্টে না থাকে, তবে ম্যানুয়াল বক্সটি দেখাবে
+                if(prof.invId === 'other' || !optionExists) {
+                    sourceSel.value = 'other';
+                    document.getElementById('profOtherSourceText').style.display = 'block';
+                    document.getElementById('profOtherSourceText').value = prof.invName;
+                } else {
+                    sourceSel.value = prof.invId;
+                    document.getElementById('profOtherSourceText').style.display = 'none';
+                }
+                
                 document.getElementById('profDetails').value = prof.details;
             } else if(type === 'return') {
                 let ret = allReturns.find(r => r.id === id);
