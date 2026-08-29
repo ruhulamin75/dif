@@ -59,7 +59,14 @@
         .card-info h3 { font-size: 20px; color: var(--text-dark); margin-bottom: 5px; }
         .card-info p { font-size: 14px; color: var(--text-gray); line-height: 1.2; }
 
-        .card.highlight-card { background: linear-gradient(135deg, var(--primary-green), var(--dark-green)); border-left: none; box-shadow: 0 8px 20px rgba(11, 158, 74, 0.3); color: var(--white); }
+        /* বর্তমান ব্যালেন্স কার্ডটিকে ফুল-উইডথ করা হয়েছে */
+        .card.highlight-card { 
+            grid-column: 1 / -1; /* কার্ডটি পুরো কলাম জুড়ে থাকবে */
+            background: linear-gradient(135deg, var(--primary-green), var(--dark-green)); 
+            border-left: none; 
+            box-shadow: 0 8px 20px rgba(11, 158, 74, 0.3); 
+            color: var(--white); 
+        }
         .card.highlight-card .card-icon { background: rgba(255,255,255,0.2); color: var(--white); }
         .card.highlight-card .card-info h3, .card.highlight-card .card-info p { color: var(--white); }
 
@@ -163,8 +170,9 @@
             <div class="card highlight-card">
                 <div class="card-icon"><i class="fa-solid fa-wallet"></i></div>
                 <div class="card-info">
-                    <h3 class="en-text" id="currentBalance">৳ 0</h3>
+                    <h3 class="en-text" id="currentBalance" style="font-size: 24px;">৳ 0</h3>
                     <p>বর্তমান ব্যালেন্স</p>
+                    <div id="currentBalanceWords" style="font-size: 13px; margin-top: 5px; opacity: 0.85; font-weight: 500;">কথায়: শূন্য টাকা মাত্র</div>
                 </div>
             </div>
         </div>
@@ -224,6 +232,39 @@
             localStorage.removeItem("loggedInMemberId");
             window.location.href = "login.html";
         }
+
+        // বাংলা সংখ্যায় কথায় রূপান্তরের ফাংশন
+        const banglaWords = { 0: 'শূন্য', 1: 'এক', 2: 'দুই', 3: 'তিন', 4: 'চার', 5: 'পাঁচ', 6: 'ছয়', 7: 'সাত', 8: 'আট', 9: 'নয়', 10: 'দশ', 11: 'এগারো', 12: 'বারো', 13: 'তেরো', 14: 'চোদ্দ', 15: 'পনেরো', 16: 'ষোলো', 17: 'সতেরো', 18: 'আঠারো', 19: 'উনিশ', 20: 'বিশ', 21: 'একুশ', 22: 'বাইশ', 23: 'তেইশ', 24: 'চব্বিশ', 25: 'পঁচিশ', 26: 'ছাব্বিশ', 27: 'সাতাশ', 28: 'আটাশ', 29: 'ঊনত্রিশ', 30: 'ত্রিশ', 31: 'একত্রিশ', 32: 'বত্রিশ', 33: 'তেত্রিশ', 34: 'চৌত্রিশ', 35: 'পঁয়ত্রিশ', 36: 'ছত্রিশ', 37: 'সাঁইত্রিশ', 38: 'আটত্রিশ', 39: 'ঊনচল্লিশ', 40: 'চল্লিশ', 41: 'একচল্লিশ', 42: 'বিয়াল্লিশ', 43: 'তেতাল্লিশ', 44: 'চুয়াল্লিশ', 45: 'পঁয়তাল্লিশ', 46: 'ছেচল্লিশ', 47: 'সাতচল্লিশ', 48: 'আটচল্লিশ', 49: 'ঊনপঞ্চাশ', 50: 'পঞ্চাশ', 51: 'একান্ন', 52: 'বায়ান্ন', 53: 'তিপ্পান্ন', 54: 'চুয়ান্ন', 55: 'পঞ্চান্ন', 56: 'ছাপ্পান্ন', 57: 'সাতান্ন', 58: 'আটান্ন', 59: 'ঊনষাট', 60: 'ষাট', 61: 'একষট্টি', 62: 'বাষট্টি', 63: 'তেষট্টি', 64: 'চৌষট্টি', 65: 'পঁয়ষট্টি', 66: 'ছেষট্টি', 67: 'সাতষট্টি', 68: 'আটষট্টি', 69: 'ঊনসত্তর', 70: 'সত্তর', 71: 'একাতর', 72: 'বাহাত্তর', 73: 'তিয়াত্তর', 74: 'চুয়াত্তর', 75: 'পঁচাত্তর', 76: 'ছিয়াত্তর', 77: 'সাতাত্তর', 78: 'আটাত্তর', 79: 'ঊনআশি', 80: 'আশি', 81: 'একাশি', 82: 'বিরাশি', 83: 'তিরাশি', 84: 'চুরাশি', 85: 'পঁচাশি', 86: 'ছিয়াশি', 87: 'সাতাশি', 88: 'আটাশি', 89: 'ঊননব্বই', 90: 'নব্বই', 91: 'একানব্বই', 92: 'বিরানব্বই', 93: 'তিরানব্বই', 94: 'চুরানব্বই', 95: 'পঁচানব্বই', 96: 'ছিয়ানব্বই', 97: 'সাতানব্বই', 98: 'আটানব্বই', 99: 'নিরানব্বই' };
+        
+        function getBanglaWordsInt(num) {
+            if (num === 0) return banglaWords[0];
+            let words = "";
+            if (Math.floor(num / 10000000) > 0) { words += getBanglaWordsInt(Math.floor(num / 10000000)) + " কোটি "; num %= 10000000; }
+            if (Math.floor(num / 100000) > 0) { words += banglaWords[Math.floor(num / 100000)] + " লক্ষ "; num %= 100000; }
+            if (Math.floor(num / 1000) > 0) { words += banglaWords[Math.floor(num / 1000)] + " হাজার "; num %= 1000; }
+            if (Math.floor(num / 100) > 0) { words += banglaWords[Math.floor(num / 100)] + " শত "; num %= 100; }
+            num = Math.floor(num); 
+            if (num > 0) { words += banglaWords[num]; }
+            return words.trim();
+        }
+
+        function getBanglaCurrency(num) {
+            let isNegative = num < 0;
+            num = Math.abs(num);
+            let intPart = Math.floor(num);
+            let decPart = Math.round((num - intPart) * 100);
+            let str = "";
+            if(intPart > 0) {
+                str += getBanglaWordsInt(intPart) + " টাকা";
+            } else if(intPart === 0 && decPart === 0) {
+                str += banglaWords[0] + " টাকা";
+            }
+            if(decPart > 0) {
+                if(str !== "") str += " ও ";
+                str += getBanglaWordsInt(decPart) + " পয়সা";
+            }
+            return (isNegative ? "মাইনাস " : "") + str;
+        }
     </script>
 
     <!-- Firebase Connection Script -->
@@ -261,6 +302,9 @@
             document.getElementById('totalProfit').innerText = "৳ " + globalProfit;
             document.getElementById('totalInvestment').innerText = "৳ " + currentInvestment;
             document.getElementById('currentBalance').innerText = "৳ " + currentBalance;
+
+            // বর্তমান ব্যালেন্স কথায় আপডেট করা হলো
+            document.getElementById('currentBalanceWords').innerText = "কথায়: " + getBanglaCurrency(currentBalance) + " মাত্র";
         }
 
         // ১. মোট সদস্য সংখ্যা
