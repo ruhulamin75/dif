@@ -15,10 +15,30 @@
         body { font-family: 'Poppins', 'Hind Siliguri', sans-serif; background-color: var(--bg-color); color: var(--text-dark); }
         .en-text { font-family: 'Poppins', sans-serif; }
 
-        .member-topbar { background: var(--white); padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100;}
+        /* =========================================
+           অ্যানিমেশন কি-ফ্রেমস (Keyframes)
+           ========================================= */
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes fadeUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        /* টপবার অ্যানিমেশন */
+        .member-topbar { background: var(--white); padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; animation: slideDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;}
         
         .brand { display: flex; align-items: center; gap: 10px; }
-        .brand img { width: 40px; }
+        .brand img { width: 40px; transition: transform 0.3s;}
+        .brand:hover img { transform: scale(1.1) rotate(5deg); }
         .brand h2 { font-size: 16px; color: var(--primary-green); margin: 0; font-weight: 700; line-height: 1.2; white-space: normal; word-wrap: break-word; max-width: 200px;}
         
         @media (min-width: 768px) {
@@ -26,62 +46,91 @@
         }
 
         .user-menu { display: flex; gap: 15px; align-items: center;}
-        .btn-profile { background: var(--light-green); color: var(--dark-green); border: none; padding: 8px 15px; border-radius: 20px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.3s;}
-        .btn-profile:hover { background: var(--primary-green); color: white;}
+        .btn-profile { background: var(--light-green); color: var(--dark-green); border: none; padding: 8px 15px; border-radius: 20px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);}
+        .btn-profile:hover { background: var(--primary-green); color: white; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(11, 158, 74, 0.2);}
         
         .profile-text { display: none; }
         @media (min-width: 481px) {
             .profile-text { display: inline; }
         }
 
-        .btn-logout { color: #d32f2f; background: #ffeaea; border: none; padding: 8px 15px; border-radius: 20px; font-weight: 600; cursor: pointer; transition: 0.3s;}
+        .btn-logout { color: #d32f2f; background: #ffeaea; border: none; padding: 8px 15px; border-radius: 20px; font-weight: 600; cursor: pointer; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);}
+        .btn-logout:hover { background: #d32f2f; color: white; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(211, 47, 47, 0.2);}
 
         .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
-        .welcome-card { background: linear-gradient(135deg, var(--primary-green), var(--dark-green)); color: white; padding: 30px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; box-shadow: 0 10px 20px rgba(11, 158, 74, 0.2);}
+        
+        /* ওয়েলকাম কার্ড অ্যানিমেশন */
+        .welcome-card { background: linear-gradient(135deg, var(--primary-green), var(--dark-green)); color: white; padding: 30px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; box-shadow: 0 10px 20px rgba(11, 158, 74, 0.2); opacity: 0; animation: scaleIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.1s;}
         .welcome-text h1 { font-size: 28px; margin: 0 0 5px 0;}
         .welcome-text p { margin: 0; opacity: 0.9; font-size: 16px;}
-        .welcome-avatar { width: 80px; height: 80px; border-radius: 50%; border: 3px solid white; object-fit: cover; background: white;}
+        .welcome-avatar { width: 80px; height: 80px; border-radius: 50%; border: 3px solid white; object-fit: cover; background: white; transition: transform 0.4s;}
+        .welcome-card:hover .welcome-avatar { transform: scale(1.1); }
 
+        /* ফান্ড কার্ড অ্যানিমেশন */
         .fund-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px;}
-        .fund-card { background: var(--white); padding: 25px 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); text-align: center; border-bottom: 4px solid var(--primary-green);}
+        .fund-card { background: var(--white); padding: 25px 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); text-align: center; border-bottom: 4px solid var(--primary-green); opacity: 0; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;}
+        
+        /* স্ট্যাগার্ড ডিলে */
+        .fund-card:nth-child(1) { animation-delay: 0.2s; }
+        .fund-card:nth-child(2) { animation-delay: 0.3s; }
+        .fund-card:nth-child(3) { animation-delay: 0.4s; }
+        .fund-card:nth-child(4) { animation-delay: 0.5s; }
+
+        .fund-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(11, 158, 74, 0.1); border-bottom-width: 6px;}
         .fund-card h3 { font-size: 15px; color: var(--text-gray); margin: 0 0 10px 0; font-weight: 600;}
         .fund-card .amount { font-size: 28px; color: var(--dark-green); font-weight: 700;}
 
+        /* ড্যাশবোর্ড সেকশন অ্যানিমেশন */
         .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; align-items: start;}
-        .section-card { background: var(--white); border-radius: 12px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 25px;}
+        .section-card { background: var(--white); border-radius: 12px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 25px; opacity: 0; animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;}
+        
+        /* সেকশন কার্ডের স্ট্যাগার্ড ডিলে */
+        .dashboard-grid > div:nth-child(1) .section-card:nth-child(1) { animation-delay: 0.6s; }
+        .dashboard-grid > div:nth-child(1) .section-card:nth-child(2) { animation-delay: 0.7s; }
+        .dashboard-grid > div:nth-child(2) .section-card:nth-child(1) { animation-delay: 0.8s; }
+
         .section-card h3 { font-size: 18px; color: var(--dark-green); margin: 0 0 20px 0; border-bottom: 2px solid var(--light-green); padding-bottom: 10px;}
 
-        .notice-item { padding: 15px; background: #f9fbf9; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid var(--primary-green);}
+        .notice-item { padding: 15px; background: #f9fbf9; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid var(--primary-green); transition: 0.3s;}
+        .notice-item:hover { transform: translateX(5px); box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
         .notice-item h4 { margin: 0 0 5px 0; color: var(--text-dark); font-size: 16px;}
         .notice-item p { margin: 0; color: var(--text-gray); font-size: 14px; line-height: 1.5;}
         .notice-date { font-size: 12px; color: #888; display: block; margin-top: 8px;}
 
-        .bank-item { padding: 15px; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 15px; display: flex; align-items: flex-start; gap: 15px;}
-        .bank-icon { width: 45px; height: 45px; background: #e3f2fd; color: #1976d2; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 20px; flex-shrink: 0;}
+        .bank-item { padding: 15px; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 15px; display: flex; align-items: flex-start; gap: 15px; transition: 0.3s;}
+        .bank-item:hover { border-color: #1976d2; background: #f0f8ff; }
+        .bank-icon { width: 45px; height: 45px; background: #e3f2fd; color: #1976d2; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 20px; flex-shrink: 0; transition: transform 0.3s;}
+        .bank-item:hover .bank-icon { transform: rotate(-10deg) scale(1.1); }
         .bank-info h4 { margin: 0 0 5px 0; color: #1976d2; font-size: 16px;}
         .bank-info p { margin: 0; color: #444; font-size: 14px; line-height: 1.6;}
 
         table { width: 100%; border-collapse: collapse; }
         table th, table td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border-color); font-size: 14px;}
         table th { background: var(--light-green); color: var(--dark-green); }
-        .btn-view-receipt { background: #e3f2fd; color: #1976d2; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600;}
+        table tbody tr { transition: background-color 0.3s; }
+        table tbody tr:hover { background-color: #f9fbf9; }
+        .btn-view-receipt { background: #e3f2fd; color: #1976d2; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; transition: 0.3s;}
+        .btn-view-receipt:hover { background: #1976d2; color: white; transform: translateY(-2px);}
 
         /* প্রোফাইল মোডাল */
         .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 9999; overflow-y: auto; padding: 20px;}
         .modal-content { background: var(--white); border-radius: 12px; width: 100%; max-width: 600px; margin: 30px auto; padding: 30px; position: relative;}
-        .close-btn { position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; background: none; border: none; color: #555;}
+        .close-btn { position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; background: none; border: none; color: #555; transition: color 0.3s;}
+        .close-btn:hover { color: #d32f2f; }
         
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .form-group { margin-bottom: 15px; }
         .form-group.full { grid-column: 1 / -1; }
         .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px;}
-        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; font-family: inherit; font-size: 14px; outline: none; background: #fafafa;}
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; font-family: inherit; font-size: 14px; outline: none; background: #fafafa; transition: border-color 0.3s;}
         .form-group input:focus { border-color: var(--primary-green); background: white;}
         .form-group input[readonly] { background: #eee; cursor: not-allowed; color: #777;}
         
-        .pic-wrapper { width: 100px; height: 100px; border-radius: 50%; border: 2px dashed var(--primary-green); margin: 0 auto 20px; display: flex; justify-content: center; align-items: center; cursor: pointer; overflow: hidden; position: relative;}
+        .pic-wrapper { width: 100px; height: 100px; border-radius: 50%; border: 2px dashed var(--primary-green); margin: 0 auto 20px; display: flex; justify-content: center; align-items: center; cursor: pointer; overflow: hidden; position: relative; transition: border-color 0.3s;}
+        .pic-wrapper:hover { border-color: var(--dark-green); }
         .pic-wrapper img { width: 100%; height: 100%; object-fit: cover;}
-        .save-btn { grid-column: 1/-1; background: var(--primary-green); color: white; border: none; padding: 12px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 16px; margin-top: 10px;}
+        .save-btn { grid-column: 1/-1; background: var(--primary-green); color: white; border: none; padding: 12px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 16px; margin-top: 10px; transition: background-color 0.3s;}
+        .save-btn:hover { background: var(--dark-green); }
 
         /* রিসিট প্রিন্ট স্টাইল */
         .receipt-print-area { display: none; }
@@ -103,9 +152,9 @@
             
             .receipt-container-print {
                 width: 100%;
-                max-width: 800px; /* মার্জিন ও বর্ডার ক্লিয়ার করার জন্য */
+                max-width: 800px;
                 margin: 0 auto;
-                padding: 40px; /* রিসিটের ভেতরের কন্টেন্টকে জায়গা দেওয়া হলো */
+                padding: 40px;
                 box-sizing: border-box;
             }
 
@@ -298,6 +347,30 @@
             window.location.href = "login.html";
         }
 
+        // ==========================================
+        // Number Counting Animation Function
+        // ==========================================
+        function animateCounter(element, targetValue, duration) {
+            let startValue = 0;
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                // Ease out function for smooth deceleration
+                const easeProgress = 1 - Math.pow(1 - progress, 4); 
+                let currentVal = Math.floor(easeProgress * (targetValue - startValue) + startValue);
+                
+                element.innerText = '৳ ' + currentVal;
+                
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                } else {
+                    element.innerText = '৳ ' + targetValue;
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
         // Data Loading Logic
         function loadDashboardData() {
             onValue(ref(db, 'members/' + loggedInUserId), (snapshot) => {
@@ -363,10 +436,11 @@
 
                 let totalSum = mSum + ySum + sSum;
 
-                document.getElementById('tMonthly').innerText = '৳ ' + mSum;
-                document.getElementById('tYearly').innerText = '৳ ' + ySum;
-                document.getElementById('tShare').innerText = '৳ ' + sSum;
-                document.getElementById('tTotal').innerText = '৳ ' + totalSum;
+                // Number Counting Animations Triggered Here
+                animateCounter(document.getElementById('tMonthly'), mSum, 1500);
+                animateCounter(document.getElementById('tYearly'), ySum, 1500);
+                animateCounter(document.getElementById('tShare'), sSum, 1500);
+                animateCounter(document.getElementById('tTotal'), totalSum, 1800);
 
                 const tbody = document.getElementById('trxContainer');
                 tbody.innerHTML = '';
