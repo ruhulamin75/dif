@@ -44,6 +44,19 @@
             font-family: 'Poppins', sans-serif;
         }
 
+        /* =========================================
+           অ্যানিমেশন কি-ফ্রেমস (Keyframes)
+           ========================================= */
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes fadeUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
         /* হেডার অংশ */
         header {
             background-color: var(--white);
@@ -55,6 +68,7 @@
             position: sticky;
             top: 0;
             z-index: 1000;
+            animation: slideDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; /* হেডার অ্যানিমেশন */
         }
 
         .logo-section {
@@ -92,7 +106,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             border: none;
             cursor: pointer;
             font-family: 'Hind Siliguri', sans-serif;
@@ -100,17 +114,18 @@
 
         .header-btn:hover {
             background-color: var(--dark-green);
-            box-shadow: 0 4px 10px rgba(11, 158, 74, 0.2);
+            box-shadow: 0 6px 15px rgba(11, 158, 74, 0.25);
+            transform: translateY(-2px) scale(1.02); /* বাটন হোভার অ্যানিমেশন */
         }
         
         #installAppBtn {
             background-color: #1976d2;
-            display: none; /* Initially hidden */
+            display: none; 
         }
         
         #installAppBtn:hover {
             background-color: #115293;
-            box-shadow: 0 4px 10px rgba(25, 118, 210, 0.2);
+            box-shadow: 0 6px 15px rgba(25, 118, 210, 0.25);
         }
 
         /* মূল কন্টেন্ট */
@@ -133,16 +148,22 @@
             text-align: center;
         }
 
+        /* হিরো টেক্সট অ্যানিমেশন */
         .info-container h2 {
             font-size: 32px;
             color: var(--dark-green);
             margin-bottom: 10px;
+            opacity: 0;
+            animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
         .info-container > p {
             font-size: 18px;
             color: var(--text-gray);
             margin-bottom: 35px;
+            opacity: 0;
+            animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation-delay: 0.15s;
         }
 
         /* সুবিধার গ্রিড */
@@ -153,17 +174,27 @@
             text-align: left;
         }
 
+        /* কার্ড অ্যানিমেশন */
         .feature-card {
             background: #f9fbf9;
             padding: 20px;
             border-radius: 12px;
             border-left: 4px solid var(--primary-green);
-            transition: 0.3s;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            opacity: 0;
+            animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
+        /* স্ট্যাগার্ড ডিলে (একের পর এক আসার জন্য) */
+        .feature-card:nth-child(1) { animation-delay: 0.3s; }
+        .feature-card:nth-child(2) { animation-delay: 0.45s; }
+        .feature-card:nth-child(3) { animation-delay: 0.6s; }
+        .feature-card:nth-child(4) { animation-delay: 0.75s; }
+
         .feature-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transform: translateY(-5px) scale(1.02); /* কার্ড হোভার বাউন্স */
+            box-shadow: 0 10px 25px rgba(11, 158, 74, 0.1);
+            border-left-width: 6px;
         }
 
         .feature-card i {
@@ -173,6 +204,11 @@
             background: var(--light-green);
             padding: 12px;
             border-radius: 8px;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover i {
+            transform: scale(1.1) rotate(5deg); /* আইকন হোভার ইফেক্ট */
         }
 
         .feature-card h3 {
@@ -222,7 +258,7 @@
         .footer-links ul li a, .footer-links ul li span {
             color: #d1e8da;
             text-decoration: none;
-            transition: color 0.3s;
+            transition: color 0.3s, transform 0.2s;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -231,6 +267,7 @@
 
         .footer-links ul li a:hover {
             color: var(--white);
+            transform: translateX(5px); /* লিংক হোভার ইফেক্ট */
         }
 
         .footer-bottom {
@@ -241,7 +278,6 @@
 
         /* রেসপন্সিভ ডিজাইন */
         @media (max-width: 768px) {
-            /* হেডারের লেআউট ঠিক রাখা হয়েছে */
             header {
                 padding: 15px 20px;
             }
@@ -280,7 +316,7 @@
         /* Very small screens */
         @media (max-width: 380px) {
              .header-btn span {
-                 display: none; /* Hide text, show only icon on very small screens to save space */
+                 display: none; 
              }
         }
     </style>
@@ -372,7 +408,6 @@
     
     <!-- PWA Install & Service Worker Logic -->
     <script>
-        // Service Worker Registration
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
@@ -385,42 +420,32 @@
             });
         }
 
-        // App Install Button Logic
         let deferredPrompt;
         const installBtn = document.getElementById('installAppBtn');
-
-        // Check if the app is already running as a standalone app (installed)
         const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
 
         if (!isStandalone) {
             window.addEventListener('beforeinstallprompt', (e) => {
-                // Prevent the mini-infobar from appearing on mobile
                 e.preventDefault();
-                // Stash the event so it can be triggered later.
                 deferredPrompt = e;
-                // Update UI notify the user they can install the PWA
                 installBtn.style.display = 'flex';
             });
 
             installBtn.addEventListener('click', async () => {
                 if (deferredPrompt) {
-                    // Show the install prompt
                     deferredPrompt.prompt();
-                    // Wait for the user to respond to the prompt
                     const { outcome } = await deferredPrompt.userChoice;
                     if (outcome === 'accepted') {
                         console.log('User accepted the install prompt');
                     } else {
                         console.log('User dismissed the install prompt');
                     }
-                    // We've used the prompt, and can't use it again, throw it away
                     deferredPrompt = null;
                     installBtn.style.display = 'none';
                 }
             });
 
             window.addEventListener('appinstalled', (evt) => {
-                // Log install to analytics
                 console.log('INSTALL: Success');
                 installBtn.style.display = 'none';
             });
