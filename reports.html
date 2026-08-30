@@ -73,6 +73,8 @@
 
         /* প্রিন্ট এরিয়া (Report Container) */
         .report-container { background: var(--white); border-radius: 12px; padding: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); min-height: 400px; display: none; position: relative; z-index: 1; animation: popIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;}
+        
+        /* Watermark default for screen */
         .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.04; z-index: -1; pointer-events: none; }
         .watermark img { width: 350px; height: auto;}
 
@@ -141,11 +143,14 @@
                 transform: none !important;
             } 
 
-            /* ওয়াটারমার্ক এর অপাসিটি এবং পজিশন ঠিক রাখতে */
+            /* ওয়াটারমার্ক ফিক্স: position fixed দিলে প্রতিটি পেজে আসবে */
             .watermark {
-                opacity: 0.05 !important;
-                transform: translate(-50%, -50%) !important;
-                z-index: -1 !important;
+                position: fixed !important; 
+                top: 50% !important; 
+                left: 50% !important; 
+                transform: translate(-50%, -50%) !important; 
+                opacity: 0.05 !important; 
+                z-index: -1 !important; 
             }
             
             .report-title { background: var(--light-green) !important;}
@@ -404,9 +409,6 @@
             let categoryTotals = {};
             let filteredItems = [];
 
-            // ===============================================
-            // নতুন যুক্ত করা অংশ: সকল সদস্যের লেজার
-            // ===============================================
             if (type === 'all_members_ledger') {
                 document.getElementById('repTitle').innerText = "সকল সদস্যের লেজার (Summary)";
                 thRow.innerHTML = `
@@ -421,7 +423,6 @@
                 let membersSummary = [];
                 let totalMonthly = 0, totalYearly = 0, totalShare = 0;
 
-                // প্রতিটি সদস্যের ডেটা ক্যালকুলেট করা
                 Object.keys(membersData).forEach(memberKey => {
                     const m = membersData[memberKey];
                     let name = m.nameBn || m.nameEn;
@@ -451,7 +452,6 @@
                     }
                 });
 
-                // আইডি অনুযায়ী সাজানো (A to Z)
                 membersSummary.sort((a, b) => a.id.localeCompare(b.id));
 
                 if(membersSummary.length === 0) {
@@ -473,7 +473,6 @@
                         tbody.appendChild(tr);
                     });
 
-                    // Grand Total Row
                     let totalTr = document.createElement('tr');
                     totalTr.className = 'grand-total-row';
                     totalTr.style.opacity = "0";
@@ -494,9 +493,6 @@
                 document.getElementById('catSummaryTable').style.display = 'none';
 
             } else {
-                // ===============================================
-                // আগের অন্যান্য রিপোর্ট লজিক
-                // ===============================================
                 allTransactions.forEach(trx => {
                     let trxDate = new Date(trx.date);
                     if (trxDate >= sDate && trxDate <= eDate) {
@@ -582,7 +578,6 @@
                 }
             }
 
-            // Display Report Container and trigger its Pop-in animation
             document.getElementById('reportContainer').style.display = 'block';
             document.getElementById('btnPrint').style.display = 'inline-block';
         }
