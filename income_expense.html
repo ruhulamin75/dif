@@ -654,7 +654,13 @@
             if (cleanPhone.startsWith("+")) cleanPhone = cleanPhone.replace("+", "");
             else if (cleanPhone.startsWith("01")) cleanPhone = "88" + cleanPhone;
 
+            // তারিখটি সুন্দর ফরম্যাটে (DD/MM/YYYY) রূপান্তর করা
+            let dStr = new Date(trx.date).toLocaleDateString('en-GB');
+
+            // মেসেজ তৈরি
             let message = "আসসালামু আলাইকুম *" + memberName + "*,\n\n";
+            message += "*তারিখ:* " + dStr + "\n";
+            
             if (trx.type === 'income') {
                 message += "আপনার জমার বিবরণ:\n\n";
             } else {
@@ -669,7 +675,7 @@
             
             message += "------------------------\n";
             message += (trx.type === 'income' ? "সর্বমোট প্রদান: *" : "সর্বমোট উত্তোলন: *") + trx.amount + " টাকা* ✅\n\n";
-            message += "ধন্যবাদ! 🤝";
+            message += "ধন্যবাদান্তে,\n*দারুল ইত্তিহাদ ফাউন্ডেশন* 🤝";
 
             let encodedMessage = encodeURIComponent(message);
             let whatsappUrl = "https://wa.me/" + cleanPhone + "?text=" + encodedMessage;
