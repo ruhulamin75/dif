@@ -107,6 +107,8 @@
         /* অ্যাকশন বাটন */
         .action-icons { display: flex; gap: 8px; justify-content: center;}
         .action-icons button { border: none; background: none; cursor: pointer; font-size: 15px; padding: 8px 10px; border-radius: 6px; transition: 0.3s; display: flex; align-items: center; justify-content: center;}
+        .btn-whatsapp { color: #25D366; background: #e8f9ef; font-weight: 600;} 
+        .btn-whatsapp:hover { background: #25D366; color: white; transform: translateY(-2px);}
         .btn-view { color: #1976d2; background: #f0f8ff; font-weight: 600;} .btn-view:hover { background: #1976d2; color: white; transform: translateY(-2px);}
         .btn-edit { color: var(--primary-green); background: #eaf6ee; font-weight: 600;} .btn-edit:hover { background: var(--primary-green); color: white; transform: translateY(-2px);}
         .btn-delete { color: #d32f2f; background: #ffeaea; font-weight: 600;} .btn-delete:hover { background: #d32f2f; color: white; transform: translateY(-2px);}
@@ -618,52 +620,62 @@
         const db = getDatabase(app);
 
         let memberDict = {}; 
-        let memberPhoneDict = {}; // [NEW]: নাম্বার স্টোর করার জন্য
+        let memberPhoneDict = {};
         let allTransactions = [];
         let filteredTransactions = [];
         let displayCount = 5;
 
-        // [NEW]: WhatsApp মেসেজ পাঠানোর ফাংশন
-        function processWhatsAppReceipt(trxData, isUpdate) {
-            let successMsg = isUpdate ? 'লেনদেনটি সফলভাবে আপডেট হয়েছে!' : 'লেনদেন সফলভাবে সংরক্ষণ করা হয়েছে!';
-            
+        // টেবিল থেকে সরাসরি WhatsApp মেসেজ পাঠানোর ফাংশন
+        window.sendWhatsAppMsg = function(id) {
+            const trx = allTransactions.find(t => t.id === id);
+            if(!trx) return;
+
             let phone = '';
-            if (trxData.payerId && memberPhoneDict[trxData.payerId]) {
-                phone = memberPhoneDict[trxData.payerId];
-            }
             
+            // ফোন নাম্বার খোঁজার লজিক
+            if (trx.type === 'income' && trx.payerId && memberPhoneDict[trx.payerId]) {
+                phone = memberPhoneDict[trx.payerId];
+            } else if (trx.type === 'expense') {
+                // উত্তোলনের ক্ষেত্রে নাম দিয়ে ডেটাবেস থেকে ID ও নাম্বার খুঁজে বের করা
+                let memberId = Object.keys(memberDict).find(key => memberDict[key] === trx.spender);
+                if (memberId && memberPhoneDict[memberId]) {
+                    phone = memberPhoneDict[memberId];
+                }
+            }
+
             if (!phone) {
-                // নাম্বার না থাকলে শুধু সাকসেস মেসেজ দেখাবে
-                alert(successMsg + (trxData.payerId ? "\n\n(সদস্যের মোবাইল নাম্বার সিস্টেমে না থাকায় WhatsApp অপশনটি দেখানো হচ্ছে না)" : ""));
+                alert("দুঃখিত! এই সদস্যের কোনো মোবাইল নাম্বার ডেটাবেসে পাওয়া যায়নি।");
                 return;
             }
 
-            let wantToMessage = confirm(successMsg + "\n\nআপনি কি " + trxData.payerName + "-কে WhatsApp-এ মানি রিসিট পাঠাতে চান?");
+            let memberName = trx.type === 'income' ? trx.payerName : trx.spender;
             
-            if (wantToMessage) {
-                let cleanPhone = phone.replace(/\s+/g, '').replace(/-/g, ''); 
-                if (cleanPhone.startsWith("+")) {
-                    cleanPhone = cleanPhone.replace("+", "");
-                } else if (cleanPhone.startsWith("01")) {
-                    cleanPhone = "88" + cleanPhone;
-                }
+            let cleanPhone = phone.replace(/\s+/g, '').replace(/-/g, ''); 
+            if (cleanPhone.startsWith("+")) cleanPhone = cleanPhone.replace("+", "");
+            else if (cleanPhone.startsWith("01")) cleanPhone = "88" + cleanPhone;
 
-                let message = "আসসালামু আলাইকুম *" + trxData.payerName + "*,\n\nআপনার আজকের জমার বিবরণ:\n\n";
-                
-                trxData.items.forEach(item => {
+            let message = "আসসালামু আলাইকুম *" + memberName + "*,\n\n";
+            if (trx.type === 'income') {
+                message += "আপনার জমার বিবরণ:\n\n";
+            } else {
+                message += "আপনার উত্তোলনের বিবরণ:\n\n";
+            }
+            
+            if (trx.items && trx.items.length > 0) {
+                trx.items.forEach(item => {
                     message += "▪ " + item.category + ": *" + item.amount + " টাকা*\n";
                 });
-                
-                message += "------------------------\n";
-                message += "সর্বমোট প্রদান: *" + trxData.amount + " টাকা* ✅\n\n";
-                message += "ধন্যবাদ! 🤝";
-
-                let encodedMessage = encodeURIComponent(message);
-                let whatsappUrl = "https://wa.me/" + cleanPhone + "?text=" + encodedMessage;
-                
-                window.open(whatsappUrl, '_blank');
             }
-        }
+            
+            message += "------------------------\n";
+            message += (trx.type === 'income' ? "সর্বমোট প্রদান: *" : "সর্বমোট উত্তোলন: *") + trx.amount + " টাকা* ✅\n\n";
+            message += "ধন্যবাদ! 🤝";
+
+            let encodedMessage = encodeURIComponent(message);
+            let whatsappUrl = "https://wa.me/" + cleanPhone + "?text=" + encodedMessage;
+            
+            window.location.href = whatsappUrl; 
+        };
 
         // সদস্য লিস্ট ড্রপডাউনে
         onValue(ref(db, 'members'), (snapshot) => {
@@ -683,7 +695,6 @@
                     let displayName = `${mName} ${m.memberId ? `(${m.memberId})` : ''}`;
                     memberDict[key] = displayName;
                     
-                    // [NEW]: ডেটাবেস থেকে নাম্বার নিয়ে রাখা হচ্ছে
                     memberPhoneDict[key] = m.phone || m.mobile || m.mobileNumber || m.phoneNumber || m.contact || ''; 
 
                     incMemSelect.insertBefore(new Option(displayName, key), incMemSelect.lastElementChild);
@@ -761,6 +772,7 @@
                             status: 'active'
                         });
                     }
+                    alert('লেনদেনটি সফলভাবে আপডেট হয়েছে!');
                 } else {
                     trxData.timestamp = Date.now();
                     await set(push(ref(db, 'transactions')), trxData);
@@ -770,14 +782,7 @@
                             status: 'active'
                         });
                     }
-                }
-                
-                // [NEW]: WhatsApp মেসেজ এবং সাকসেস এলার্ট কলিং
-                if (type === 'income') {
-                    processWhatsAppReceipt(trxData, editId ? true : false);
-                } else {
-                    if (editId) alert('লেনদেনটি সফলভাবে আপডেট হয়েছে!');
-                    else alert('লেনদেন সফলভাবে সংরক্ষণ করা হয়েছে!');
+                    alert('লেনদেন সফলভাবে সংরক্ষণ করা হয়েছে!');
                 }
 
                 resetForm();
@@ -876,6 +881,7 @@
                     <td class="en-text" style="font-weight:bold; color: ${isIncome ? 'var(--primary-green)' : 'var(--expense-red)'};">৳ ${trx.amount}</td>
                     <td style="text-align: center;">
                         <div class="action-icons">
+                            <button class="btn-whatsapp" title="WhatsApp-এ পাঠান" onclick="window.sendWhatsAppMsg('${trx.id}')"><i class="fa-brands fa-whatsapp"></i></button>
                             <button class="btn-view" title="রিসিট দেখুন" onclick="window.showReceipt('${trx.id}')"><i class="fa-solid fa-receipt"></i></button>
                             <button class="btn-edit" title="এডিট করুন" onclick="window.editTrx('${trx.id}')"><i class="fa-solid fa-pen-to-square"></i></button>
                             <button class="btn-delete" title="ডিলিট করুন" onclick="window.deleteTrx('${trx.id}')"><i class="fa-solid fa-trash-can"></i></button>
