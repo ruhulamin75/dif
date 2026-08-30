@@ -73,7 +73,7 @@
 
         /* প্রিন্ট এরিয়া (Report Container) */
         .report-container { background: var(--white); border-radius: 12px; padding: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); min-height: 400px; display: none; position: relative; z-index: 1; animation: popIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;}
-        .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.04; z-index: -1; pointer-events: none; }
+        .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.05; z-index: -1; pointer-events: none; }
         .watermark img { width: 350px; height: auto;}
 
         .report-header { text-align: center; border-bottom: 2px solid var(--primary-green); padding-bottom: 15px; margin-bottom: 25px;}
@@ -115,7 +115,7 @@
         .clearfix::after { content: ""; clear: both; display: table; }
 
         /* ====================================================
-           প্রিন্ট মিডিয়া কোয়েরি (A4 Size Fix - 100% White Background)
+           প্রিন্ট মিডিয়া কোয়েরি ফিক্স (Watermark & Row Visibility)
            ==================================================== */
         @media print {
             @page { size: A4 portrait; margin: 15mm; }
@@ -128,15 +128,20 @@
             .cat-summary-wrapper { overflow-x: visible !important; width: 50% !important; float: right !important;}
             .signature-box { float: right !important; width: 300px !important; margin-top: 80px !important;}
             
-            /* অ্যানিমেশন ফিক্স: প্রিন্টের সময় opacity 1 রাখতে হবে */
-            * { 
-                -webkit-print-color-adjust: exact !important; 
-                print-color-adjust: exact !important; 
-                animation: none !important; 
-                transition: none !important; 
-                opacity: 1 !important; /* This fixes the invisible table rows issue */
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; animation: none !important; transition: none !important; } 
+
+            /* অ্যানিমেশনের কারণে অদৃশ্য হয়ে থাকা লেখাগুলো দৃশ্যমান করতে */
+            tr, .summary-box, .report-container {
+                opacity: 1 !important;
                 transform: none !important;
-            } 
+            }
+
+            /* ওয়াটারমার্ক এর অপাসিটি এবং পজিশন ঠিক রাখতে */
+            .watermark {
+                opacity: 0.05 !important;
+                transform: translate(-50%, -50%) !important;
+                z-index: -1 !important;
+            }
             
             .report-title { background: var(--light-green) !important;}
             .summary-box { background: #ffffff !important; border: 1px solid #ddd !important;}
@@ -159,7 +164,6 @@
 </head>
 <body>
 
-    <!-- Security Lock -->
     <script>
         if (localStorage.getItem("userRole") !== "admin") {
             alert("অনুগ্রহ করে প্রথমে অ্যাডমিন হিসেবে লগইন করুন।");
@@ -216,8 +220,7 @@
                 <label>সদস্য নির্বাচন করুন</label>
                 <select id="memberId">
                     <option value="" disabled selected>সদস্য নির্বাচন করুন</option>
-                    <!-- JS থেকে সদস্য লিস্ট আসবে -->
-                </select>
+                    </select>
             </div>
 
             <div class="form-group">
@@ -234,7 +237,6 @@
             <button class="btn-print" id="btnPrint" onclick="window.print()"><i class="fa-solid fa-print"></i> রিপোর্ট প্রিন্ট করুন</button>
         </div>
 
-        <!-- Printable Report Area -->
         <div class="report-container" id="reportContainer">
             <div class="watermark"><img src="1000123161.png" alt="Watermark"></div>
             
@@ -265,17 +267,14 @@
                 <table id="mainReportTable">
                     <thead>
                         <tr id="tableHeaderRow">
-                            <!-- Headers will be injected via JS -->
-                        </tr>
+                            </tr>
                     </thead>
                     <tbody id="reportTableBody">
-                        <!-- Rows will be injected via JS -->
-                    </tbody>
+                        </tbody>
                 </table>
             </div>
 
             <div class="clearfix">
-                <!-- Responsive wrapper added here -->
                 <div class="cat-summary-wrapper">
                     <table class="cat-summary-table" id="catSummaryTable" style="display: none;">
                         <thead>
@@ -285,13 +284,11 @@
                             </tr>
                         </thead>
                         <tbody id="catSummaryBody">
-                            <!-- Category summary will be injected via JS -->
-                        </tbody>
+                            </tbody>
                     </table>
                 </div>
             </div>
             
-            <!-- Responsive Signature section -->
             <div class="signature-box">
                 অনুমোদিত স্বাক্ষর
             </div>
@@ -326,7 +323,6 @@
         }
     </script>
 
-    <!-- Firebase Connection -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
