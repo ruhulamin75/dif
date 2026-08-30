@@ -618,9 +618,52 @@
         const db = getDatabase(app);
 
         let memberDict = {}; 
+        let memberPhoneDict = {}; // [NEW]: নাম্বার স্টোর করার জন্য
         let allTransactions = [];
         let filteredTransactions = [];
         let displayCount = 5;
+
+        // [NEW]: WhatsApp মেসেজ পাঠানোর ফাংশন
+        function processWhatsAppReceipt(trxData, isUpdate) {
+            let successMsg = isUpdate ? 'লেনদেনটি সফলভাবে আপডেট হয়েছে!' : 'লেনদেন সফলভাবে সংরক্ষণ করা হয়েছে!';
+            
+            let phone = '';
+            if (trxData.payerId && memberPhoneDict[trxData.payerId]) {
+                phone = memberPhoneDict[trxData.payerId];
+            }
+            
+            if (!phone) {
+                // নাম্বার না থাকলে শুধু সাকসেস মেসেজ দেখাবে
+                alert(successMsg + (trxData.payerId ? "\n\n(সদস্যের মোবাইল নাম্বার সিস্টেমে না থাকায় WhatsApp অপশনটি দেখানো হচ্ছে না)" : ""));
+                return;
+            }
+
+            let wantToMessage = confirm(successMsg + "\n\nআপনি কি " + trxData.payerName + "-কে WhatsApp-এ মানি রিসিট পাঠাতে চান?");
+            
+            if (wantToMessage) {
+                let cleanPhone = phone.replace(/\s+/g, '').replace(/-/g, ''); 
+                if (cleanPhone.startsWith("+")) {
+                    cleanPhone = cleanPhone.replace("+", "");
+                } else if (cleanPhone.startsWith("01")) {
+                    cleanPhone = "88" + cleanPhone;
+                }
+
+                let message = "আসসালামু আলাইকুম *" + trxData.payerName + "*,\n\nআপনার আজকের জমার বিবরণ:\n\n";
+                
+                trxData.items.forEach(item => {
+                    message += "▪ " + item.category + ": *" + item.amount + " টাকা*\n";
+                });
+                
+                message += "------------------------\n";
+                message += "সর্বমোট প্রদান: *" + trxData.amount + " টাকা* ✅\n\n";
+                message += "ধন্যবাদ! 🤝";
+
+                let encodedMessage = encodeURIComponent(message);
+                let whatsappUrl = "https://wa.me/" + cleanPhone + "?text=" + encodedMessage;
+                
+                window.open(whatsappUrl, '_blank');
+            }
+        }
 
         // সদস্য লিস্ট ড্রপডাউনে
         onValue(ref(db, 'members'), (snapshot) => {
@@ -639,6 +682,9 @@
                     let mName = m.nameBn || m.nameEn;
                     let displayName = `${mName} ${m.memberId ? `(${m.memberId})` : ''}`;
                     memberDict[key] = displayName;
+                    
+                    // [NEW]: ডেটাবেস থেকে নাম্বার নিয়ে রাখা হচ্ছে
+                    memberPhoneDict[key] = m.phone || m.mobile || m.mobileNumber || m.phoneNumber || m.contact || ''; 
 
                     incMemSelect.insertBefore(new Option(displayName, key), incMemSelect.lastElementChild);
                     incColSelect.appendChild(new Option(displayName, key));
@@ -715,7 +761,6 @@
                             status: 'active'
                         });
                     }
-                    alert('লেনদেনটি সফলভাবে আপডেট হয়েছে!');
                 } else {
                     trxData.timestamp = Date.now();
                     await set(push(ref(db, 'transactions')), trxData);
@@ -725,8 +770,16 @@
                             status: 'active'
                         });
                     }
-                    alert('লেনদেন সফলভাবে সংরক্ষণ করা হয়েছে!');
                 }
+                
+                // [NEW]: WhatsApp মেসেজ এবং সাকসেস এলার্ট কলিং
+                if (type === 'income') {
+                    processWhatsAppReceipt(trxData, editId ? true : false);
+                } else {
+                    if (editId) alert('লেনদেনটি সফলভাবে আপডেট হয়েছে!');
+                    else alert('লেনদেন সফলভাবে সংরক্ষণ করা হয়েছে!');
+                }
+
                 resetForm();
             } catch(error) {
                 alert('সংরক্ষণ করতে সমস্যা হয়েছে!');
