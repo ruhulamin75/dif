@@ -73,7 +73,7 @@
 
         /* প্রিন্ট এরিয়া (Report Container) */
         .report-container { background: var(--white); border-radius: 12px; padding: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); min-height: 400px; display: none; position: relative; z-index: 1; animation: popIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;}
-        .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.05; z-index: -1; pointer-events: none; }
+        .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.04; z-index: -1; pointer-events: none; }
         .watermark img { width: 350px; height: auto;}
 
         .report-header { text-align: center; border-bottom: 2px solid var(--primary-green); padding-bottom: 15px; margin-bottom: 25px;}
@@ -100,6 +100,9 @@
         table tbody tr:hover { background-color: #f9fbf9; }
         table td.amount-col { text-align: right; font-weight: 600; font-family: 'Poppins', sans-serif;}
         table th.amount-col { text-align: right; }
+
+        /* Grand Total Row for All Members Ledger */
+        .grand-total-row { background: #eaf6ee; font-weight: bold; color: var(--dark-green); }
 
         /* Category Summary Table */
         .cat-summary-wrapper { width: 50%; float: right; overflow-x: auto; margin-top: 10px; border-radius: 8px;}
@@ -128,13 +131,15 @@
             .cat-summary-wrapper { overflow-x: visible !important; width: 50% !important; float: right !important;}
             .signature-box { float: right !important; width: 300px !important; margin-top: 80px !important;}
             
-            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; animation: none !important; transition: none !important; } 
-
-            /* অ্যানিমেশনের কারণে অদৃশ্য হয়ে থাকা লেখাগুলো দৃশ্যমান করতে */
-            tr, .summary-box, .report-container {
+            /* অ্যানিমেশন ফিক্স: প্রিন্টের সময় opacity 1 রাখতে হবে */
+            * { 
+                -webkit-print-color-adjust: exact !important; 
+                print-color-adjust: exact !important; 
+                animation: none !important; 
+                transition: none !important; 
                 opacity: 1 !important;
                 transform: none !important;
-            }
+            } 
 
             /* ওয়াটারমার্ক এর অপাসিটি এবং পজিশন ঠিক রাখতে */
             .watermark {
@@ -213,6 +218,7 @@
                     <option value="income">আয় রিপোর্ট</option>
                     <option value="expense">ব্যয় রিপোর্ট</option>
                     <option value="ledger">সদস্য লেজার (ব্যক্তিগত হিসাব)</option>
+                    <option value="all_members_ledger">সকল সদস্যের লেজার (Summary)</option>
                 </select>
             </div>
 
@@ -390,96 +396,190 @@
             document.getElementById('repDateRange').innerText = (start && end) ? `${sDate.toLocaleDateString('en-GB')} to ${eDate.toLocaleDateString('en-GB')}` : 'All Time';
             document.getElementById('repGenDate').innerText = new Date().toLocaleDateString('en-GB') + " " + new Date().toLocaleTimeString('en-US');
 
-            let filteredItems = [];
-            let grandTotal = 0;
-            let categoryTotals = {};
-
-            allTransactions.forEach(trx => {
-                let trxDate = new Date(trx.date);
-                if (trxDate >= sDate && trxDate <= eDate) {
-                    
-                    if (type === 'income' && trx.type === 'income' && trx.items) {
-                        trx.items.forEach(item => {
-                            filteredItems.push({ date: trx.date, name: trx.payerName || '-', category: item.category, amount: item.amount, receipt: trx.timestamp });
-                            grandTotal += item.amount;
-                            categoryTotals[item.category] = (categoryTotals[item.category] || 0) + item.amount;
-                        });
-                    }
-                    
-                    if (type === 'expense' && trx.type === 'expense' && trx.items) {
-                        trx.items.forEach(item => {
-                            filteredItems.push({ date: trx.date, name: trx.spender || '-', category: item.category, amount: item.amount, receipt: trx.timestamp });
-                            grandTotal += item.amount;
-                            categoryTotals[item.category] = (categoryTotals[item.category] || 0) + item.amount;
-                        });
-                    }
-
-                    if (type === 'ledger' && trx.type === 'income' && trx.payerId === document.getElementById('memberId').value && trx.items) {
-                        const allowedCats = ['এককালীন/বাৎসরিক জমা', 'মাসিক জমা', 'শেয়ার'];
-                        trx.items.forEach(item => {
-                            if(allowedCats.includes(item.category)) {
-                                filteredItems.push({ date: trx.date, category: item.category, amount: item.amount, receipt: trx.timestamp });
-                                grandTotal += item.amount;
-                                categoryTotals[item.category] = (categoryTotals[item.category] || 0) + item.amount;
-                            }
-                        });
-                    }
-                }
-            });
-
-            filteredItems.sort((a,b) => new Date(a.date) - new Date(b.date));
-
             const tbody = document.getElementById('reportTableBody');
             const thRow = document.getElementById('tableHeaderRow');
             tbody.innerHTML = '';
 
-            if(type === 'income') {
-                document.getElementById('repTitle').innerText = "আয় রিপোর্ট (Income Report)";
-                thRow.innerHTML = `<th>তারিখ</th><th>প্রদানকারী</th><th>আয়ের খাত</th><th class="amount-col">পরিমাণ</th>`;
-            } else if(type === 'expense') {
-                document.getElementById('repTitle').innerText = "ব্যয় রিপোর্ট (Expense Report)";
-                thRow.innerHTML = `<th>তারিখ</th><th>ব্যয়কারী</th><th>ব্যয়ের খাত</th><th class="amount-col">পরিমাণ</th>`;
-            } else {
-                let mName = document.getElementById('memberId').options[document.getElementById('memberId').selectedIndex].text;
-                document.getElementById('repTitle').innerText = `সদস্য লেজার: ${mName}`;
-                thRow.innerHTML = `<th>তারিখ</th><th>খাত</th><th class="amount-col">পরিমাণ</th>`;
-            }
+            let grandTotal = 0;
+            let categoryTotals = {};
+            let filteredItems = [];
 
-            if(filteredItems.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">এই সময়ে কোনো ডেটা পাওয়া যায়নি।</td></tr>`;
-            } else {
-                filteredItems.forEach((item, index) => {
-                    let animDelay = (index % 15) * 0.05; // Table Row Staggered Animation Delay
-                    let dStr = new Date(item.date).toLocaleDateString('en-GB');
-                    let tr = document.createElement('tr');
+            // ===============================================
+            // নতুন যুক্ত করা অংশ: সকল সদস্যের লেজার
+            // ===============================================
+            if (type === 'all_members_ledger') {
+                document.getElementById('repTitle').innerText = "সকল সদস্যের লেজার (Summary)";
+                thRow.innerHTML = `
+                    <th>ক্রঃ নং</th>
+                    <th>সদস্যের নাম ও আইডি</th>
+                    <th class="amount-col">মাসিক জমা</th>
+                    <th class="amount-col">এককালীন/বাৎসরিক</th>
+                    <th class="amount-col">শেয়ার</th>
+                    <th class="amount-col">সর্বমোট জমা</th>
+                `;
+
+                let membersSummary = [];
+                let totalMonthly = 0, totalYearly = 0, totalShare = 0;
+
+                // প্রতিটি সদস্যের ডেটা ক্যালকুলেট করা
+                Object.keys(membersData).forEach(memberKey => {
+                    const m = membersData[memberKey];
+                    let name = m.nameBn || m.nameEn;
+                    let mId = m.memberId || '-';
                     
-                    tr.style.opacity = "0";
-                    tr.style.animation = `fadeUp 0.4s ease forwards ${animDelay}s`;
+                    let memberSum = { id: mId, name: name, monthly: 0, yearly: 0, share: 0, total: 0 };
+
+                    allTransactions.forEach(trx => {
+                        let trxDate = new Date(trx.date);
+                        if (trx.type === 'income' && trx.payerId === memberKey && trx.items && trxDate >= sDate && trxDate <= eDate) {
+                            trx.items.forEach(item => {
+                                if (item.category === 'মাসিক জমা') memberSum.monthly += item.amount;
+                                if (item.category === 'এককালীন/বাৎসরিক জমা') memberSum.yearly += item.amount;
+                                if (item.category === 'শেয়ার') memberSum.share += item.amount;
+                            });
+                        }
+                    });
+
+                    memberSum.total = memberSum.monthly + memberSum.yearly + memberSum.share;
                     
-                    if(type === 'ledger') {
-                        tr.innerHTML = `<td class="en-text">${dStr}</td><td>${item.category}</td><td class="amount-col en-text">৳ ${item.amount}</td>`;
-                    } else {
-                        tr.innerHTML = `<td class="en-text">${dStr}</td><td>${item.name}</td><td>${item.category}</td><td class="amount-col en-text">৳ ${item.amount}</td>`;
+                    if (memberSum.total > 0) {
+                        membersSummary.push(memberSum);
+                        totalMonthly += memberSum.monthly;
+                        totalYearly += memberSum.yearly;
+                        totalShare += memberSum.share;
+                        grandTotal += memberSum.total;
                     }
-                    tbody.appendChild(tr);
                 });
-            }
 
-            // Number Counting and Summary Animation Update
-            document.getElementById('sumValue1').innerText = filteredItems.length;
-            document.getElementById('sumValue2').innerText = "৳ " + grandTotal;
+                // আইডি অনুযায়ী সাজানো (A to Z)
+                membersSummary.sort((a, b) => a.id.localeCompare(b.id));
 
-            const catTbody = document.getElementById('catSummaryBody');
-            catTbody.innerHTML = '';
-            if(Object.keys(categoryTotals).length > 0) {
-                Object.keys(categoryTotals).forEach((cat, index) => {
-                    let animDelay = (index % 10) * 0.05;
-                    catTbody.innerHTML += `<tr style="opacity:0; animation: fadeUp 0.4s ease forwards ${animDelay}s"><td>${cat}</td><td class="amount-col en-text">৳ ${categoryTotals[cat]}</td></tr>`;
-                });
-                catTbody.innerHTML += `<tr class="cat-total-row" style="opacity:0; animation: fadeUp 0.4s ease forwards ${Object.keys(categoryTotals).length * 0.05}s"><td>সর্বমোট</td><td class="amount-col en-text" style="color:var(--dark-green);">৳ ${grandTotal}</td></tr>`;
-                document.getElementById('catSummaryTable').style.display = 'table';
-            } else {
+                if(membersSummary.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;">এই সময়ে কোনো ডেটা পাওয়া যায়নি।</td></tr>`;
+                } else {
+                    membersSummary.forEach((mem, index) => {
+                        let animDelay = (index % 15) * 0.05;
+                        let tr = document.createElement('tr');
+                        tr.style.opacity = "0";
+                        tr.style.animation = `fadeUp 0.4s ease forwards ${animDelay}s`;
+                        tr.innerHTML = `
+                            <td class="en-text">${index + 1}</td>
+                            <td>${mem.name} <span class="en-text">(${mem.id})</span></td>
+                            <td class="amount-col en-text">৳ ${mem.monthly}</td>
+                            <td class="amount-col en-text">৳ ${mem.yearly}</td>
+                            <td class="amount-col en-text">৳ ${mem.share}</td>
+                            <td class="amount-col en-text" style="color:var(--dark-green);">৳ ${mem.total}</td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+
+                    // Grand Total Row
+                    let totalTr = document.createElement('tr');
+                    totalTr.className = 'grand-total-row';
+                    totalTr.style.opacity = "0";
+                    totalTr.style.animation = `fadeUp 0.4s ease forwards ${membersSummary.length * 0.05}s`;
+                    totalTr.innerHTML = `
+                        <td colspan="2" style="text-align: right;">সর্বমোট:</td>
+                        <td class="amount-col en-text">৳ ${totalMonthly}</td>
+                        <td class="amount-col en-text">৳ ${totalYearly}</td>
+                        <td class="amount-col en-text">৳ ${totalShare}</td>
+                        <td class="amount-col en-text">৳ ${grandTotal}</td>
+                    `;
+                    tbody.appendChild(totalTr);
+                }
+
+                document.getElementById('sumValue1').innerText = membersSummary.length;
+                document.getElementById('sumTitle1').innerText = "মোট সদস্য (যাদের জমা আছে)";
+                document.getElementById('sumValue2').innerText = "৳ " + grandTotal;
                 document.getElementById('catSummaryTable').style.display = 'none';
+
+            } else {
+                // ===============================================
+                // আগের অন্যান্য রিপোর্ট লজিক
+                // ===============================================
+                allTransactions.forEach(trx => {
+                    let trxDate = new Date(trx.date);
+                    if (trxDate >= sDate && trxDate <= eDate) {
+                        
+                        if (type === 'income' && trx.type === 'income' && trx.items) {
+                            trx.items.forEach(item => {
+                                filteredItems.push({ date: trx.date, name: trx.payerName || '-', category: item.category, amount: item.amount });
+                                grandTotal += item.amount;
+                                categoryTotals[item.category] = (categoryTotals[item.category] || 0) + item.amount;
+                            });
+                        }
+                        
+                        if (type === 'expense' && trx.type === 'expense' && trx.items) {
+                            trx.items.forEach(item => {
+                                filteredItems.push({ date: trx.date, name: trx.spender || '-', category: item.category, amount: item.amount });
+                                grandTotal += item.amount;
+                                categoryTotals[item.category] = (categoryTotals[item.category] || 0) + item.amount;
+                            });
+                        }
+
+                        if (type === 'ledger' && trx.type === 'income' && trx.payerId === document.getElementById('memberId').value && trx.items) {
+                            const allowedCats = ['এককালীন/বাৎসরিক জমা', 'মাসিক জমা', 'শেয়ার'];
+                            trx.items.forEach(item => {
+                                if(allowedCats.includes(item.category)) {
+                                    filteredItems.push({ date: trx.date, category: item.category, amount: item.amount });
+                                    grandTotal += item.amount;
+                                    categoryTotals[item.category] = (categoryTotals[item.category] || 0) + item.amount;
+                                }
+                            });
+                        }
+                    }
+                });
+
+                filteredItems.sort((a,b) => new Date(a.date) - new Date(b.date));
+
+                if(type === 'income') {
+                    document.getElementById('repTitle').innerText = "আয় রিপোর্ট (Income Report)";
+                    thRow.innerHTML = `<th>তারিখ</th><th>প্রদানকারী</th><th>আয়ের খাত</th><th class="amount-col">পরিমাণ</th>`;
+                } else if(type === 'expense') {
+                    document.getElementById('repTitle').innerText = "ব্যয় রিপোর্ট (Expense Report)";
+                    thRow.innerHTML = `<th>তারিখ</th><th>ব্যয়কারী</th><th>ব্যয়ের খাত</th><th class="amount-col">পরিমাণ</th>`;
+                } else {
+                    let mName = document.getElementById('memberId').options[document.getElementById('memberId').selectedIndex].text;
+                    document.getElementById('repTitle').innerText = `সদস্য লেজার: ${mName}`;
+                    thRow.innerHTML = `<th>তারিখ</th><th>খাত</th><th class="amount-col">পরিমাণ</th>`;
+                }
+
+                if(filteredItems.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">এই সময়ে কোনো ডেটা পাওয়া যায়নি।</td></tr>`;
+                } else {
+                    filteredItems.forEach((item, index) => {
+                        let animDelay = (index % 15) * 0.05; 
+                        let dStr = new Date(item.date).toLocaleDateString('en-GB');
+                        let tr = document.createElement('tr');
+                        
+                        tr.style.opacity = "0";
+                        tr.style.animation = `fadeUp 0.4s ease forwards ${animDelay}s`;
+                        
+                        if(type === 'ledger') {
+                            tr.innerHTML = `<td class="en-text">${dStr}</td><td>${item.category}</td><td class="amount-col en-text">৳ ${item.amount}</td>`;
+                        } else {
+                            tr.innerHTML = `<td class="en-text">${dStr}</td><td>${item.name}</td><td>${item.category}</td><td class="amount-col en-text">৳ ${item.amount}</td>`;
+                        }
+                        tbody.appendChild(tr);
+                    });
+                }
+
+                document.getElementById('sumValue1').innerText = filteredItems.length;
+                document.getElementById('sumTitle1').innerText = "মোট এন্ট্রি";
+                document.getElementById('sumValue2').innerText = "৳ " + grandTotal;
+
+                const catTbody = document.getElementById('catSummaryBody');
+                catTbody.innerHTML = '';
+                if(Object.keys(categoryTotals).length > 0) {
+                    Object.keys(categoryTotals).forEach((cat, index) => {
+                        let animDelay = (index % 10) * 0.05;
+                        catTbody.innerHTML += `<tr style="opacity:0; animation: fadeUp 0.4s ease forwards ${animDelay}s"><td>${cat}</td><td class="amount-col en-text">৳ ${categoryTotals[cat]}</td></tr>`;
+                    });
+                    catTbody.innerHTML += `<tr class="cat-total-row" style="opacity:0; animation: fadeUp 0.4s ease forwards ${Object.keys(categoryTotals).length * 0.05}s"><td>সর্বমোট</td><td class="amount-col en-text" style="color:var(--dark-green);">৳ ${grandTotal}</td></tr>`;
+                    document.getElementById('catSummaryTable').style.display = 'table';
+                } else {
+                    document.getElementById('catSummaryTable').style.display = 'none';
+                }
             }
 
             // Display Report Container and trigger its Pop-in animation
