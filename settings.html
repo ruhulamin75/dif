@@ -58,14 +58,15 @@
         .settings-grid > div:nth-child(2) { animation-delay: 0.3s; }
         .settings-grid > div:nth-child(3) { animation-delay: 0.4s; }
         .settings-grid > div:nth-child(4) { animation-delay: 0.5s; }
+        .settings-grid > div:nth-child(5) { animation-delay: 0.6s; }
 
         .form-container { background: var(--white); border-radius: 12px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border-top: 4px solid var(--primary-green); margin-bottom: 25px; transition: 0.3s;}
         .form-container:hover { box-shadow: 0 8px 25px rgba(0,0,0,0.05); }
         .form-container h3 { color: var(--dark-green); margin-bottom: 20px; font-size: 18px; border-bottom: 2px solid var(--light-green); padding-bottom: 10px;}
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-dark); font-size: 14px;}
-        .form-group input, .form-group textarea { width: 100%; padding: 10px 15px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 14px; font-family: inherit; outline: none; background: #fafafa; transition: 0.3s;}
-        .form-group input:focus, .form-group textarea:focus { border-color: var(--primary-green); background: var(--white); box-shadow: 0 0 0 3px rgba(11, 158, 74, 0.1);}
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px 15px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 14px; font-family: inherit; outline: none; background: #fafafa; transition: 0.3s;}
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--primary-green); background: var(--white); box-shadow: 0 0 0 3px rgba(11, 158, 74, 0.1);}
         
         .action-buttons { display: flex; gap: 10px; margin-top: 20px; }
         .save-btn { flex: 1; background: var(--primary-green); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; font-family: inherit; font-size: 15px;}
@@ -157,6 +158,29 @@
                 </div>
             </div>
 
+            <!-- এ পর্যন্ত সর্বমোট মাসিক জমা নির্ধারণ -->
+            <div>
+                <div class="form-container" style="border-top-color: #00897b;">
+                    <h3 style="color: #00897b; border-bottom-color: #e0f2f1;"><i class="fa-solid fa-hand-holding-dollar"></i> সর্বমোট প্রদেয় মাসিক জমা (এ পর্যন্ত)</h3>
+                    <p style="font-size: 13px; color: var(--text-gray); margin-bottom: 15px;">প্রতিষ্ঠার পর থেকে এ পর্যন্ত একজন সদস্যের সর্বমোট কত টাকা মাসিক জমা দেওয়ার কথা, তা এখানে আপডেট করুন।</p>
+                    
+                    <div style="background: #e0f2f1; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
+                        <h4 style="margin: 0; font-size: 14px; color: #00695c;">বর্তমান নির্ধারিত পরিমাণ</h4>
+                        <div class="en-text" id="currentExpectedAmount" style="font-size: 26px; font-weight: 700; color: #004d40;">৳ 0</div>
+                    </div>
+
+                    <form id="expectedFeeForm">
+                        <div class="form-group">
+                            <label>নতুন পরিমাণ লিখুন (টাকা)</label>
+                            <input type="number" step="0.01" id="expectedFeeAmount" class="en-text" placeholder="যেমন: 5000" required>
+                        </div>
+                        <div class="action-buttons">
+                            <button type="submit" class="save-btn" id="saveExpectedFeeBtn" style="background: #00897b;"><i class="fa-solid fa-floppy-disk"></i> ফি আপডেট করুন</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
             <!-- নোটিশ বোর্ড -->
             <div>
                 <div class="form-container">
@@ -183,15 +207,17 @@
             </div>
 
             <!-- ব্যাংক একাউন্টস -->
-            <div>
-                <div class="form-container" style="border-top-color: #1976d2;">
+            <div class="danger-zone" style="margin-bottom: 25px;">
+                <div class="form-container" style="border-top-color: #1976d2; margin-bottom: 0;">
                     <h3 style="color: #1976d2; border-bottom-color: #e3f2fd;"><i class="fa-solid fa-building-columns"></i> ব্যাংক একাউন্ট যুক্ত করুন</h3>
                     <form id="bankForm">
                         <input type="hidden" id="editBankId">
-                        <div class="form-group"><label>ব্যাংকের নাম</label><input type="text" id="bName" placeholder="যেমন: Islami Bank" required></div>
-                        <div class="form-group"><label>একাউন্টের নাম</label><input type="text" id="bAccName" class="en-text" required></div>
-                        <div class="form-group"><label>একাউন্ট নম্বর</label><input type="text" id="bAccNo" class="en-text" required></div>
-                        <div class="form-group"><label>শাখা / ব্রাঞ্চ (ঐচ্ছিক)</label><input type="text" id="bBranch"></div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                            <div class="form-group"><label>ব্যাংকের নাম</label><input type="text" id="bName" placeholder="যেমন: Islami Bank" required></div>
+                            <div class="form-group"><label>একাউন্টের নাম</label><input type="text" id="bAccName" class="en-text" required></div>
+                            <div class="form-group"><label>একাউন্ট নম্বর</label><input type="text" id="bAccNo" class="en-text" required></div>
+                            <div class="form-group"><label>শাখা / ব্রাঞ্চ (ঐচ্ছিক)</label><input type="text" id="bBranch"></div>
+                        </div>
                         <div class="action-buttons">
                             <button type="button" class="cancel-btn" id="cancelBankBtn" onclick="resetBankForm()">বাতিল</button>
                             <button type="submit" class="save-btn" id="saveBankBtn" style="background: #1976d2;">সংরক্ষণ করুন</button>
@@ -259,7 +285,7 @@
         window.logout = async function(e) {
             e.preventDefault();
             try {
-                await signOut(auth); // Firebase সেশন ক্লিয়ার
+                await signOut(auth); 
             } catch (error) {
                 console.error("Logout Error:", error);
             }
@@ -303,6 +329,33 @@
             }
         });
 
+        // --- এ পর্যন্ত সর্বমোট মাসিক জমা নির্ধারণ লজিক ---
+        onValue(ref(db, 'settings/expected_monthly_total'), (snapshot) => {
+            const val = snapshot.val() || 0;
+            document.getElementById('currentExpectedAmount').innerText = "৳ " + val;
+        });
+
+        document.getElementById('expectedFeeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const amount = parseFloat(document.getElementById('expectedFeeAmount').value);
+            const btn = document.getElementById('saveExpectedFeeBtn');
+
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> সেভ হচ্ছে...';
+            btn.disabled = true;
+
+            try {
+                // ডাটাবেসে একটি নির্দিষ্ট ফিল্ডে সেভ/ওভাররাইট করা হচ্ছে
+                await set(ref(db, 'settings/expected_monthly_total'), amount);
+                alert("এ পর্যন্ত সর্বমোট প্রদেয় মাসিক জমার পরিমাণ সফলভাবে আপডেট হয়েছে!");
+                document.getElementById('expectedFeeForm').reset();
+            } catch (error) {
+                alert("সেভ করতে সমস্যা হয়েছে: " + error.message);
+            } finally {
+                btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> ফি আপডেট করুন';
+                btn.disabled = false;
+            }
+        });
+
         // --- নোটিশ বোর্ড লজিক ---
         let allNotices = [];
         onValue(ref(db, 'notices'), (snapshot) => {
@@ -312,7 +365,7 @@
                 Object.keys(snapshot.val()).forEach(k => allNotices.push({id: k, ...snapshot.val()[k]}));
                 allNotices.sort((a, b) => b.timestamp - a.timestamp).forEach((n, index) => {
                     let d = new Date(n.timestamp).toLocaleDateString('en-GB');
-                    let animDelay = (index % 10) * 0.05; // Table row stagger animation
+                    let animDelay = (index % 10) * 0.05; 
                     
                     tbody.innerHTML += `<tr style="opacity:0; animation: fadeUp 0.4s ease forwards ${animDelay}s">
                         <td><div class="en-text" style="font-size:12px; color:gray;">${d}</div><div style="font-weight:600;">${n.title}</div></td>
@@ -350,7 +403,7 @@
             if (snapshot.val()) {
                 Object.keys(snapshot.val()).forEach(k => allBanks.push({id: k, ...snapshot.val()[k]}));
                 allBanks.forEach((b, index) => {
-                    let animDelay = (index % 10) * 0.05; // Table row stagger animation
+                    let animDelay = (index % 10) * 0.05; 
                     
                     tbody.innerHTML += `<tr style="opacity:0; animation: fadeUp 0.4s ease forwards ${animDelay}s">
                         <td>
