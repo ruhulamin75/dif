@@ -67,6 +67,14 @@
         .form-group input, .form-group textarea { width: 100%; padding: 10px 15px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 14px; font-family: inherit; outline: none; background: #fafafa; transition: 0.3s;}
         .form-group input:focus, .form-group textarea:focus { border-color: var(--primary-green); background: var(--white); box-shadow: 0 0 0 3px rgba(11, 158, 74, 0.1);}
         
+        /* Rich Text Editor Styles */
+        .editor-toolbar { display: flex; gap: 8px; margin-bottom: 8px; background: #fafafa; padding: 5px; border-radius: 6px; border: 1px solid var(--border-color); }
+        .editor-toolbar button { background: var(--white); border: 1px solid var(--border-color); padding: 5px 12px; border-radius: 4px; cursor: pointer; color: var(--text-dark); transition: 0.3s; font-size: 14px; }
+        .editor-toolbar button:hover { background: var(--light-green); color: var(--primary-green); border-color: var(--primary-green); }
+        .rich-editor { width: 100%; min-height: 120px; padding: 12px 15px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 14px; font-family: inherit; outline: none; background: #fafafa; transition: 0.3s; overflow-y: auto; white-space: pre-wrap; word-wrap: break-word; }
+        .rich-editor:focus { border-color: var(--primary-green); background: var(--white); box-shadow: 0 0 0 3px rgba(11, 158, 74, 0.1); }
+        .rich-editor[placeholder]:empty:before { content: attr(placeholder); color: #888; pointer-events: none; display: block; }
+
         .action-buttons { display: flex; gap: 10px; margin-top: 20px; }
         .save-btn { flex: 1; background: var(--primary-green); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; font-family: inherit; font-size: 15px;}
         .save-btn:hover { background: var(--dark-green); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(11, 158, 74, 0.25);}
@@ -164,7 +172,20 @@
                     <form id="noticeForm">
                         <input type="hidden" id="editNoticeId">
                         <div class="form-group"><label>শিরোনাম</label><input type="text" id="nTitle" required></div>
-                        <div class="form-group"><label>বিবরণ</label><textarea id="nDesc" rows="3" required></textarea></div>
+                        
+                        <!-- আপডেট করা Rich Text Editor -->
+                        <div class="form-group">
+                            <label>বিবরণ</label>
+                            <div class="editor-toolbar">
+                                <button type="button" onclick="document.execCommand('bold', false, null)" title="Bold"><i class="fa-solid fa-bold"></i></button>
+                                <button type="button" onclick="document.execCommand('italic', false, null)" title="Italic"><i class="fa-solid fa-italic"></i></button>
+                                <button type="button" onclick="document.execCommand('underline', false, null)" title="Underline"><i class="fa-solid fa-underline"></i></button>
+                                <button type="button" onclick="document.execCommand('insertUnorderedList', false, null)" title="Bullet List"><i class="fa-solid fa-list-ul"></i></button>
+                            </div>
+                            <!-- Textarea এর বদলে Contenteditable Div -->
+                            <div id="nDesc" contenteditable="true" class="rich-editor" placeholder="নোটিশের বিস্তারিত লিখুন..."></div>
+                        </div>
+
                         <div class="action-buttons">
                             <button type="button" class="cancel-btn" id="cancelNoticeBtn" onclick="resetNoticeForm()">বাতিল</button>
                             <button type="submit" class="save-btn" id="saveNoticeBtn">পাবলিশ করুন</button>
@@ -259,7 +280,7 @@
         window.logout = async function(e) {
             e.preventDefault();
             try {
-                await signOut(auth); // Firebase সেশন ক্লিয়ার
+                await signOut(auth);
             } catch (error) {
                 console.error("Logout Error:", error);
             }
@@ -303,7 +324,7 @@
             }
         });
 
-        // --- নোটিশ বোর্ড লজিক ---
+        // --- নোটিশ বোর্ড লজিক (আপডেটেড) ---
         let allNotices = [];
         onValue(ref(db, 'notices'), (snapshot) => {
             const tbody = document.getElementById('noticeTableBody');
@@ -312,7 +333,7 @@
                 Object.keys(snapshot.val()).forEach(k => allNotices.push({id: k, ...snapshot.val()[k]}));
                 allNotices.sort((a, b) => b.timestamp - a.timestamp).forEach((n, index) => {
                     let d = new Date(n.timestamp).toLocaleDateString('en-GB');
-                    let animDelay = (index % 10) * 0.05; // Table row stagger animation
+                    let animDelay = (index % 10) * 0.05; 
                     
                     tbody.innerHTML += `<tr style="opacity:0; animation: fadeUp 0.4s ease forwards ${animDelay}s">
                         <td><div class="en-text" style="font-size:12px; color:gray;">${d}</div><div style="font-weight:600;">${n.title}</div></td>
@@ -326,8 +347,21 @@
 
         document.getElementById('noticeForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+            
+            // Rich editor থেকে HTML ডেটা সংগ্রহ
+            const descHTML = document.getElementById('nDesc').innerHTML.trim();
+            if(!descHTML || descHTML === '<br>') {
+                alert("দয়া করে নোটিশের বিবরণ লিখুন।");
+                return;
+            }
+
             const id = document.getElementById('editNoticeId').value;
-            const data = { title: document.getElementById('nTitle').value, description: document.getElementById('nDesc').value, timestamp: Date.now() };
+            const data = { 
+                title: document.getElementById('nTitle').value, 
+                description: descHTML, 
+                timestamp: Date.now() 
+            };
+            
             if(id) await update(ref(db, 'notices/' + id), data);
             else await set(push(ref(db, 'notices')), data);
             window.resetNoticeForm();
@@ -335,12 +369,29 @@
 
         window.editNotice = (id) => {
             const n = allNotices.find(x => x.id === id);
-            document.getElementById('editNoticeId').value = n.id; document.getElementById('nTitle').value = n.title; document.getElementById('nDesc').value = n.description;
-            document.getElementById('saveNoticeBtn').innerText = 'আপডেট করুন'; document.getElementById('cancelNoticeBtn').style.display = 'block';
+            document.getElementById('editNoticeId').value = n.id; 
+            document.getElementById('nTitle').value = n.title; 
+            
+            // Textarea এর বদলে innerHTML দিয়ে ডেটা সেট করা হলো
+            document.getElementById('nDesc').innerHTML = n.description || '';
+            
+            document.getElementById('saveNoticeBtn').innerText = 'আপডেট করুন'; 
+            document.getElementById('cancelNoticeBtn').style.display = 'block';
             window.scrollTo({ top: 0, behavior: 'smooth' });
         };
+        
         window.delNotice = async (id) => { if(confirm("ডিলিট করবেন?")) await remove(ref(db, 'notices/' + id)); };
-        window.resetNoticeForm = () => { document.getElementById('noticeForm').reset(); document.getElementById('editNoticeId').value = ''; document.getElementById('saveNoticeBtn').innerText = 'পাবলিশ করুন'; document.getElementById('cancelNoticeBtn').style.display = 'none'; };
+        
+        window.resetNoticeForm = () => { 
+            document.getElementById('noticeForm').reset(); 
+            document.getElementById('editNoticeId').value = ''; 
+            
+            // Rich editor ম্যানুয়ালি ক্লিয়ার করতে হয়
+            document.getElementById('nDesc').innerHTML = ''; 
+            
+            document.getElementById('saveNoticeBtn').innerText = 'পাবলিশ করুন'; 
+            document.getElementById('cancelNoticeBtn').style.display = 'none'; 
+        };
 
         // --- ব্যাংক একাউন্ট লজিক ---
         let allBanks = [];
@@ -350,7 +401,7 @@
             if (snapshot.val()) {
                 Object.keys(snapshot.val()).forEach(k => allBanks.push({id: k, ...snapshot.val()[k]}));
                 allBanks.forEach((b, index) => {
-                    let animDelay = (index % 10) * 0.05; // Table row stagger animation
+                    let animDelay = (index % 10) * 0.05;
                     
                     tbody.innerHTML += `<tr style="opacity:0; animation: fadeUp 0.4s ease forwards ${animDelay}s">
                         <td>
