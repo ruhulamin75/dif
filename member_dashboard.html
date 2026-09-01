@@ -94,7 +94,8 @@
         .notice-item { padding: 15px; background: #f9fbf9; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid var(--primary-green); transition: 0.3s;}
         .notice-item:hover { transform: translateX(5px); box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
         .notice-item h4 { margin: 0 0 5px 0; color: var(--text-dark); font-size: 16px;}
-        .notice-item p { margin: 0; color: var(--text-gray); font-size: 14px; line-height: 1.5;}
+        /* নোটিশ প্যারাগ্রাফ স্টাইল আপডেট: white-space এবং word-wrap যুক্ত করা হয়েছে */
+        .notice-item p { margin: 0; color: var(--text-gray); font-size: 14px; line-height: 1.6; white-space: pre-wrap; word-wrap: break-word;}
         .notice-date { font-size: 12px; color: #888; display: block; margin-top: 8px;}
 
         .bank-item { padding: 15px; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 15px; display: flex; align-items: flex-start; gap: 15px; transition: 0.3s;}
@@ -466,8 +467,16 @@
                     let notices = Object.values(snapshot.val()).sort((a,b) => b.timestamp - a.timestamp);
                     notices.forEach(n => {
                         let d = new Date(n.timestamp).toLocaleDateString('en-GB');
+                        
+                        // লিংক, স্পেস ও প্যারাগ্রাফ ফরম্যাটিং লজিক
+                        let desc = n.description || '';
+                        // যদি আগে থেকে কোনো HTML লিংক (<a ...) করা না থাকে, তবে URL গুলোকে স্বয়ংক্রিয়ভাবে লিংকে রূপান্তর করবে
+                        if (!desc.includes('<a ')) {
+                            desc = desc.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" style="color: #1976d2; text-decoration: underline; word-break: break-all;">$1</a>');
+                        }
+
                         cont.innerHTML += `<div class="notice-item">
-                            <h4>${n.title}</h4><p>${n.description}</p><span class="notice-date en-text"><i class="fa-regular fa-clock"></i> ${d}</span>
+                            <h4>${n.title}</h4><p>${desc}</p><span class="notice-date en-text"><i class="fa-regular fa-clock"></i> ${d}</span>
                         </div>`;
                     });
                 } else { cont.innerHTML = '<div style="color:gray;">কোনো নোটিশ নেই</div>'; }
