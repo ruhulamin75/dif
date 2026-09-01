@@ -62,6 +62,12 @@
         .form-container { background: var(--white); border-radius: 12px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border-top: 4px solid var(--primary-green); margin-bottom: 25px; transition: 0.3s;}
         .form-container:hover { box-shadow: 0 8px 25px rgba(0,0,0,0.05); }
         .form-container h3 { color: var(--dark-green); margin-bottom: 20px; font-size: 18px; border-bottom: 2px solid var(--light-green); padding-bottom: 10px;}
+        
+        /* টগল বাটন স্টাইল */
+        .toggle-form-btn { background: #fafafa; color: var(--dark-green); border: 2px dashed #ccc; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer; width: 100%; text-align: center; font-family: inherit; font-size: 15px; transition: 0.3s; margin-bottom: 15px; display: flex; justify-content: center; align-items: center; gap: 8px;}
+        .toggle-form-btn:hover { background: var(--light-green); color: var(--primary-green); border-color: var(--primary-green); }
+        .hidden-form { display: none; }
+
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-dark); font-size: 14px;}
         .form-group input, .form-group textarea { width: 100%; padding: 10px 15px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 14px; font-family: inherit; outline: none; background: #fafafa; transition: 0.3s;}
@@ -155,7 +161,12 @@
             <div class="danger-zone" style="margin-bottom: 25px;">
                 <div class="form-container" style="border-top-color: #ff9800; margin-bottom: 0;">
                     <h3 style="color: #f57c00; border-bottom-color: #ffe0b2;"><i class="fa-solid fa-user-shield"></i> অ্যাডমিন পাসওয়ার্ড পরিবর্তন</h3>
-                    <form id="adminPassForm">
+                    
+                    <button type="button" class="toggle-form-btn" id="togglePassBtn" onclick="toggleFormVisibility('adminPassForm', 'togglePassBtn', 'পাসওয়ার্ড পরিবর্তন করুন')" style="color: #f57c00; border-color: #ffcc80; background: #fff8e1;">
+                        <i class="fa-solid fa-plus"></i> পাসওয়ার্ড পরিবর্তন করুন
+                    </button>
+
+                    <form id="adminPassForm" class="hidden-form">
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
                             <div class="form-group"><label>বর্তমান পাসওয়ার্ড</label><input type="password" id="currentPass" class="en-text" required></div>
                             <div class="form-group"><label>নতুন পাসওয়ার্ড</label><input type="password" id="newPass" class="en-text" minlength="6" required></div>
@@ -169,11 +180,15 @@
             <div>
                 <div class="form-container">
                     <h3><i class="fa-solid fa-bullhorn"></i> নোটিশ বোর্ড</h3>
-                    <form id="noticeForm">
+                    
+                    <button type="button" class="toggle-form-btn" id="toggleNoticeBtn" onclick="toggleFormVisibility('noticeForm', 'toggleNoticeBtn', 'নতুন নোটিশ যুক্ত করুন')">
+                        <i class="fa-solid fa-plus"></i> নতুন নোটিশ যুক্ত করুন
+                    </button>
+
+                    <form id="noticeForm" class="hidden-form">
                         <input type="hidden" id="editNoticeId">
                         <div class="form-group"><label>শিরোনাম</label><input type="text" id="nTitle" required></div>
                         
-                        <!-- আপডেট করা Rich Text Editor -->
                         <div class="form-group">
                             <label>বিবরণ</label>
                             <div class="editor-toolbar">
@@ -182,7 +197,6 @@
                                 <button type="button" onclick="document.execCommand('underline', false, null)" title="Underline"><i class="fa-solid fa-underline"></i></button>
                                 <button type="button" onclick="document.execCommand('insertUnorderedList', false, null)" title="Bullet List"><i class="fa-solid fa-list-ul"></i></button>
                             </div>
-                            <!-- Textarea এর বদলে Contenteditable Div -->
                             <div id="nDesc" contenteditable="true" class="rich-editor" placeholder="নোটিশের বিস্তারিত লিখুন..."></div>
                         </div>
 
@@ -206,8 +220,13 @@
             <!-- ব্যাংক একাউন্টস -->
             <div>
                 <div class="form-container" style="border-top-color: #1976d2;">
-                    <h3 style="color: #1976d2; border-bottom-color: #e3f2fd;"><i class="fa-solid fa-building-columns"></i> ব্যাংক একাউন্ট যুক্ত করুন</h3>
-                    <form id="bankForm">
+                    <h3 style="color: #1976d2; border-bottom-color: #e3f2fd;"><i class="fa-solid fa-building-columns"></i> ব্যাংক একাউন্ট</h3>
+                    
+                    <button type="button" class="toggle-form-btn" id="toggleBankBtn" onclick="toggleFormVisibility('bankForm', 'toggleBankBtn', 'নতুন ব্যাংক যুক্ত করুন')" style="color: #1976d2; border-color: #90caf9; background: #e3f2fd;">
+                        <i class="fa-solid fa-plus"></i> নতুন ব্যাংক যুক্ত করুন
+                    </button>
+
+                    <form id="bankForm" class="hidden-form">
                         <input type="hidden" id="editBankId">
                         <div class="form-group"><label>ব্যাংকের নাম</label><input type="text" id="bName" placeholder="যেমন: Islami Bank" required></div>
                         <div class="form-group"><label>একাউন্টের নাম</label><input type="text" id="bAccName" class="en-text" required></div>
@@ -250,12 +269,42 @@
         </div>
     </main>
 
-    <!-- সাইডবার টগল করার ফাংশন -->
+    <!-- সাইডবার এবং টগল ফাংশন -->
     <script>
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('show');
             document.getElementById('sidebarOverlay').classList.toggle('show');
         }
+
+        // ফর্ম হাইড/শো করার ফাংশন
+        function toggleFormVisibility(formId, btnId, defaultText) {
+            const form = document.getElementById(formId);
+            const btn = document.getElementById(btnId);
+            
+            if (form.classList.contains('hidden-form')) {
+                form.classList.remove('hidden-form');
+                btn.innerHTML = '<i class="fa-solid fa-minus"></i> বাতিল করুন';
+            } else {
+                form.classList.add('hidden-form');
+                btn.innerHTML = '<i class="fa-solid fa-plus"></i> ' + defaultText;
+            }
+        }
+
+        // ফর্ম ফোর্স ওপেন করার ফাংশন (এডিট বাটনের জন্য)
+        window.openFormPanel = function(formId, btnId) {
+            const form = document.getElementById(formId);
+            const btn = document.getElementById(btnId);
+            form.classList.remove('hidden-form');
+            btn.innerHTML = '<i class="fa-solid fa-minus"></i> বাতিল করুন';
+        };
+
+        // ফর্ম ফোর্স ক্লোজ করার ফাংশন (রিসেট/ক্যান্সেল এর জন্য)
+        window.closeFormPanel = function(formId, btnId, defaultText) {
+            const form = document.getElementById(formId);
+            const btn = document.getElementById(btnId);
+            form.classList.add('hidden-form');
+            btn.innerHTML = '<i class="fa-solid fa-plus"></i> ' + defaultText;
+        };
     </script>
 
     <!-- Firebase Scripts -->
@@ -312,6 +361,7 @@
                 await updatePassword(user, newPass);
                 alert("আলহামদুলিল্লাহ! অ্যাডমিন পাসওয়ার্ড সফলভাবে পরিবর্তন করা হয়েছে। পরবর্তী লগইনের সময় নতুন পাসওয়ার্ড ব্যবহার করুন।");
                 document.getElementById('adminPassForm').reset();
+                window.closeFormPanel('adminPassForm', 'togglePassBtn', 'পাসওয়ার্ড পরিবর্তন করুন');
             } catch (error) {
                 if(error.code === 'auth/invalid-credential') {
                     alert("আপনার দেওয়া বর্তমান পাসওয়ার্ডটি ভুল হয়েছে!");
@@ -348,7 +398,6 @@
         document.getElementById('noticeForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            // Rich editor থেকে HTML ডেটা সংগ্রহ
             const descHTML = document.getElementById('nDesc').innerHTML.trim();
             if(!descHTML || descHTML === '<br>') {
                 alert("দয়া করে নোটিশের বিবরণ লিখুন।");
@@ -371,12 +420,12 @@
             const n = allNotices.find(x => x.id === id);
             document.getElementById('editNoticeId').value = n.id; 
             document.getElementById('nTitle').value = n.title; 
-            
-            // Textarea এর বদলে innerHTML দিয়ে ডেটা সেট করা হলো
             document.getElementById('nDesc').innerHTML = n.description || '';
             
             document.getElementById('saveNoticeBtn').innerText = 'আপডেট করুন'; 
             document.getElementById('cancelNoticeBtn').style.display = 'block';
+            
+            window.openFormPanel('noticeForm', 'toggleNoticeBtn');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         };
         
@@ -385,12 +434,10 @@
         window.resetNoticeForm = () => { 
             document.getElementById('noticeForm').reset(); 
             document.getElementById('editNoticeId').value = ''; 
-            
-            // Rich editor ম্যানুয়ালি ক্লিয়ার করতে হয়
             document.getElementById('nDesc').innerHTML = ''; 
-            
             document.getElementById('saveNoticeBtn').innerText = 'পাবলিশ করুন'; 
             document.getElementById('cancelNoticeBtn').style.display = 'none'; 
+            window.closeFormPanel('noticeForm', 'toggleNoticeBtn', 'নতুন নোটিশ যুক্ত করুন');
         };
 
         // --- ব্যাংক একাউন্ট লজিক ---
@@ -433,10 +480,18 @@
             const b = allBanks.find(x => x.id === id);
             document.getElementById('editBankId').value = b.id; document.getElementById('bName').value = b.bankName; document.getElementById('bAccName').value = b.accName; document.getElementById('bAccNo').value = b.accNo; document.getElementById('bBranch').value = b.branch;
             document.getElementById('saveBankBtn').innerText = 'আপডেট করুন'; document.getElementById('cancelBankBtn').style.display = 'block';
+            
+            window.openFormPanel('bankForm', 'toggleBankBtn');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         };
         window.delBank = async (id) => { if(confirm("ডিলিট করবেন?")) await remove(ref(db, 'bank_accounts/' + id)); };
-        window.resetBankForm = () => { document.getElementById('bankForm').reset(); document.getElementById('editBankId').value = ''; document.getElementById('saveBankBtn').innerText = 'সংরক্ষণ করুন'; document.getElementById('cancelBankBtn').style.display = 'none'; };
+        window.resetBankForm = () => { 
+            document.getElementById('bankForm').reset(); 
+            document.getElementById('editBankId').value = ''; 
+            document.getElementById('saveBankBtn').innerText = 'সংরক্ষণ করুন'; 
+            document.getElementById('cancelBankBtn').style.display = 'none'; 
+            window.closeFormPanel('bankForm', 'toggleBankBtn', 'নতুন ব্যাংক যুক্ত করুন');
+        };
 
         // --- ডেঞ্জার জোন (Data Erase) লজিক ---
         window.eraseData = async (type) => {
