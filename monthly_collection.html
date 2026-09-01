@@ -75,7 +75,7 @@
 
         /* প্রিমিয়াম টেবিল ডিজাইন */
         .table-container { background: var(--white); border-radius: 12px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); overflow-x: auto; opacity: 0; animation: fadeUp 0.6s ease forwards 0.4s;}
-        table { width: 100%; border-collapse: separate; border-spacing: 0; min-width: 800px; }
+        table { width: 100%; border-collapse: separate; border-spacing: 0; min-width: 900px; }
         table th, table td { padding: 16px 15px; text-align: left; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
         table th { background-color: #f8fbf9; color: var(--dark-green); font-weight: 600; text-transform: uppercase; font-size: 13px; letter-spacing: 0.5px;}
         table tbody tr { transition: all 0.3s ease; }
@@ -144,6 +144,24 @@
             <h2>সদস্যদের জমার তালিকা</h2>
         </div>
 
+        <!-- টার্গেট সেট করার নতুন সেকশন -->
+        <div class="filter-section" style="margin-bottom: 15px; animation-delay: 0.25s;">
+            <div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: center; width: 100%;">
+                <div style="flex: 1; min-width: 250px;">
+                    <label style="font-size: 14px; font-weight: 600; color: var(--dark-green); display: block; margin-bottom: 8px;">এই মাস পর্যন্ত সর্বমোট জমা হওয়ার কথা:</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="number" id="expectedDepositInput" placeholder="অ্যামাউন্ট লিখুন..." style="flex: 1; padding: 12px 15px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 15px; outline: none; transition: 0.3s; font-family: inherit;">
+                        <button id="saveExpectedBtn" style="padding: 12px 20px; background: var(--primary-green); color: var(--white); border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-family: inherit; transition: 0.3s;">সেভ করুন</button>
+                    </div>
+                </div>
+                <div class="summary-box" style="margin: 0; min-width: 180px;">
+                    <h4>সেট করা টার্গেট</h4>
+                    <div class="amount" id="currentExpectedText">৳ 0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- সার্চ ও সামারি সেকশন -->
         <div class="filter-section">
             <div class="search-box">
                 <i class="fa-solid fa-magnifying-glass"></i>
@@ -159,16 +177,17 @@
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 10%;">ক্রমিক</th>
-                        <th style="width: 15%;">সদস্য আইডি</th>
-                        <th style="width: 40%;">সদস্যের তথ্য</th>
+                        <th style="width: 8%;">ক্রমিক</th>
+                        <th style="width: 12%;">সদস্য আইডি</th>
+                        <th style="width: 30%;">সদস্যের তথ্য</th>
                         <th style="width: 15%; text-align: right;">সর্বমোট জমা</th>
+                        <th style="width: 15%; text-align: right;">বকেয়া</th> <!-- নতুন কলাম -->
                         <th style="width: 20%; text-align: right;">সর্বশেষ জমা ও তারিখ</th>
                     </tr>
                 </thead>
                 <tbody id="collectionTableBody">
                     <tr>
-                        <td colspan="5" class="loading-data">
+                        <td colspan="6" class="loading-data">
                             <i class="fa-solid fa-spinner fa-spin"></i> ডাটাবেস থেকে তথ্য লোড হচ্ছে...
                         </td>
                     </tr>
@@ -185,7 +204,6 @@
             const step = (timestamp) => {
                 if (!startTimestamp) startTimestamp = timestamp;
                 const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-                // Smooth deceleration
                 const easeProgress = 1 - Math.pow(1 - progress, 4);
                 let currentVal = Math.floor(easeProgress * (end - start) + start);
                 
@@ -213,11 +231,11 @@
     </script>
 
     <!-- Firebase Connection Script -->
+    <!-- Notice: 'set' is imported here -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+        import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-        // আপনার ফায়ারবেস কনফিগারেশন 
         const firebaseConfig = {
             apiKey: "AIzaSyDqSsaNPqrWQfSeGvh0IuPxGaOJ7S4y4Qo",
             authDomain: "darul-ittihad-foundation.firebaseapp.com",
@@ -235,6 +253,39 @@
         
         let allMembersData = [];
         let allTransactions = [];
+        let expectedDepositAmount = 0; // নতুন গ্লোবাল ভেরিয়েবল টার্গেট এমাউন্টের জন্য
+
+        // ০. সেট করা টার্গেট ডেটা লোড
+        onValue(ref(db, 'settings/expectedMonthlyDeposit'), (snapshot) => {
+            expectedDepositAmount = snapshot.val() || 0;
+            document.getElementById('currentExpectedText').innerText = '৳ ' + expectedDepositAmount;
+            document.getElementById('expectedDepositInput').value = expectedDepositAmount;
+            
+            // ডাটা লোড হয়ে থাকলে টেবিল রি-রেন্ডার করবে
+            if (allMembersData.length > 0) {
+                document.getElementById('searchInput').dispatchEvent(new Event('input'));
+            }
+        });
+
+        // টার্গেট এমাউন্ট সেভ করার ফাংশন
+        document.getElementById('saveExpectedBtn').addEventListener('click', () => {
+            const val = document.getElementById('expectedDepositInput').value;
+            if(val === "" || val < 0) {
+                alert("দয়া করে সঠিক এমাউন্ট লিখুন।");
+                return;
+            }
+            const btn = document.getElementById('saveExpectedBtn');
+            btn.innerText = "সেভিং...";
+            set(ref(db, 'settings/expectedMonthlyDeposit'), Number(val))
+                .then(() => {
+                    alert("টার্গেট এমাউন্ট সফলভাবে সেভ হয়েছে!");
+                    btn.innerText = "সেভ করুন";
+                })
+                .catch(err => {
+                    alert("সেভ করতে সমস্যা হয়েছে: " + err);
+                    btn.innerText = "সেভ করুন";
+                });
+        });
 
         // ১. ট্রানজেকশন ডেটা লোড
         onValue(ref(db, 'transactions'), (snapshot) => {
@@ -270,13 +321,12 @@
             allMembersData.forEach(m => {
                 m.totalMonthly = 0;
                 m.lastAmount = 0;
-                m.lastDateObj = 0; // তুলনার জন্য
+                m.lastDateObj = 0;
                 m.lastDateStr = '-';
             });
 
             let grandTotal = 0;
 
-            // ট্রানজেকশন থেকে 'মাসিক জমা' খাতের হিসাব বের করা
             allTransactions.forEach(trx => {
                 if (trx.type === 'income' && trx.items && trx.payerId) {
                     let hasMonthly = false;
@@ -295,7 +345,6 @@
                             mem.totalMonthly += monthlyAmtInTrx;
                             grandTotal += monthlyAmtInTrx;
 
-                            // সর্বশেষ জমার তারিখ এবং পরিমাণ বের করা
                             let trxTime = new Date(trx.date).getTime();
                             if (trxTime >= mem.lastDateObj) {
                                 mem.lastDateObj = trxTime;
@@ -307,10 +356,8 @@
                 }
             });
 
-            // Number Counting Animation Call for Grand Total
             animateValue(document.getElementById('grandTotalText'), 0, grandTotal, 1500);
 
-            // আইডি অনুযায়ী সাজানো
             allMembersData.sort((a, b) => {
                 let idA = a.memberId ? a.memberId.toString().toLowerCase() : 'zzz';
                 let idB = b.memberId ? b.memberId.toString().toLowerCase() : 'zzz';
@@ -323,7 +370,7 @@
         function renderTable(dataArray) {
             tbody.innerHTML = '';
             if(dataArray.length === 0){
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px;">কোনো রেকর্ড পাওয়া যায়নি।</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 20px;">কোনো রেকর্ড পাওয়া যায়নি।</td></tr>';
                 return;
             }
 
@@ -336,7 +383,21 @@
                 let lAmount = member.lastAmount || 0;
                 let lDate = member.lastDateStr !== '-' ? `<i class="fa-regular fa-calendar" style="margin-right:4px;"></i> ${member.lastDateStr}` : 'জমা নেই';
 
-                // Staggered Animation Delay for table rows
+                // বকেয়া হিসাব করার লজিক
+                let dueAmount = expectedDepositAmount - tAmount;
+                let dueHtml = '';
+
+                if (dueAmount === 0) {
+                    // জিরো হলে ড্যাশ
+                    dueHtml = `<span style="color: var(--text-gray); font-weight: bold; font-size: 18px;">-</span>`;
+                } else if (dueAmount > 0) {
+                    // বকেয়া থাকলে লাল রঙ
+                    dueHtml = `<span class="amount-text en-text" style="color: #d32f2f;">৳ ${dueAmount}</span>`;
+                } else {
+                    // অ্যাডভান্স জমা থাকলে নীল রঙ
+                    dueHtml = `<span class="amount-text en-text" style="color: #1976d2;">৳ ${Math.abs(dueAmount)}</span>`;
+                }
+
                 let animDelay = (index % 10) * 0.05;
 
                 const tr = document.createElement('tr');
@@ -355,6 +416,7 @@
                         </div>
                     </td>
                     <td style="text-align: right;"><span class="amount-text">৳ ${tAmount}</span></td>
+                    <td style="text-align: right;">${dueHtml}</td> <!-- নতুন বকেয়া ডাটা -->
                     <td style="text-align: right;">
                         <span class="amount-text" style="color: var(--text-dark);">৳ ${lAmount}</span>
                         <span class="date-text en-text">${lDate}</span>
@@ -374,7 +436,6 @@
             });
             renderTable(filteredMembers);
             
-            // Search Update Total
             let searchTotal = 0;
             filteredMembers.forEach(m => searchTotal += (m.totalMonthly || 0));
             animateValue(document.getElementById('grandTotalText'), 0, searchTotal, 800);
