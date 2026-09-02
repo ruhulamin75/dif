@@ -383,7 +383,12 @@
             let todayIncome = 0;
             let allTrx = [];
 
-            const todayStr = new Date().toISOString().split('T')[0];
+            // বাংলাদেশ সময় (Asia/Dhaka) অনুযায়ী আজকের তারিখ বের করা
+            const now = new Date();
+            const bdtDate = new Date(now.toLocaleString("en-US", {timeZone: "Asia/Dhaka"}));
+            const todayStr = bdtDate.getFullYear() + "-" + 
+                             String(bdtDate.getMonth() + 1).padStart(2, '0') + "-" + 
+                             String(bdtDate.getDate()).padStart(2, '0');
 
             if (data) {
                 Object.keys(data).forEach(key => {
