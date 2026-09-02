@@ -441,7 +441,13 @@
 
     <script>
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('show'); document.getElementById('sidebarOverlay').classList.toggle('show'); }
-        document.getElementById('entryDate').valueAsDate = new Date();
+        
+        // বাংলাদেশ সময় অনুযায়ী আজকের তারিখ সেট করা
+        const now = new Date();
+        const bdtDate = new Date(now.toLocaleString("en-US", {timeZone: "Asia/Dhaka"}));
+        document.getElementById('entryDate').value = bdtDate.getFullYear() + "-" + 
+                                                   String(bdtDate.getMonth() + 1).padStart(2, '0') + "-" + 
+                                                   String(bdtDate.getDate()).padStart(2, '0');
 
         function logout(e) {
             e.preventDefault();
@@ -521,7 +527,12 @@
         function resetForm() {
             document.getElementById('invProfForm').reset();
             document.getElementById('editId').value = "";
-            document.getElementById('entryDate').valueAsDate = new Date();
+            
+            // বাংলাদেশ সময় অনুযায়ী রিসেট করা
+            const bdtNow = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Dhaka"}));
+            document.getElementById('entryDate').value = bdtNow.getFullYear() + "-" + 
+                                                       String(bdtNow.getMonth() + 1).padStart(2, '0') + "-" + 
+                                                       String(bdtNow.getDate()).padStart(2, '0');
             
             document.getElementById('profOtherSourceText').style.display = 'none';
             document.getElementById('profOtherSourceText').value = '';
