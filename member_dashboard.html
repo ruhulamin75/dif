@@ -63,7 +63,7 @@
         .welcome-card { background: linear-gradient(135deg, var(--primary-green), var(--dark-green)); color: white; padding: 30px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; box-shadow: 0 10px 20px rgba(11, 158, 74, 0.2); opacity: 0; animation: scaleIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.1s;}
         .welcome-text h1 { font-size: 28px; margin: 0 0 5px 0;}
         .welcome-text p { margin: 0; opacity: 0.9; font-size: 16px;}
-        .welcome-avatar { width: 80px; height: 80px; border-radius: 50%; border: 3px solid white; object-fit: cover; background: white; transition: transform 0.4s;}
+        .welcome-avatar { width: 100px; height: 100px; border-radius: 50%; border: 3px solid white; object-fit: cover; background: white; transition: transform 0.4s;}
         .welcome-card:hover .welcome-avatar { transform: scale(1.1); }
 
         /* ফান্ড কার্ড অ্যানিমেশন */
@@ -124,7 +124,7 @@
         .form-group.full { grid-column: 1 / -1; }
         .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px;}
         .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; font-family: inherit; font-size: 14px; outline: none; background: #fafafa; transition: border-color 0.3s;}
-        .form-group input:focus { border-color: var(--primary-green); background: white;}
+        .form-group input:focus, .form-group select:focus { border-color: var(--primary-green); background: white;}
         .form-group input[readonly] { background: #eee; cursor: not-allowed; color: #777;}
         
         .pic-wrapper { width: 100px; height: 100px; border-radius: 50%; border: 2px dashed var(--primary-green); margin: 0 auto 20px; display: flex; justify-content: center; align-items: center; cursor: pointer; overflow: hidden; position: relative; transition: border-color 0.3s;}
@@ -324,6 +324,15 @@
                     <div class="form-group"><label>পিতার নাম</label><input type="text" id="pFather"></div>
                     <div class="form-group"><label>মাতার নাম</label><input type="text" id="pMother"></div>
                     <div class="form-group"><label>পেশা</label><input type="text" id="pProfession"></div>
+                    
+                    <div class="form-group">
+                        <label>লিঙ্গ</label>
+                        <select id="pGender">
+                            <option value="Male">পুরুষ</option>
+                            <option value="Female">মহিলা</option>
+                        </select>
+                    </div>
+                    
                     <div class="form-group"><label>রক্তের গ্রুপ</label><input type="text" id="pBlood" class="en-text"></div>
                     <div class="form-group full"><label>বর্তমান ঠিকানা</label><input type="text" id="pAddress"></div>
                     <div class="form-group full"><label>পাসওয়ার্ড (লগইন এর জন্য)</label><input type="text" id="pPassword" class="en-text" required></div>
@@ -407,9 +416,19 @@
                 document.getElementById('mWelcomeName').innerText = m.nameBn || m.nameEn;
                 document.getElementById('mWelcomeId').innerText = m.memberId || 'N/A';
                 document.getElementById('mWelcomePhone').innerText = m.phone || 'N/A';
+                
+                let gender = m.gender || 'Male';
+                document.getElementById('pGender').value = gender;
+                
                 if(m.photo) {
                     document.getElementById('mWelcomePic').src = m.photo;
                     document.getElementById('editPicPreview').src = m.photo;
+                } else {
+                    let defaultPic = gender === 'Female' 
+                        ? 'https://cdn-icons-png.flaticon.com/512/4140/4140047.png' 
+                        : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
+                    document.getElementById('mWelcomePic').src = defaultPic;
+                    document.getElementById('editPicPreview').src = defaultPic;
                 }
                 
                 document.getElementById('pNameBn').value = m.nameBn || '';
@@ -559,6 +578,7 @@
             const updates = {
                 nameBn: document.getElementById('pNameBn').value,
                 nameEn: document.getElementById('pNameEn').value,
+                gender: document.getElementById('pGender').value,
                 fatherName: document.getElementById('pFather').value,
                 motherName: document.getElementById('pMother').value,
                 profession: document.getElementById('pProfession').value,
