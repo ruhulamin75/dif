@@ -157,14 +157,40 @@
                 margin: 0 auto;
                 padding: 40px;
                 box-sizing: border-box;
+                position: relative;
             }
 
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             
-            .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.05; z-index: -1; }
-            .watermark img { width: 300px; }
+            /* Watermark Fix for large screens/pads */
+            .watermark { 
+                position: fixed; /* Changed from absolute to fixed */
+                top: 50%; 
+                left: 50%; 
+                transform: translate(-50%, -50%); 
+                opacity: 0.05; 
+                z-index: -1; 
+                pointer-events: none;
+            }
+            .watermark img { width: 400px; max-width: 80%; }
             
-            .receipt-header { text-align: center; border-bottom: 3px double #ccc; padding-bottom: 15px; margin-bottom: 25px;}
+            /* Member's Copy Badge Style */
+            .members-copy-badge {
+                position: absolute;
+                top: 40px;
+                left: 40px;
+                background: #f0f0f0 !important;
+                color: #555 !important;
+                padding: 5px 12px;
+                border-radius: 4px;
+                font-size: 12px;
+                font-weight: 600;
+                border: 1px solid #ccc;
+                font-family: 'Poppins', sans-serif;
+                z-index: 10;
+            }
+
+            .receipt-header { text-align: center; border-bottom: 3px double #ccc; padding-bottom: 15px; margin-bottom: 25px; position: relative;}
             .receipt-header img { width: 60px; margin-bottom: 10px;}
             .receipt-header h1 { margin: 0; font-size: 28px; font-family: 'Poppins', sans-serif; color: #222; font-weight: 700;}
             .receipt-title { display: inline-block; padding: 8px 25px; border-radius: 30px; font-size: 18px; font-weight: 700; margin-top: 15px; background: var(--primary-green) !important; color: white !important;}
@@ -573,11 +599,13 @@
                 itemsHtml = `<tr><td colspan="3" style="text-align:center;">খাতের বিবরণ নেই</td></tr>`;
             }
 
+            // হুবহু অ্যাডমিনের মতোই রিসিট নম্বর জেনারেট হচ্ছে
             let rId = "#" + (trx.timestamp ? trx.timestamp.toString().slice(-6) : "000000");
             let words = trx.amountInWords || "টাকা মাত্র"; 
 
             const html = `
                 <div class="receipt-container-print">
+                    <div class="members-copy-badge">Member's Copy</div>
                     <div class="watermark"><img src="1000123161.png" alt="Watermark"></div>
                     <div class="receipt-header">
                         <img src="1000123161.png" alt="Logo">
