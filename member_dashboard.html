@@ -164,7 +164,7 @@
             
             /* Watermark Fix for large screens/pads */
             .watermark { 
-                position: fixed; /* Changed from absolute to fixed */
+                position: fixed; 
                 top: 50%; 
                 left: 50%; 
                 transform: translate(-50%, -50%); 
@@ -328,8 +328,9 @@
                     <div class="form-group">
                         <label>লিঙ্গ</label>
                         <select id="pGender">
-                            <option value="Male">পুরুষ</option>
-                            <option value="Female">মহিলা</option>
+                            <!-- ভ্যালুগুলো অ্যাডমিন প্যানেলের সাথে মেলানো হলো -->
+                            <option value="পুরুষ">পুরুষ</option>
+                            <option value="নারী">নারী</option>
                         </select>
                     </div>
                     
@@ -392,7 +393,6 @@
             const step = (timestamp) => {
                 if (!startTimestamp) startTimestamp = timestamp;
                 const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-                // Ease out function for smooth deceleration
                 const easeProgress = 1 - Math.pow(1 - progress, 4); 
                 let currentVal = Math.floor(easeProgress * (targetValue - startValue) + startValue);
                 
@@ -417,14 +417,15 @@
                 document.getElementById('mWelcomeId').innerText = m.memberId || 'N/A';
                 document.getElementById('mWelcomePhone').innerText = m.phone || 'N/A';
                 
-                let gender = m.gender || 'Male';
+                let gender = m.gender || 'পুরুষ';
                 document.getElementById('pGender').value = gender;
                 
                 if(m.photo) {
                     document.getElementById('mWelcomePic').src = m.photo;
                     document.getElementById('editPicPreview').src = m.photo;
                 } else {
-                    let defaultPic = gender === 'Female' 
+                    // নারী হলে মহিলা আইকন, অন্যথায় (পুরুষ বা সেভ না থাকলে) পুরুষ আইকন
+                    let defaultPic = gender === 'নারী' 
                         ? 'https://cdn-icons-png.flaticon.com/512/4140/4140047.png' 
                         : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
                     document.getElementById('mWelcomePic').src = defaultPic;
@@ -482,7 +483,6 @@
 
                 let totalSum = mSum + ySum + sSum;
 
-                // Number Counting Animations Triggered Here
                 animateCounter(document.getElementById('tMonthly'), mSum, 1500);
                 animateCounter(document.getElementById('tYearly'), ySum, 1500);
                 animateCounter(document.getElementById('tShare'), sSum, 1500);
@@ -512,10 +512,7 @@
                     let notices = Object.values(snapshot.val()).sort((a,b) => b.timestamp - a.timestamp);
                     notices.forEach(n => {
                         let d = new Date(n.timestamp).toLocaleDateString('en-GB');
-                        
-                        // লিংক, স্পেস ও প্যারাগ্রাফ ফরম্যাটিং লজিক
                         let desc = n.description || '';
-                        // যদি আগে থেকে কোনো HTML লিংক (<a ...) করা না থাকে, তবে URL গুলোকে স্বয়ংক্রিয়ভাবে লিংকে রূপান্তর করবে
                         if (!desc.includes('<a ')) {
                             desc = desc.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" style="color: #1976d2; text-decoration: underline; word-break: break-all;">$1</a>');
                         }
@@ -597,7 +594,7 @@
         });
 
         // ==========================================
-        // রিসিট প্রিন্ট জেনারেটর (মেইন ডাটাবেস থেকে ফুল রিসিট)
+        // রিসিট প্রিন্ট জেনারেটর
         // ==========================================
         window.printReceipt = async (trxId) => {
             const snap = await get(ref(db, 'transactions/' + trxId));
@@ -619,7 +616,6 @@
                 itemsHtml = `<tr><td colspan="3" style="text-align:center;">খাতের বিবরণ নেই</td></tr>`;
             }
 
-            // হুবহু অ্যাডমিনের মতোই রিসিট নম্বর জেনারেট হচ্ছে
             let rId = "#" + (trx.timestamp ? trx.timestamp.toString().slice(-6) : "000000");
             let words = trx.amountInWords || "টাকা মাত্র"; 
 
