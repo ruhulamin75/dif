@@ -457,7 +457,13 @@
     <!-- লজিক -->
     <script>
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('show'); document.getElementById('sidebarOverlay').classList.toggle('show'); }
-        document.getElementById('trxDate').valueAsDate = new Date();
+        
+        // বাংলাদেশ সময় অনুযায়ী আজকের তারিখ সেট করা (রাত ১২টার পর অটো আপডেট)
+        const now = new Date();
+        const bdtDate = new Date(now.toLocaleString("en-US", {timeZone: "Asia/Dhaka"}));
+        document.getElementById('trxDate').value = bdtDate.getFullYear() + "-" + 
+                                                   String(bdtDate.getMonth() + 1).padStart(2, '0') + "-" + 
+                                                   String(bdtDate.getDate()).padStart(2, '0');
 
         function logout(e) {
             e.preventDefault();
@@ -579,7 +585,12 @@
         function resetForm() {
             document.getElementById('trxForm').reset();
             document.getElementById('editTrxId').value = "";
-            document.getElementById('trxDate').valueAsDate = new Date();
+            
+            // বাংলাদেশ সময় অনুযায়ী রিসেট করা
+            const bdtNow = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Dhaka"}));
+            document.getElementById('trxDate').value = bdtNow.getFullYear() + "-" + 
+                                                       String(bdtNow.getMonth() + 1).padStart(2, '0') + "-" + 
+                                                       String(bdtNow.getDate()).padStart(2, '0');
             
             document.querySelectorAll('.category-item input[type="checkbox"]').forEach(chk => { chk.checked = false; toggleIncAmt(chk, chk.id.replace('chk', 'inc-box')); });
             document.getElementById('incOtherMemberText').style.display = 'none';
