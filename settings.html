@@ -98,6 +98,10 @@
         .btn-delete { color: #d32f2f; background: none; border: none; cursor: pointer; font-size: 16px; transition: 0.3s;}
         .btn-delete:hover { transform: scale(1.2); }
 
+        .badge { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; display: inline-block; }
+        .badge.withdraw { background: rgba(211, 47, 47, 0.15); color: #d32f2f; }
+        .btn-action { width: 30px; height: 30px; border-radius: 6px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 13px; transition: 0.3s; color: #fff; margin-right: 5px; }
+
         /* Danger Zone Styles */
         .danger-zone { grid-column: 1 / -1; }
         .danger-btn { flex: 1; min-width: 250px; background: #fffafafa; color: #d32f2f; border: 2px solid #ffcdd2; padding: 15px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; justify-content: center; align-items: center; gap: 10px; font-size: 16px; font-family: inherit;}
@@ -249,21 +253,43 @@
                 </div>
             </div>
 
-            <!-- ডেঞ্জার জোন (Data Reset) -->
+            <!-- ডেঞ্জার জোন (Data Reset & Recycle Bin) -->
             <div class="danger-zone">
                 <div class="form-container" style="border-top-color: #d32f2f;">
-                    <h3 style="color: #d32f2f; border-bottom-color: #ffeaea;"><i class="fa-solid fa-triangle-exclamation"></i> ডেঞ্জার জোন (ডেটা রিসেট)</h3>
+                    <h3 style="color: #d32f2f; border-bottom-color: #ffeaea;"><i class="fa-solid fa-triangle-exclamation"></i> ডেঞ্জার জোন (ডেটা রিসেট ও রিকভারি)</h3>
                     <p style="color: var(--text-gray); font-size: 15px; margin-bottom: 20px;">
-                        <strong>সতর্কতা:</strong> নিচের বাটনগুলোতে ক্লিক করে ডেটা মুছে ফেললে তা আর পুনরায় ফিরিয়ে আনা সম্ভব নয়। 
+                        <strong>সতর্কতা:</strong> নিচের বাটনগুলোতে ক্লিক করে ডেটা মুছে ফেললে তা সরাসরি "রিসাইকেল বিন"-এ চলে যাবে। ৭ দিন পর তা অটোমেটিক চিরতরে মুছে যাবে। 
                     </p>
-                    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                    
+                    <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 30px;">
                         <button class="danger-btn" onclick="window.eraseData('members')">
-                            <i class="fa-solid fa-users-slash"></i> Erase All Members Data
+                            <i class="fa-solid fa-users-slash"></i> সকল সদস্যের ডেটা মুছুন
                         </button>
                         <button class="danger-btn" onclick="window.eraseData('transactions')">
-                            <i class="fa-solid fa-money-bill-transfer"></i> Erase All Transactions
+                            <i class="fa-solid fa-money-bill-transfer"></i> সকল লেনদেন মুছুন
                         </button>
                     </div>
+
+                    <!-- Recycle Bin Display -->
+                    <h4 style="color: #d32f2f; margin-bottom: 15px; border-bottom: 1px dashed #ccc; padding-bottom: 5px;">
+                        <i class="fa-solid fa-trash-can-arrow-up"></i> রিসাইকেল বিন (মুছে ফেলা ডেটা)
+                    </h4>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>রিসেটের ধরণ</th>
+                                    <th>ডিলিট করার সময়</th>
+                                    <th>স্থায়ীভাবে মুছে যাবে</th>
+                                    <th style="text-align: right;">অ্যাকশন</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recycleBinTable">
+                                <tr><td colspan="4" style="text-align:center;">লোড হচ্ছে...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -310,7 +336,7 @@
     <!-- Firebase Scripts -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getDatabase, ref, set, onValue, push, remove, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+        import { getDatabase, ref, set, onValue, push, remove, update, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
         import { getAuth, updatePassword, EmailAuthProvider, reauthenticateWithCredential, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
         const firebaseConfig = {
@@ -493,12 +519,90 @@
             window.closeFormPanel('bankForm', 'toggleBankBtn', 'নতুন ব্যাংক যুক্ত করুন');
         };
 
-        // --- ডেঞ্জার জোন (Data Erase) লজিক ---
+        // --- Recycle Bin Logic & Listeners ---
+        onValue(ref(db, 'recycle_bin'), (snapshot) => {
+            const tbody = document.getElementById('recycleBinTable');
+            tbody.innerHTML = '';
+            const now = Date.now();
+            let hasItems = false;
+
+            if (snapshot.exists()) {
+                snapshot.forEach(child => {
+                    let item = child.val();
+                    item.id = child.key;
+                    
+                    if(now > item.expiresAt) {
+                        // Auto Permanent Delete after 7 Days
+                        remove(ref(db, 'recycle_bin/' + item.id));
+                    } else {
+                        hasItems = true;
+                        let typeName = item.type === 'members' ? 'সকল সদস্য' : 'সকল লেনদেন';
+                        let delDate = new Date(item.timestamp).toLocaleString('en-GB');
+                        let daysLeft = Math.ceil((item.expiresAt - now) / (1000 * 60 * 60 * 24));
+                        
+                        tbody.innerHTML += `<tr>
+                            <td><span class="badge withdraw">${typeName}</span></td>
+                            <td style="font-size: 13px;" class="en-text">${delDate}</td>
+                            <td><span style="color: #f57c00; font-weight: bold;">${daysLeft} দিন পর</span></td>
+                            <td style="text-align: right; display:flex; gap:5px; justify-content:flex-end;">
+                                <button class="btn-action" style="background: var(--primary-green);" onclick="window.restoreData('${item.id}')" title="রিস্টোর করুন"><i class="fa-solid fa-rotate-left"></i></button>
+                                <button class="btn-action" style="background: #d32f2f;" onclick="window.permanentDelete('${item.id}')" title="স্থায়ীভাবে মুছুন"><i class="fa-solid fa-trash"></i></button>
+                            </td>
+                        </tr>`;
+                    }
+                });
+            }
+            
+            if(!hasItems) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color: #999; padding: 20px;">রিসাইকেল বিনে কোনো ডেটা নেই</td></tr>';
+            }
+        });
+
+        // Restore Data
+        window.restoreData = async (binId) => {
+            if(confirm("আপনি কি এই মুছে ফেলা ডেটাগুলো পুনরায় রিস্টোর করতে চান?")) {
+                try {
+                    const snap = await get(ref(db, `recycle_bin/${binId}`));
+                    if(snap.exists()) {
+                        let item = snap.val();
+                        let restoreUpdates = {};
+                        
+                        if(item.data) {
+                            for(let key in item.data) {
+                                restoreUpdates[key] = item.data[key];
+                            }
+                        }
+                        
+                        // Remove from bin
+                        restoreUpdates[`recycle_bin/${binId}`] = null;
+                        await update(ref(db), restoreUpdates);
+                        alert("ডেটা সফলভাবে রিস্টোর করা হয়েছে!");
+                    }
+                } catch(e) {
+                    alert("রিস্টোর করতে সমস্যা হয়েছে!");
+                    console.error(e);
+                }
+            }
+        }
+
+        // Permanent Delete
+        window.permanentDelete = async (binId) => {
+            if(confirm("সতর্কতা! আপনি কি এটি চিরতরে মুছে ফেলতে চান? এটি আর রিস্টোর করা যাবে না!")) {
+                try {
+                    await remove(ref(db, `recycle_bin/${binId}`));
+                    alert("ডেটা চিরতরে মুছে ফেলা হয়েছে!");
+                } catch(e) {
+                    alert("ডিলিট করতে সমস্যা হয়েছে!");
+                }
+            }
+        }
+
+        // --- ডেঞ্জার জোন (Data Erase -> Recycle Bin) লজিক ---
         window.eraseData = async (type) => {
             let typeName = type === 'members' ? 'সকল সদস্যের ডেটা' : 'সকল লেনদেনের ডেটা';
             const user = auth.currentUser;
             
-            if (confirm(`সতর্কতা! আপনি কি নিশ্চিত যে ${typeName} মুছে ফেলতে চান? এটি আর ফিরিয়ে আনা সম্ভব নয়!`)) {
+            if (confirm(`সতর্কতা! আপনি কি নিশ্চিত যে ${typeName} মুছে ফেলতে চান?\n\n(ডেটাগুলো রিসাইকেল বিনে জমা হবে এবং ৭ দিন পর চিরতরে মুছে যাবে)`)) {
                 
                 let adminPass = prompt("নিশ্চিত করতে আপনার অ্যাডমিন পাসওয়ার্ড দিন:");
                 
@@ -508,10 +612,38 @@
                             const credential = EmailAuthProvider.credential(user.email, adminPass);
                             await reauthenticateWithCredential(user, credential);
                             
-                            await remove(ref(db, type));
-                            alert(`সফলভাবে ${typeName} মুছে ফেলা হয়েছে!`);
+                            // Fetch all current data to backup
+                            const snap = await get(ref(db));
+                            const currentData = snap.exists() ? snap.val() : {};
+                            
+                            let updates = {};
+                            let backupData = {};
+                            
+                            if (type === 'members') {
+                                // Wipe members and their related transactions
+                                if(currentData['members']) backupData['members'] = currentData['members'];
+                                updates['members'] = null;
+                            } else if (type === 'transactions') {
+                                // Wipe transactions
+                                if(currentData['transactions']) backupData['transactions'] = currentData['transactions'];
+                                updates['transactions'] = null;
+                            }
+                            
+                            // Push backup to recycle_bin
+                            const binKey = push(ref(db, 'recycle_bin')).key;
+                            updates[`recycle_bin/${binKey}`] = {
+                                type: type,
+                                timestamp: Date.now(),
+                                expiresAt: Date.now() + (7 * 24 * 60 * 60 * 1000), // 7 Days logic
+                                data: backupData
+                            };
+                            
+                            await update(ref(db), updates);
+                            alert(`সফলভাবে ${typeName} মুছে রিসাইকেল বিনে পাঠানো হয়েছে!`);
+                            
                         } catch (error) {
                             alert("পাসওয়ার্ড ভুল হয়েছে অথবা সমস্যা হয়েছে! (" + error.message + ")");
+                            console.error(error);
                         }
                     } else {
                         alert("ইউজার সেশন পাওয়া যায়নি। দয়া করে পুনরায় লগইন করুন।");
