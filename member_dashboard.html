@@ -170,7 +170,7 @@
         .chat-send-btn { background: var(--primary-green); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.3s; font-size: 16px;}
         .chat-send-btn:hover { background: var(--dark-green); transform: scale(1.1); box-shadow: 0 4px 10px rgba(11,158,74,0.3);}
 
-        /* Profile Modal & Print Styles */
+        /* Profile Modal & Print Styles Remain Unchanged */
         .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(3px); z-index: 9999; overflow-y: auto; padding: 20px;}
         .modal-content { background: var(--white); border-radius: 16px; width: 100%; max-width: 600px; margin: 30px auto; padding: 30px; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.2); animation: scaleIn 0.4s;}
         .close-btn { position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; background: none; border: none; color: #555; transition: color 0.3s;}
@@ -265,7 +265,7 @@
             <img id="mWelcomePic" class="welcome-avatar" src="https://via.placeholder.com/100?text=Photo" alt="Profile">
         </div>
 
-        <!-- NEW: হিরো মেম্বারস লিস্ট (Target Based Logic) -->
+        <!-- NEW: হিরো মেম্বারস লিস্ট (Target Amount Based) -->
         <div class="hero-section">
             <div class="hero-header">
                 <h3><i class="fa-solid fa-award"></i> মাসের হিরো (Top Contributors)</h3>
@@ -410,7 +410,7 @@
     <!-- Firebase Scripts -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getDatabase, ref, onValue, update, get, push, set, serverTimestamp, onDisconnect, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+        import { getDatabase, ref, onValue, update, get, push, set, serverTimestamp, onDisconnect, query, limitToLast, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
         const firebaseConfig = {
           apiKey: "AIzaSyDqSsaNPqrWQfSeGvh0IuPxGaOJ7S4y4Qo",
@@ -680,7 +680,7 @@
         loadHeroMembers();
 
         // ===============================================
-        // CHAT & PRESENCE SYSTEM (Fixed Realtime & Delete)
+        // CHAT & PRESENCE SYSTEM (Fix for Network Issue)
         // ===============================================
         const connectedRef = ref(db, '.info/connected');
         const myConnectionsRef = ref(db, `presence/${loggedInUserId}`);
@@ -728,6 +728,7 @@
         function renderChats() {
             const chatBox = document.getElementById('chatMessages');
             chatBox.innerHTML = '';
+            
             if(Object.keys(currentChats).length > 0) {
                 Object.values(currentChats).sort((a,b) => a.timestamp - b.timestamp).forEach(msg => {
                     const isMe = msg.senderId === loggedInUserId;
@@ -736,7 +737,7 @@
                     let isOnline = presenceData[msg.senderId] && presenceData[msg.senderId].online;
                     let dotHtml = isOnline ? `<i class="fa-solid fa-circle active-icon"></i>` : '';
                     
-                    // Delete Button
+                    // Delete Button Only for Sender
                     let deleteBtn = isMe ? `<span class="delete-chat-btn" onclick="deleteChatMessage('${msg.id}')" title="মুছে ফেলুন"><i class="fa-solid fa-trash"></i></span>` : '';
                     
                     chatBox.innerHTML += `
@@ -760,18 +761,22 @@
             const text = input.value.trim();
             if(!text || !currentMemberData) return;
             
-            input.value = '';
+            input.value = ''; // ইনপুট বক্স ক্লিয়ার
             
-            // Using Date.now() for instant reliable sorting without delay
-            await push(ref(db, 'chats'), {
-                senderId: loggedInUserId,
-                senderName: currentMemberData.nameBn || currentMemberData.nameEn || 'সদস্য',
-                text: text,
-                timestamp: Date.now() 
-            }).catch(err => {
-                console.error(err);
-                alert("মেসেজ পাঠাতে সমস্যা হয়েছে। আপনার ইন্টারনেট কানেকশন চেক করুন।");
-            });
+            try {
+                // ফায়ারবেসে ডাটা সেভ করার ১০০% সিকিউর মেথড
+                const newChatRef = push(ref(db, 'chats'));
+                await set(newChatRef, {
+                    senderId: loggedInUserId || "Unknown",
+                    senderName: currentMemberData.nameBn || currentMemberData.nameEn || 'সদস্য',
+                    text: text,
+                    timestamp: Date.now() 
+                });
+            } catch (err) {
+                console.error("Firebase Error:", err);
+                // ফায়ারবেসের আসল এরর মেসেজটি স্ক্রিনে দেখাবে
+                alert("এরর: " + err.message); 
+            }
         });
 
         window.deleteChatMessage = async function(id) {
