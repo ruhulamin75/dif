@@ -72,12 +72,13 @@
         .hero-scroll::-webkit-scrollbar { height: 6px; }
         .hero-scroll::-webkit-scrollbar-thumb { background: #d35400; border-radius: 10px; }
         
-        .hero-card { min-width: 110px; background: linear-gradient(135deg, #fffdf8, #fff8f2); border: 1px solid #fdebd0; border-radius: 12px; padding: 15px 10px; text-align: center; position: relative; box-shadow: 0 4px 10px rgba(211, 84, 0, 0.05); transition: 0.3s;}
+        .hero-card { min-width: 115px; background: linear-gradient(135deg, #fffdf8, #fff8f2); border: 1px solid #fdebd0; border-radius: 12px; padding: 15px 10px; text-align: center; position: relative; box-shadow: 0 4px 10px rgba(211, 84, 0, 0.05); transition: 0.3s;}
         .hero-card:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(211, 84, 0, 0.15); }
         .hero-badge-icon { position: absolute; top: -10px; right: -5px; background: #f39c12; color: #fff; width: 25px; height: 25px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); border: 2px solid #fff;}
         .hero-img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; margin-bottom: 8px; border: 2px solid #f39c12; padding: 2px;}
         .hero-name { font-size: 13px; font-weight: 700; color: var(--text-dark); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
         .hero-id { font-size: 11px; color: #888; margin: 0;}
+        .hero-date { font-size: 10px; color: var(--primary-green); margin-top: 4px; font-weight: bold; background: #eaf6ee; padding: 2px 5px; border-radius: 8px;}
 
         /* --- গ্লসি ফান্ড কার্ড অ্যানিমেশন --- */
         .fund-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px;}
@@ -169,7 +170,7 @@
         .chat-send-btn { background: var(--primary-green); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.3s; font-size: 16px;}
         .chat-send-btn:hover { background: var(--dark-green); transform: scale(1.1); box-shadow: 0 4px 10px rgba(11,158,74,0.3);}
 
-        /* Profile Modal & Print Styles Remain Unchanged */
+        /* Profile Modal & Print Styles */
         .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(3px); z-index: 9999; overflow-y: auto; padding: 20px;}
         .modal-content { background: var(--white); border-radius: 16px; width: 100%; max-width: 600px; margin: 30px auto; padding: 30px; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.2); animation: scaleIn 0.4s;}
         .close-btn { position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; background: none; border: none; color: #555; transition: color 0.3s;}
@@ -232,7 +233,7 @@
 </head>
 <body>
 
-    <!-- Security Lock (Unchanged) -->
+    <!-- Security Lock -->
     <script>
         if (localStorage.getItem("userRole") !== "member") {
             alert("সিস্টেমে প্রবেশ করতে অনুগ্রহ করে আপনার নম্বর দিয়ে লগইন করুন।");
@@ -264,11 +265,11 @@
             <img id="mWelcomePic" class="welcome-avatar" src="https://via.placeholder.com/100?text=Photo" alt="Profile">
         </div>
 
-        <!-- NEW: হিরো মেম্বারস লিস্ট (Target Amount Based) -->
+        <!-- NEW: হিরো মেম্বারস লিস্ট (Target Based Logic) -->
         <div class="hero-section">
             <div class="hero-header">
-                <h3><i class="fa-solid fa-award"></i> মাসের হিরো (Early Birds)</h3>
-                <p>মাসের শুরুতে (১-৫ তারিখ) 'নির্ধারিত মাসিক চাঁদা' প্রদানকারী সম্মানিত সদস্যবৃন্দ</p>
+                <h3><i class="fa-solid fa-award"></i> মাসের হিরো (Top Contributors)</h3>
+                <p>যারা নির্ধারিত টার্গেট পরিমাণ মোট 'মাসিক জমা' পূরণ করেছেন, তারাই এই লিস্টের অন্তর্ভুক্ত।</p>
             </div>
             <div class="hero-scroll" id="heroMembersContainer">
                 <div style="color: gray; padding: 10px;">লোড হচ্ছে...</div>
@@ -409,7 +410,7 @@
     <!-- Firebase Scripts -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getDatabase, ref, onValue, update, get, push, set, serverTimestamp, onDisconnect, query, limitToLast, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+        import { getDatabase, ref, onValue, update, get, push, set, serverTimestamp, onDisconnect, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
         const firebaseConfig = {
           apiKey: "AIzaSyDqSsaNPqrWQfSeGvh0IuPxGaOJ7S4y4Qo",
@@ -591,82 +592,86 @@
         // HERO MEMBERS LOGIC (Target Amount Based)
         // ===============================================
         function loadHeroMembers() {
-            const currentMonth = new Date().getMonth();
-            const currentYear = new Date().getFullYear();
-            
-            // ১. ডাটাবেস থেকে বর্তমান মাসের টার্গেট এমাউন্ট নিয়ে আসা
+            // ডাটাবেস থেকে বর্তমান টার্গেট এমাউন্ট নিয়ে আসা
             onValue(ref(db, 'settings/expectedMonthlyDeposit'), (targetSnap) => {
                 const targetAmount = targetSnap.val() || 0;
                 
                 onValue(ref(db, 'transactions'), (trxSnap) => {
                     const data = trxSnap.val();
-                    let earlyBirdPayments = {}; 
-                    let heroIds = new Set();
+                    let memberStats = {}; // { memberId: { total: 0, lastDate: 0 } }
                     
                     if(data) {
                         Object.values(data).forEach(trx => {
-                            // চেক: ট্রানজ্যাকশনটি জমা/আয় কিনা
-                            if((trx.type === 'income' || trx.type === 'deposit')) {
-                                const trxDate = new Date(trx.date);
+                            if(trx.type === 'income' || trx.type === 'deposit') {
+                                let monthlyAmt = 0;
                                 
-                                // চেক: বর্তমান মাসের ১-৫ তারিখের মধ্যে কিনা
-                                if(trxDate.getMonth() === currentMonth && trxDate.getFullYear() === currentYear && trxDate.getDate() >= 1 && trxDate.getDate() <= 5) {
-                                    
-                                    let monthlyAmt = 0;
-                                    
-                                    // ট্রানজ্যাকশন থেকে শুধু 'মাসিক জমা' এর টাকাটা বের করা
-                                    if (trx.items && Array.isArray(trx.items)) {
-                                        trx.items.forEach(i => {
-                                            if(i.category === 'মাসিক জমা') monthlyAmt += parseFloat(i.amount || 0);
-                                        });
-                                    } else if (trx.details && trx.details.includes('মাসিক জমা')) {
-                                        let match = trx.details.match(/মাসিক জমা:\s*৳\s*(\d+(\.\d+)?)/);
-                                        if(match && match[1]) monthlyAmt += parseFloat(match[1]);
-                                    }
-                                    
-                                    if(monthlyAmt > 0) {
-                                        let memberId = trx.payerId || trx.memberId;
-                                        if(memberId) {
-                                            if(!earlyBirdPayments[memberId]) earlyBirdPayments[memberId] = 0;
-                                            earlyBirdPayments[memberId] += monthlyAmt;
+                                if (trx.items && Array.isArray(trx.items)) {
+                                    trx.items.forEach(i => {
+                                        if(i.category === 'মাসিক জমা') monthlyAmt += parseFloat(i.amount || 0);
+                                    });
+                                } else if (trx.details && trx.details.includes('মাসিক জমা')) {
+                                    let match = trx.details.match(/মাসিক জমা:\s*৳\s*(\d+(\.\d+)?)/);
+                                    if(match && match[1]) monthlyAmt += parseFloat(match[1]);
+                                }
+                                
+                                if(monthlyAmt > 0) {
+                                    let memberId = trx.payerId || trx.memberId;
+                                    if(memberId) {
+                                        if(!memberStats[memberId]) memberStats[memberId] = { total: 0, lastDate: 0 };
+                                        
+                                        // মোট মাসিক জমা যোগ করা
+                                        memberStats[memberId].total += monthlyAmt;
+                                        
+                                        // সর্বশেষ ট্রানজেকশনের টাইমস্ট্যাম্প আপডেট করা
+                                        let trxTime = new Date(trx.date).getTime() || trx.timestamp;
+                                        if(trxTime > memberStats[memberId].lastDate) {
+                                            memberStats[memberId].lastDate = trxTime;
                                         }
                                     }
                                 }
                             }
                         });
-                        
-                        // ২. চেক করা: মেম্বারের ১-৫ তারিখের জমা টার্গেটের সমান বা বেশি কিনা
-                        for(let mId in earlyBirdPayments) {
-                            if(targetAmount > 0 && earlyBirdPayments[mId] >= targetAmount) {
-                                heroIds.add(mId);
-                            }
+                    }
+                    
+                    // টার্গেট পূরণকারী মেম্বারদের ফিল্টার করা
+                    let heroes = [];
+                    for(let mId in memberStats) {
+                        if(targetAmount > 0 && memberStats[mId].total >= targetAmount) {
+                            heroes.push({ id: mId, lastDate: memberStats[mId].lastDate });
                         }
                     }
                     
-                    // ৩. যারা টার্গেট পূরণ করেছে তাদের লিস্টে দেখানো
+                    // লাস্ট ডেট অনুযায়ী সর্টিং (Ascending: যে আগে টার্গেট পূরণ করেছে সে আগে আসবে)
+                    heroes.sort((a, b) => a.lastDate - b.lastDate);
+                    
                     onValue(ref(db, 'members'), (memSnap) => {
                         const members = memSnap.val();
                         const container = document.getElementById('heroMembersContainer');
                         container.innerHTML = '';
                         
-                        if(heroIds.size > 0 && members) {
-                            heroIds.forEach(id => {
-                                let m = members[id];
+                        if(heroes.length > 0 && members) {
+                            heroes.forEach(h => {
+                                let m = members[h.id];
                                 if(m) {
                                     let photo = m.photo || (m.gender === 'নারী' ? 'https://cdn-icons-png.flaticon.com/512/4140/4140047.png' : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png');
                                     let name = m.nameBn || m.nameEn || 'সদস্য';
+                                    
+                                    // তারিখ ফরম্যাটিং (e.g. 5 Jan)
+                                    let dateStr = new Date(h.lastDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+                                    
                                     container.innerHTML += `
                                         <div class="hero-card">
                                             <div class="hero-badge-icon"><i class="fa-solid fa-crown"></i></div>
                                             <img class="hero-img" src="${photo}" alt="Hero">
                                             <div class="hero-name">${name}</div>
                                             <p class="hero-id en-text">${m.memberId || m.id || 'ID'}</p>
+                                            <div class="hero-date"><i class="fa-regular fa-calendar-check"></i> ${dateStr}</div>
                                         </div>
                                     `;
                                 }
                             });
                         } else {
-                            container.innerHTML = `<div style="color:gray; width: 100%; text-align:center; padding: 10px;">এই মাসে এখনো কোনো আর্লি বার্ড নেই। মাসের শুরুতে (১-৫ তারিখ) নির্ধারিত টার্গেট (৳ ${targetAmount}) জমা দিয়ে আপনিও হতে পারেন এই লিস্টের একজন!</div>`;
+                            container.innerHTML = `<div style="color:gray; width: 100%; text-align:center; padding: 10px;">নির্ধারিত টার্গেট (৳ ${targetAmount}) মোট মাসিক জমা পূরণ করে আপনিও হতে পারেন এই লিস্টের একজন!</div>`;
                         }
                     }, {onlyOnce: true});
                 });
@@ -675,7 +680,7 @@
         loadHeroMembers();
 
         // ===============================================
-        // CHAT & PRESENCE SYSTEM
+        // CHAT & PRESENCE SYSTEM (Fixed Realtime & Delete)
         // ===============================================
         const connectedRef = ref(db, '.info/connected');
         const myConnectionsRef = ref(db, `presence/${loggedInUserId}`);
@@ -697,19 +702,25 @@
         });
 
         let currentChats = {};
-        const chatQuery = query(ref(db, 'chats'), limitToLast(50));
-        
-        onValue(chatQuery, (snap) => {
+        // Fetch all chats safely to avoid index query bugs
+        onValue(ref(db, 'chats'), (snap) => {
             currentChats = {};
             if(snap.exists()) {
+                let allChatArr = [];
                 snap.forEach(child => {
-                    currentChats[child.key] = { id: child.key, ...child.val() };
+                    allChatArr.push({ id: child.key, ...child.val() });
                 });
+                
+                // Sort by timestamp and keep last 50
+                allChatArr.sort((a,b) => a.timestamp - b.timestamp);
+                if(allChatArr.length > 50) allChatArr = allChatArr.slice(allChatArr.length - 50);
+                
+                allChatArr.forEach(c => currentChats[c.id] = c);
             }
             renderChats();
             
             const chatWindow = document.getElementById('chatWindow');
-            if(!chatWindow.classList.contains('open')) {
+            if(chatWindow && !chatWindow.classList.contains('open')) {
                 document.getElementById('chatBadge').style.display = 'block';
             }
         });
@@ -717,7 +728,6 @@
         function renderChats() {
             const chatBox = document.getElementById('chatMessages');
             chatBox.innerHTML = '';
-            
             if(Object.keys(currentChats).length > 0) {
                 Object.values(currentChats).sort((a,b) => a.timestamp - b.timestamp).forEach(msg => {
                     const isMe = msg.senderId === loggedInUserId;
@@ -726,7 +736,7 @@
                     let isOnline = presenceData[msg.senderId] && presenceData[msg.senderId].online;
                     let dotHtml = isOnline ? `<i class="fa-solid fa-circle active-icon"></i>` : '';
                     
-                    // Delete Button Only for Sender
+                    // Delete Button
                     let deleteBtn = isMe ? `<span class="delete-chat-btn" onclick="deleteChatMessage('${msg.id}')" title="মুছে ফেলুন"><i class="fa-solid fa-trash"></i></span>` : '';
                     
                     chatBox.innerHTML += `
@@ -737,6 +747,7 @@
                         </div>
                     `;
                 });
+                // Auto scroll to bottom
                 chatBox.scrollTop = chatBox.scrollHeight;
             } else {
                 chatBox.innerHTML = '<div style="text-align:center; color:#999; margin-top:20px;">কোনো মেসেজ নেই। আড্ডা শুরু করুন!</div>';
@@ -750,12 +761,16 @@
             if(!text || !currentMemberData) return;
             
             input.value = '';
-            // Changed serverTimestamp() to Date.now() for instant reliable local sorting
+            
+            // Using Date.now() for instant reliable sorting without delay
             await push(ref(db, 'chats'), {
                 senderId: loggedInUserId,
                 senderName: currentMemberData.nameBn || currentMemberData.nameEn || 'সদস্য',
                 text: text,
                 timestamp: Date.now() 
+            }).catch(err => {
+                console.error(err);
+                alert("মেসেজ পাঠাতে সমস্যা হয়েছে। আপনার ইন্টারনেট কানেকশন চেক করুন।");
             });
         });
 
