@@ -94,7 +94,6 @@
         .notice-item { padding: 15px; background: #f9fbf9; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid var(--primary-green); transition: 0.3s;}
         .notice-item:hover { transform: translateX(5px); box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
         .notice-item h4 { margin: 0 0 5px 0; color: var(--text-dark); font-size: 16px;}
-        /* নোটিশ প্যারাগ্রাফ স্টাইল আপডেট: white-space এবং word-wrap যুক্ত করা হয়েছে */
         .notice-item p { margin: 0; color: var(--text-gray); font-size: 14px; line-height: 1.6; white-space: pre-wrap; word-wrap: break-word;}
         .notice-date { font-size: 12px; color: #888; display: block; margin-top: 8px;}
 
@@ -328,7 +327,6 @@
                     <div class="form-group">
                         <label>লিঙ্গ</label>
                         <select id="pGender">
-                            <!-- ভ্যালুগুলো অ্যাডমিন প্যানেলের সাথে মেলানো হলো -->
                             <option value="পুরুষ">পুরুষ</option>
                             <option value="নারী">নারী</option>
                         </select>
@@ -424,7 +422,6 @@
                     document.getElementById('mWelcomePic').src = m.photo;
                     document.getElementById('editPicPreview').src = m.photo;
                 } else {
-                    // নারী হলে মহিলা আইকন, অন্যথায় (পুরুষ বা সেভ না থাকলে) পুরুষ আইকন
                     let defaultPic = gender === 'নারী' 
                         ? 'https://cdn-icons-png.flaticon.com/512/4140/4140047.png' 
                         : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
@@ -524,6 +521,9 @@
                 } else { cont.innerHTML = '<div style="color:gray;">কোনো নোটিশ নেই</div>'; }
             });
 
+            // ===============================================
+            // ব্যাংক একাউন্ট এবং কপি বাটন 
+            // ===============================================
             onValue(ref(db, 'bank_accounts'), (snapshot) => {
                 const cont = document.getElementById('banksContainer');
                 cont.innerHTML = '';
@@ -535,7 +535,10 @@
                                 <h4>Bank: ${b.bankName}</h4>
                                 <p class="en-text">
                                     <strong>Name:</strong> ${b.accName}<br>
-                                    <strong>Account no.:</strong> ${b.accNo}<br>
+                                    <strong>Account no.:</strong> ${b.accNo}
+                                    <button onclick="copyBankAcc('${b.accNo}', this)" style="cursor: pointer; border: none; background: none; color: #1976d2; font-size: 0.9em; margin-left: 5px;" title="কপি করুন">
+                                        <i class="fa-regular fa-copy"></i>
+                                    </button><br>
                                     <strong>Branch:</strong> ${b.branch || '-'}
                                 </p>
                             </div>
@@ -546,6 +549,26 @@
         }
         
         loadDashboardData();
+
+        // ===============================================
+        // সাইলেন্ট কপি ফাংশন (পপআপ ছাড়া)
+        // ===============================================
+        window.copyBankAcc = function(accNo, btnElement) {
+            navigator.clipboard.writeText(accNo).then(() => {
+                // অরিজিনাল আইকনটি সেভ করে রাখছি
+                const originalIcon = btnElement.innerHTML;
+                
+                // কপি হওয়ার পর আইকনটি টিক চিহ্ন হয়ে যাবে
+                btnElement.innerHTML = '<i class="fa-solid fa-check" style="color: var(--primary-green);"></i>';
+                
+                // ২ সেকেন্ড পর আবার আগের আইকনটি ফিরে আসবে
+                setTimeout(() => {
+                    btnElement.innerHTML = originalIcon;
+                }, 2000);
+            }).catch(err => {
+                console.error("কপি করতে সমস্যা হয়েছে: ", err);
+            });
+        };
 
         window.openProfileModal = () => document.getElementById('profileModal').style.display = 'block';
 
