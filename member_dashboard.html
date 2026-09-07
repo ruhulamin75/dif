@@ -31,7 +31,9 @@
         @keyframes slideDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes fadeUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes scaleIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        
+        @keyframes pulseChat { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(11, 158, 74, 0.4); } 70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(11, 158, 74, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(11, 158, 74, 0); } }
+
+        /* টপবার অ্যানিমেশন */
         .member-topbar { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; animation: slideDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; border-bottom: 1px solid rgba(11, 158, 74, 0.1);}
         
         .brand { display: flex; align-items: center; gap: 10px; }
@@ -86,14 +88,15 @@
         .fund-card:nth-child(2) { animation-delay: 0.3s; }
         .fund-card:nth-child(3) { animation-delay: 0.4s; }
         .fund-card:nth-child(4) { animation-delay: 0.5s; }
+        .fund-card:nth-child(5) { animation-delay: 0.6s; }
 
         .fund-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(11, 158, 74, 0.15); border-color: var(--primary-green);}
         
         /* Glossy Icons */
-        .glossy-icon { width: 50px; height: 50px; border-radius: 12px; margin: 0 auto 15px auto; display: flex; justify-content: center; align-items: center; font-size: 22px; color: var(--primary-green); background: linear-gradient(135deg, #eaf6ee 0%, #c5e8d3 100%); box-shadow: inset 0 2px 5px rgba(255,255,255,0.8), 0 4px 10px rgba(11, 158, 74, 0.2); border: 1px solid rgba(255,255,255,0.5); z-index: 2; position: relative;}
+        .glossy-icon { width: 50px; height: 50px; border-radius: 12px; margin: 0 auto 15px auto; display: flex; justify-content: center; align-items: center; font-size: 22px; color: var(--primary-green); background: linear-gradient(135deg, #eaf6ee 0%, #c5e8d3 100%); box-shadow: inset 0 2px 5px rgba(255,255,255,0.8), 0 4px 10px rgba(11, 158, 74, 0.2); border: 1px solid rgba(255,255,255,0.5); z-index: 2; position: relative; transition: 0.3s;}
         
-        .fund-card h3 { font-size: 15px; color: var(--text-gray); margin: 0 0 5px 0; font-weight: 600; position: relative; z-index: 2;}
-        .fund-card .amount { font-size: 28px; color: var(--dark-green); font-weight: 700; position: relative; z-index: 2;}
+        .fund-card h3 { font-size: 15px; color: var(--text-gray); margin: 0 0 5px 0; font-weight: 600; position: relative; z-index: 2; transition: 0.3s;}
+        .fund-card .amount { font-size: 28px; color: var(--dark-green); font-weight: 700; position: relative; z-index: 2; transition: 0.3s;}
 
         /* ড্যাশবোর্ড সেকশন অ্যানিমেশন */
         .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; align-items: start;}
@@ -126,6 +129,43 @@
         table tbody tr:hover { background-color: #f9fbf9; }
         .btn-view-receipt { background: linear-gradient(135deg, #e3f2fd, #bbdefb); color: #1976d2; border: 1px solid rgba(25,118,210,0.2); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; transition: 0.3s;}
         .btn-view-receipt:hover { background: #1976d2; color: white; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(25, 118, 210, 0.2);}
+
+        /* --- COMMUNITY CHAT WIDGET --- */
+        .chat-widget-btn { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; background: linear-gradient(135deg, var(--primary-green), var(--dark-green)); color: white; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 24px; cursor: pointer; box-shadow: 0 10px 25px rgba(11, 158, 74, 0.4); z-index: 1000; animation: pulseChat 2s infinite; border: none; transition: 0.3s;}
+        .chat-widget-btn:hover { transform: scale(1.1); animation: none; }
+        .chat-badge { position: absolute; top: -5px; right: -5px; background: #e74c3c; color: white; font-size: 11px; padding: 3px 6px; border-radius: 10px; font-weight: bold; border: 2px solid white; display: none;}
+
+        .chat-window { position: fixed; bottom: 100px; right: 30px; width: 350px; height: 500px; background: white; border-radius: 16px; box-shadow: 0 15px 40px rgba(0,0,0,0.15); display: flex; flex-direction: column; z-index: 1000; overflow: hidden; transform: scale(0); transform-origin: bottom right; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); opacity: 0; border: 1px solid rgba(11, 158, 74, 0.2);}
+        .chat-window.open { transform: scale(1); opacity: 1; }
+        
+        .chat-header { background: linear-gradient(135deg, var(--primary-green), var(--dark-green)); color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .chat-header h3 { margin: 0; font-size: 16px; display: flex; align-items: center; gap: 8px;}
+        .online-dot { width: 10px; height: 10px; background: #2ecc71; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 5px rgba(46, 204, 113, 0.5);}
+        .close-chat { background: none; border: none; color: white; font-size: 20px; cursor: pointer; opacity: 0.8; transition: 0.3s;}
+        .close-chat:hover { opacity: 1; transform: rotate(90deg);}
+
+        .chat-messages { flex: 1; background: #f4f8f6; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; scrollbar-width: thin;}
+        .chat-messages::-webkit-scrollbar { width: 5px; } .chat-messages::-webkit-scrollbar-thumb { background: #ccc; border-radius: 5px; }
+        
+        .msg-box { max-width: 80%; display: flex; flex-direction: column; animation: fadeUp 0.3s ease-out;}
+        .msg-box.my-msg { align-self: flex-end; align-items: flex-end; }
+        .msg-box.other-msg { align-self: flex-start; align-items: flex-start; }
+        
+        .msg-sender { font-size: 11px; color: #777; margin-bottom: 2px; display: flex; align-items: center; gap: 5px;}
+        .msg-sender i.active-icon { color: #2ecc71; font-size: 8px; }
+        .delete-chat-btn { cursor:pointer; margin-right:8px; opacity:0.5; color: #e74c3c; transition:0.3s; padding:2px;}
+        .delete-chat-btn:hover { opacity:1; }
+        
+        .msg-text { padding: 10px 14px; border-radius: 15px; font-size: 14px; line-height: 1.4; word-wrap: break-word;}
+        .my-msg .msg-text { background: linear-gradient(135deg, var(--primary-green), #12a65a); color: white; border-bottom-right-radius: 2px; }
+        .other-msg .msg-text { background: white; color: var(--text-dark); border-bottom-left-radius: 2px; border: 1px solid #eee; box-shadow: 0 2px 5px rgba(0,0,0,0.02);}
+        .msg-time { font-size: 10px; color: #999; margin-top: 3px; }
+
+        .chat-input-area { padding: 15px; background: white; border-top: 1px solid #eee; display: flex; gap: 10px; align-items: center;}
+        .chat-input-area input { flex: 1; padding: 10px 15px; border: 1px solid #ddd; border-radius: 20px; outline: none; font-family: inherit; font-size: 14px; background: #fafafa;}
+        .chat-input-area input:focus { border-color: var(--primary-green); background: white;}
+        .chat-send-btn { background: var(--primary-green); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.3s; font-size: 16px;}
+        .chat-send-btn:hover { background: var(--dark-green); transform: scale(1.1); box-shadow: 0 4px 10px rgba(11,158,74,0.3);}
 
         /* Profile Modal & Print Styles */
         .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(3px); z-index: 9999; overflow-y: auto; padding: 20px;}
@@ -180,9 +220,8 @@
             .dashboard-grid { grid-template-columns: 1fr; } 
             .form-grid { grid-template-columns: 1fr; } 
             .welcome-card { flex-direction: column; text-align: center; gap: 15px; } 
-        }
-        @media (min-width: 769px) and (max-width: 991px) {
-            .fund-card.total-card { grid-column: 1 / -1; }
+            .chat-window { width: 90%; right: 5%; bottom: 100px; height: 450px;}
+            .hero-header { flex-direction: column; text-align: center; gap: 10px;}
         }
     </style>
 </head>
@@ -210,6 +249,7 @@
     </header>
 
     <div class="container">
+        <!-- ওয়েলকাম কার্ড -->
         <div class="welcome-card">
             <div class="welcome-text">
                 <h1>স্বাগতম, <span id="mWelcomeName">...</span></h1>
@@ -218,7 +258,7 @@
             <img id="mWelcomePic" class="welcome-avatar" src="https://via.placeholder.com/100?text=Photo" alt="Profile">
         </div>
 
-        <!-- NEW: হিরো মেম্বার সেকশন (সিঙ্গেল মেম্বার হাইলাইট) -->
+        <!-- HIREO MEMBERS LIST -->
         <div class="hero-section">
             <div class="hero-header">
                 <h3 style="font-size: 20px;"><i class="fa-solid fa-trophy" style="color: #f39c12;"></i> টপ কন্ট্রিবিউটর</h3>
@@ -235,6 +275,13 @@
                 <div class="glossy-icon"><i class="fa-solid fa-calendar-check"></i></div>
                 <h3>মাসিক জমা</h3><div class="amount en-text" id="tMonthly">৳ 0</div>
             </div>
+
+            <!-- NEW: মাসিক বকেয়া কার্ড -->
+            <div class="fund-card" id="dueCardBox" style="transition: 0.3s;">
+                <div class="glossy-icon" id="dueCardIcon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+                <h3 id="tMonthlyDueTitle">মাসিক বকেয়া</h3><div class="amount en-text" id="tMonthlyDue">৳ 0</div>
+            </div>
+
             <div class="fund-card">
                 <div class="glossy-icon"><i class="fa-solid fa-layer-group"></i></div>
                 <h3>এককালীন/বাৎসরিক</h3><div class="amount en-text" id="tYearly">৳ 0</div>
@@ -251,6 +298,7 @@
         </div>
 
         <div class="dashboard-grid">
+            <!-- কলাম ১ -->
             <div>
                 <div class="section-card">
                     <h3><i class="fa-solid fa-bullhorn"></i> নোটিশ বোর্ড</h3>
@@ -263,6 +311,7 @@
                 </div>
             </div>
 
+            <!-- কলাম ২ -->
             <div>
                 <div class="section-card">
                     <h3><i class="fa-solid fa-clock-rotate-left"></i> সাম্প্রতিক জমা (ব্যক্তিগত হিসাব)</h3>
@@ -279,6 +328,26 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Community Chat Widget -->
+    <button class="chat-widget-btn" onclick="toggleChat()">
+        <i class="fa-solid fa-comments"></i>
+        <div class="chat-badge" id="chatBadge">new</div>
+    </button>
+
+    <div class="chat-window" id="chatWindow">
+        <div class="chat-header">
+            <h3><div class="online-dot"></div> আড্ডা ও আলোচনা <span id="onlineCount" style="font-size:11px; font-weight:normal;">(লোড হচ্ছে..)</span></h3>
+            <button class="close-chat" onclick="toggleChat()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div style="text-align:center; color:gray; margin-top:20px;"><i class="fas fa-spinner fa-spin"></i> চ্যাট লোড হচ্ছে...</div>
+        </div>
+        <form class="chat-input-area" id="chatForm">
+            <input type="text" id="chatInput" placeholder="আপনার মেসেজ লিখুন..." autocomplete="off">
+            <button type="submit" class="chat-send-btn"><i class="fa-solid fa-paper-plane"></i></button>
+        </form>
     </div>
 
     <!-- প্রোফাইল এডিট মোডাল -->
@@ -341,7 +410,7 @@
     <!-- Firebase Scripts -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getDatabase, ref, onValue, update, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+        import { getDatabase, ref, onValue, update, get, push, set, serverTimestamp, onDisconnect, query, limitToLast, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
         const firebaseConfig = {
           apiKey: "AIzaSyDqSsaNPqrWQfSeGvh0IuPxGaOJ7S4y4Qo",
@@ -363,7 +432,14 @@
             window.location.href = "login.html";
         }
 
+        window.toggleChat = function() {
+            const chatWindow = document.getElementById('chatWindow');
+            chatWindow.classList.toggle('open');
+            document.getElementById('chatBadge').style.display = 'none';
+        }
+
         function animateCounter(element, targetValue, duration) {
+            if(!element) return;
             let startValue = 0;
             let startTimestamp = null;
             const step = (timestamp) => {
@@ -382,6 +458,9 @@
             };
             window.requestAnimationFrame(step);
         }
+
+        let mSumGlobal = 0;
+        let expectedAmountGlobal = 0;
 
         function loadDashboardData() {
             onValue(ref(db, 'members/' + loggedInUserId), (snapshot) => {
@@ -417,6 +496,11 @@
                 document.getElementById('pPassword').value = m.password || '';
             });
 
+            onValue(ref(db, 'settings/expectedMonthlyDeposit'), (targetSnap) => {
+                expectedAmountGlobal = targetSnap.val() || 0;
+                updateDueDisplay();
+            });
+
             onValue(ref(db, 'transactions'), (snapshot) => {
                 const data = snapshot.val();
                 let mSum = 0, ySum = 0, sSum = 0;
@@ -449,12 +533,15 @@
                     });
                 }
 
+                mSumGlobal = mSum;
                 let totalSum = mSum + ySum + sSum;
 
                 animateCounter(document.getElementById('tMonthly'), mSum, 1500);
                 animateCounter(document.getElementById('tYearly'), ySum, 1500);
                 animateCounter(document.getElementById('tShare'), sSum, 1500);
                 animateCounter(document.getElementById('tTotal'), totalSum, 1800);
+                
+                updateDueDisplay();
 
                 const tbody = document.getElementById('trxContainer');
                 tbody.innerHTML = '';
@@ -504,11 +591,50 @@
                 } else { cont.innerHTML = '<div style="color:gray;">কোনো একাউন্ট নেই</div>'; }
             });
         }
+
+        function updateDueDisplay() {
+            let diff = expectedAmountGlobal - mSumGlobal;
+            let dueElement = document.getElementById('tMonthlyDue');
+            let dueTitleElement = document.getElementById('tMonthlyDueTitle');
+            let dueCardIcon = document.getElementById('dueCardIcon');
+            let dueCardBox = document.getElementById('dueCardBox');
+            
+            if(!dueElement) return;
+
+            if(diff > 0) {
+                dueTitleElement.innerText = "মাসিক বকেয়া";
+                dueTitleElement.style.color = "var(--primary-red)";
+                dueElement.style.color = "var(--primary-red)";
+                dueCardIcon.style.color = "var(--primary-red)";
+                dueCardIcon.style.background = "linear-gradient(135deg, #ffeaea 0%, #fbd5d5 100%)";
+                dueCardIcon.style.borderColor = "rgba(231, 76, 60, 0.3)";
+                dueCardBox.style.borderBottom = "4px solid var(--primary-red)";
+                animateCounter(dueElement, diff, 1500);
+            } else if (diff < 0) {
+                dueTitleElement.innerText = "অগ্রিম জমা";
+                dueTitleElement.style.color = "#1976d2";
+                dueElement.style.color = "#1976d2";
+                dueCardIcon.style.color = "#1976d2";
+                dueCardIcon.style.background = "linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%)";
+                dueCardIcon.style.borderColor = "rgba(25, 118, 210, 0.3)";
+                dueCardBox.style.borderBottom = "4px solid #1976d2";
+                animateCounter(dueElement, Math.abs(diff), 1500);
+            } else {
+                dueTitleElement.innerText = "মাসিক বকেয়া";
+                dueTitleElement.style.color = "var(--text-gray)";
+                dueElement.style.color = "var(--text-dark)";
+                dueCardIcon.style.color = "var(--text-gray)";
+                dueCardIcon.style.background = "linear-gradient(135deg, #f1f1f1 0%, #e0e0e0 100%)";
+                dueCardIcon.style.borderColor = "#ccc";
+                dueCardBox.style.borderBottom = "4px solid var(--text-gray)";
+                animateCounter(dueElement, 0, 1500);
+            }
+        }
         
         loadDashboardData();
 
         // ===============================================
-        // HERO MEMBERS LOGIC (Single Top Contributor)
+        // HERO MEMBERS LOGIC 
         // ===============================================
         function loadHeroMembers() {
             onValue(ref(db, 'settings/expectedMonthlyDeposit'), (targetSnap) => {
@@ -563,7 +689,7 @@
                         container.innerHTML = '';
                         
                         if(heroes.length > 0 && members) {
-                            let topHero = heroes[0]; // শুধুমাত্র প্রথম জন
+                            let topHero = heroes[0]; 
                             let m = members[topHero.id];
                             if(m) {
                                 let photo = m.photo || (m.gender === 'নারী' ? 'https://cdn-icons-png.flaticon.com/512/4140/4140047.png' : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png');
@@ -588,6 +714,106 @@
             });
         }
         loadHeroMembers();
+
+        // ===============================================
+        // CHAT & PRESENCE SYSTEM
+        // ===============================================
+        const connectedRef = ref(db, '.info/connected');
+        const myConnectionsRef = ref(db, `presence/${loggedInUserId}`);
+        
+        onValue(connectedRef, (snap) => {
+            if (snap.val() === true) {
+                onDisconnect(myConnectionsRef).set({ online: false, lastSeen: serverTimestamp() });
+                set(myConnectionsRef, { online: true, lastSeen: serverTimestamp() });
+            }
+        });
+
+        let presenceData = {};
+        onValue(ref(db, 'presence'), (snap) => {
+            presenceData = snap.val() || {};
+            let count = 0;
+            Object.values(presenceData).forEach(p => { if(p.online) count++; });
+            document.getElementById('onlineCount').innerText = `(${count} জন অনলাইনে)`;
+            renderChats(); 
+        });
+
+        let currentChats = {};
+        onValue(ref(db, 'chats'), (snap) => {
+            currentChats = {};
+            if(snap.exists()) {
+                let allChatArr = [];
+                snap.forEach(child => {
+                    allChatArr.push({ id: child.key, ...child.val() });
+                });
+                
+                allChatArr.sort((a,b) => a.timestamp - b.timestamp);
+                if(allChatArr.length > 50) allChatArr = allChatArr.slice(allChatArr.length - 50);
+                
+                allChatArr.forEach(c => currentChats[c.id] = c);
+            }
+            renderChats();
+            
+            const chatWindow = document.getElementById('chatWindow');
+            if(chatWindow && !chatWindow.classList.contains('open')) {
+                document.getElementById('chatBadge').style.display = 'block';
+            }
+        });
+
+        function renderChats() {
+            const chatBox = document.getElementById('chatMessages');
+            chatBox.innerHTML = '';
+            
+            if(Object.keys(currentChats).length > 0) {
+                Object.values(currentChats).sort((a,b) => a.timestamp - b.timestamp).forEach(msg => {
+                    const isMe = msg.senderId === loggedInUserId;
+                    const time = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString('bn-BD', {hour: '2-digit', minute:'2-digit'}) : '';
+                    
+                    let isOnline = presenceData[msg.senderId] && presenceData[msg.senderId].online;
+                    let dotHtml = isOnline ? `<i class="fa-solid fa-circle active-icon"></i>` : '';
+                    
+                    let deleteBtn = isMe ? `<span class="delete-chat-btn" onclick="deleteChatMessage('${msg.id}')" title="মুছে ফেলুন"><i class="fa-solid fa-trash"></i></span>` : '';
+                    
+                    chatBox.innerHTML += `
+                        <div class="msg-box ${isMe ? 'my-msg' : 'other-msg'}">
+                            <div class="msg-sender">${deleteBtn} ${dotHtml} ${isMe ? 'আপনি' : msg.senderName}</div>
+                            <div class="msg-text">${msg.text}</div>
+                            <div class="msg-time en-text">${time}</div>
+                        </div>
+                    `;
+                });
+                chatBox.scrollTop = chatBox.scrollHeight;
+            } else {
+                chatBox.innerHTML = '<div style="text-align:center; color:#999; margin-top:20px;">কোনো মেসেজ নেই। আড্ডা শুরু করুন!</div>';
+            }
+        }
+
+        document.getElementById('chatForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            if(!text || !currentMemberData) return;
+            
+            input.value = ''; 
+            
+            try {
+                const newChatRef = push(ref(db, 'chats'));
+                await set(newChatRef, {
+                    senderId: loggedInUserId || "Unknown",
+                    senderName: currentMemberData.nameBn || currentMemberData.nameEn || 'সদস্য',
+                    text: text,
+                    timestamp: Date.now() 
+                });
+            } catch (err) {
+                console.error("Firebase Error:", err);
+                alert("এরর: " + err.message); 
+            }
+        });
+
+        window.deleteChatMessage = async function(id) {
+            if(confirm('মেসেজটি ডিলিট করতে চান?')) {
+                await remove(ref(db, 'chats/' + id));
+            }
+        }
 
         window.copyBankAcc = function(accNo, btnElement) {
             navigator.clipboard.writeText(accNo).then(() => {
