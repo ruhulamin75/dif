@@ -259,7 +259,12 @@
                 <div id="investmentSection">
                     <div class="form-group">
                         <label>বিনিয়োগের নাম / প্রতিষ্ঠান</label>
-                        <input type="text" id="invName" placeholder="যেমন: আল-মদিনা এন্টারপ্রাইজ">
+                        <select id="invNameSelect" onchange="handleInvNameSelection()" required>
+                            <option value="" disabled selected>প্রতিষ্ঠান নির্বাচন করুন</option>
+                            <!-- অপশনগুলো ডাইনামিকালি লোড হবে -->
+                            <option value="new">+ নতুন বিনিয়োগ (ম্যানুয়ালি লিখুন)</option>
+                        </select>
+                        <input type="text" id="invName" placeholder="নতুন প্রতিষ্ঠানের নাম লিখুন" style="display: none; margin-top: 8px;">
                     </div>
                     <div class="form-group">
                         <label>ঠিকানা</label>
@@ -426,7 +431,6 @@
                 const easeProgress = 1 - Math.pow(1 - progress, 4);
                 let currentVal = Math.floor(easeProgress * (end - start) + start);
                 
-                // কমা ছাড়াই প্রিন্ট করা হচ্ছে যেহেতু আপনি কমা চাননি
                 element.innerText = prefix + currentVal;
                 
                 if (progress < 1) {
@@ -463,13 +467,17 @@
             document.getElementById('profitSection').style.display = 'none';
             document.getElementById('returnSection').style.display = 'none';
             
+            document.getElementById('invNameSelect').required = false;
             document.getElementById('invName').required = false;
             document.getElementById('profSource').required = false;
             document.getElementById('returnSource').required = false;
 
             if(type === 'investment') {
                 document.getElementById('investmentSection').style.display = 'block';
-                document.getElementById('invName').required = true;
+                document.getElementById('invNameSelect').required = true;
+                if(document.getElementById('invNameSelect').value === 'new') {
+                    document.getElementById('invName').required = true;
+                }
             } else if(type === 'profit') {
                 document.getElementById('profitSection').style.display = 'block';
                 document.getElementById('profSource').required = true;
@@ -478,6 +486,34 @@
                 document.getElementById('returnSource').required = true;
             }
         }
+        
+        window.handleInvNameSelection = function() {
+            const select = document.getElementById('invNameSelect');
+            const nameInput = document.getElementById('invName');
+            const addressInput = document.getElementById('invAddress');
+            const typeInput = document.getElementById('invType');
+            
+            if (select.value === 'new') {
+                nameInput.style.display = 'block';
+                nameInput.value = '';
+                addressInput.value = '';
+                typeInput.value = '';
+                nameInput.required = true;
+            } else if(select.value !== "") {
+                nameInput.style.display = 'none';
+                nameInput.value = select.value;
+                const selectedOpt = select.options[select.selectedIndex];
+                addressInput.value = selectedOpt.dataset.address || '';
+                typeInput.value = selectedOpt.dataset.type || '';
+                nameInput.required = false; 
+            } else {
+                nameInput.style.display = 'none';
+                nameInput.value = '';
+                addressInput.value = '';
+                typeInput.value = '';
+                nameInput.required = false;
+            }
+        };
         
         function checkOtherProfSource() {
             const val = document.getElementById('profSource').value;
@@ -534,6 +570,12 @@
                                                        String(bdtNow.getMonth() + 1).padStart(2, '0') + "-" + 
                                                        String(bdtNow.getDate()).padStart(2, '0');
             
+            const invNameSelect = document.getElementById('invNameSelect');
+            if(invNameSelect) {
+                invNameSelect.value = '';
+                document.getElementById('invName').style.display = 'none';
+            }
+            
             document.getElementById('profOtherSourceText').style.display = 'none';
             document.getElementById('profOtherSourceText').value = '';
 
@@ -580,12 +622,41 @@
             animateValue(document.getElementById('currentInvestmentText'), 0, currentInv, 1500);
             animateValue(document.getElementById('totalProfitText'), 0, tProf, 1500);
 
+            // ড্রপডাউনগুলো আপডেট করা
+            const invNameSelect = document.getElementById('invNameSelect');
+            const currentSelectVal = invNameSelect ? invNameSelect.value : '';
+            
             const profSource = document.getElementById('profSource');
             const returnSource = document.getElementById('returnSource');
             
             profSource.innerHTML = '<option value="" disabled selected>খাত নির্বাচন করুন</option>';
             returnSource.innerHTML = '<option value="" disabled selected>খাত নির্বাচন করুন</option>';
+            invNameSelect.innerHTML = '<option value="" disabled selected>প্রতিষ্ঠান নির্বাচন করুন</option>';
             
+            // Unique Investments বের করা
+            let uniqueInvs = [];
+            allInvestments.forEach(inv => {
+                if(!uniqueInvs.some(i => i.name === inv.name)) {
+                    uniqueInvs.push(inv);
+                }
+            });
+
+            uniqueInvs.forEach(inv => {
+                // Investment ড্রপডাউনের জন্য
+                let opt = document.createElement('option');
+                opt.value = inv.name;
+                opt.text = inv.name;
+                opt.dataset.address = inv.address || '';
+                opt.dataset.type = inv.type || '';
+                invNameSelect.appendChild(opt);
+            });
+            
+            invNameSelect.innerHTML += '<option value="new">+ নতুন বিনিয়োগ (ম্যানুয়ালি লিখুন)</option>';
+            
+            if(currentSelectVal) {
+                invNameSelect.value = currentSelectVal;
+            }
+
             allInvestments.forEach(inv => {
                 let text = `${inv.name} (৳${inv.amount})`;
                 profSource.appendChild(new Option(text, inv.id));
@@ -799,9 +870,20 @@
                 let inv = allInvestments.find(i => i.id === id);
                 document.getElementById('entryDate').value = inv.date;
                 document.getElementById('entryAmount').value = inv.amount;
+                
+                let optExists = Array.from(document.getElementById('invNameSelect').options).some(opt => opt.value === inv.name);
+                if(optExists) {
+                    document.getElementById('invNameSelect').value = inv.name;
+                    document.getElementById('invName').style.display = 'none';
+                } else {
+                    document.getElementById('invNameSelect').value = 'new';
+                    document.getElementById('invName').style.display = 'block';
+                }
+                
                 document.getElementById('invName').value = inv.name;
                 document.getElementById('invAddress').value = inv.address;
                 document.getElementById('invType').value = inv.type;
+
             } else if(type === 'profit') {
                 let prof = allProfits.find(p => p.id === id);
                 document.getElementById('entryDate').value = prof.date;
