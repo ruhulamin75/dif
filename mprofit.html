@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>সদস্যের প্রফিট - Darul Ittihad Foundation</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root { 
+            --primary-green: #0b9e4a; 
+            --dark-green: #077033; 
+            --light-green: #eaf6ee; 
+            --expense-red: #d32f2f; 
+            --expense-light: #ffeaea; 
+            --white: #ffffff; 
+            --bg-color: #f4f7f6; 
+            --text-dark: #2c3e50; 
+            --text-gray: #666666; 
+            --border-color: #e0e0e0; 
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Poppins', 'Hind Siliguri', sans-serif; background-color: var(--bg-color); color: var(--text-dark); overflow-x: hidden; }
+        .en-text { font-family: 'Poppins', sans-serif; }
+
+        /* =========================================
+           অ্যানিমেশন কি-ফ্রেমস (Keyframes)
+           ========================================= */
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes fadeUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* মূল কন্টেন্ট (সাইডবার ছাড়া ফুল রেসপন্সিভ লেআউট) */
+        .main-content { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            padding: 20px 30px; 
+            width: 100%; 
+        }
+        
+        /* টপবার ও ব্যাক বাটন */
+        .topbar { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            background: var(--white); 
+            padding: 15px 25px; 
+            border-radius: 12px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03); 
+            margin-bottom: 25px; 
+            animation: slideDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
+        }
+        .topbar-left { 
+            display: flex; 
+            align-items: center; 
+            gap: 15px; 
+        }
+        .back-btn { 
+            width: 42px; 
+            height: 42px; 
+            border-radius: 10px; 
+            background-color: var(--light-green); 
+            color: var(--primary-green); 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            font-size: 18px; 
+            text-decoration: none; 
+            transition: all 0.3s ease; 
+            border: 1px solid transparent;
+            cursor: pointer;
+        }
+        .back-btn:hover { 
+            background-color: var(--primary-green); 
+            color: var(--white); 
+            transform: translateX(-3px); 
+            box-shadow: 0 4px 10px rgba(11, 158, 74, 0.2); 
+        }
+        .topbar-title { 
+            color: var(--dark-green); 
+            font-size: 22px; 
+            font-weight: 700; 
+            margin: 0; 
+        }
+
+        .admin-profile { display: flex; align-items: center; gap: 12px; }
+        .admin-profile div h4 { font-size: 16px; color: var(--dark-green); margin: 0; }
+        .admin-icon { 
+            width: 45px; 
+            height: 45px; 
+            border-radius: 50%; 
+            border: 2px solid var(--primary-green); 
+            background-color: var(--light-green); 
+            color: var(--primary-green); 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            font-size: 20px; 
+            transition: transform 0.3s; 
+        }
+        .admin-profile:hover .admin-icon { transform: scale(1.1); }
+
+        /* সার্চ সেকশন */
+        .search-section { 
+            background: var(--white); 
+            border-radius: 12px; 
+            padding: 20px 25px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03); 
+            margin-bottom: 25px; 
+            opacity: 0; 
+            animation: fadeUp 0.6s ease forwards 0.2s; 
+        }
+        .search-box-wrapper { 
+            position: relative; 
+            width: 100%; 
+        }
+        .search-box-wrapper i.search-icon { 
+            position: absolute; 
+            left: 16px; 
+            top: 50%; 
+            transform: translateY(-50%); 
+            color: var(--primary-green); 
+            font-size: 16px; 
+        }
+        .search-input { 
+            width: 100%; 
+            padding: 13px 45px 13px 45px; 
+            border: 1px solid var(--border-color); 
+            border-radius: 8px; 
+            font-size: 15px; 
+            font-family: inherit; 
+            outline: none; 
+            background: #fafafa; 
+            transition: 0.3s; 
+            color: var(--text-dark);
+        }
+        .search-input:focus { 
+            border-color: var(--primary-green); 
+            background: var(--white); 
+            box-shadow: 0 0 0 3px rgba(11, 158, 74, 0.1); 
+        }
+        .clear-search-btn {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-gray);
+            font-size: 16px;
+            cursor: pointer;
+            display: none;
+            padding: 5px;
+            transition: 0.2s;
+        }
+        .clear-search-btn:hover { color: var(--expense-red); }
+
+        /* টেবিল কন্টেইনার */
+        .table-container { 
+            background: var(--white); 
+            border-radius: 12px; 
+            padding: 25px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03); 
+            overflow-x: auto; 
+            opacity: 0; 
+            animation: fadeUp 0.6s ease forwards 0.35s; 
+        }
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            min-width: 600px; 
+        }
+        table th, table td { 
+            padding: 15px; 
+            text-align: left; 
+            border-bottom: 1px solid var(--border-color); 
+            vertical-align: middle; 
+        }
+        table th { 
+            background-color: var(--light-green); 
+            color: var(--dark-green); 
+            font-weight: 600; 
+            white-space: nowrap;
+        }
+        table tbody tr { 
+            transition: background-color 0.3s, transform 0.2s; 
+        }
+        table tbody tr:hover { 
+            background-color: #f9fbf9; 
+        }
+
+        .member-id-badge {
+            background: var(--light-green);
+            color: var(--dark-green);
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            display: inline-block;
+            border: 1px solid rgba(11, 158, 74, 0.2);
+        }
+
+        .profit-amount {
+            font-weight: 700;
+            color: var(--primary-green);
+            font-size: 16px;
+        }
+
+        .date-badge {
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+        .no-date-badge {
+            color: #888888;
+            font-size: 14px;
+            font-style: italic;
+        }
+
+        /* রেসপন্সিভ মিডিয়া কোয়েরি (মোবাইল ও ট্যাব) */
+        @media (max-width: 992px) { 
+            .main-content { padding: 15px; } 
+            .topbar { padding: 12px 18px; margin-bottom: 20px; }
+            .topbar-title { font-size: 19px; }
+            .admin-profile div { display: none; } 
+            .search-section { padding: 15px; margin-bottom: 20px; }
+            .table-container { padding: 15px; }
+        }
+
+        @media (max-width: 576px) {
+            .topbar-title { font-size: 17px; }
+            .back-btn { width: 38px; height: 38px; font-size: 16px; }
+            .admin-icon { width: 40px; height: 40px; font-size: 18px; }
+            .search-input { font-size: 14px; padding: 11px 38px 11px 40px; }
+            table th, table td { padding: 12px 10px; font-size: 14px; }
+            .profit-amount { font-size: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Security Lock -->
+    <script>
+        if (localStorage.getItem("userRole") !== "admin") {
+            alert("অনুগ্রহ করে প্রথমে অ্যাডমিন হিসেবে লগইন করুন।");
+            window.location.href = "login.html";
+        }
+    </script>
+
+    <main class="main-content">
+        <!-- টপবার -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <a href="investment_profit.html" class="back-btn" title="আগের পেজে ফিরে যান">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </a>
+                <h2 class="topbar-title">সদস্যের প্রফিট</h2>
+            </div>
+            <div class="admin-profile">
+                <div style="text-align: right;"><h4>অ্যাডমিন</h4></div>
+                <div class="admin-icon"><i class="fa-solid fa-user-shield"></i></div>
+            </div>
+        </header>
+
+        <!-- সার্চ বক্স -->
+        <div class="search-section">
+            <div class="search-box-wrapper">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" id="searchInput" class="search-input" placeholder="সদস্য নং বা নাম দিয়ে খুঁজুন..." oninput="filterMembers()">
+                <button type="button" id="clearSearchBtn" class="clear-search-btn" onclick="clearSearch()" title="মুছুন">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- টেবিল সেকশন -->
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 18%;">সদস্য নং</th>
+                        <th style="width: 34%;">নাম</th>
+                        <th style="width: 24%;">বর্তমান প্রফিট</th>
+                        <th style="width: 24%;">লাস্ট বণ্টনের তারিখ</th>
+                    </tr>
+                </thead>
+                <tbody id="memberProfitTableBody">
+                    <tr>
+                        <td colspan="4" style="text-align: center; padding: 25px;">
+                            <i class="fa-solid fa-spinner fa-spin" style="color: var(--primary-green); margin-right: 6px;"></i> ডাটা লোড হচ্ছে...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- Firebase & Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+        import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDqSsaNPqrWQfSeGvh0IuPxGaOJ7S4y4Qo",
+            authDomain: "darul-ittihad-foundation.firebaseapp.com",
+            projectId: "darul-ittihad-foundation",
+            storageBucket: "darul-ittihad-foundation.firebasestorage.app",
+            messagingSenderId: "1068343055365",
+            appId: "1:1068343055365:web:a42b6545e7fcd449de786c"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+
+        let rawMembersData = {};
+        let allTransactions = [];
+        let membersLoaded = false;
+        let trxLoaded = false;
+
+        // বাংলা সংখ্যা থেকে ইংরেজি সংখ্যায় রূপান্তর (সিরিয়াল ও সার্চের সুবিধার জন্য)
+        function bnToEnDigits(str) {
+            if (!str) return '';
+            const bn = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+            return String(str).replace(/[০-৯]/g, d => bn.indexOf(d));
+        }
+
+        // সদস্য নং থেকে শুধু নাম্বার বের করা (সঠিকভাবে ১, ২, ৩... সিরিয়াল করার জন্য)
+        function extractSerialNumber(memberId) {
+            let cleanStr = bnToEnDigits(memberId).replace(/\D/g, '');
+            return cleanStr ? parseInt(cleanStr, 10) : 999999;
+        }
+
+        // সদস্য ডাটা লোড
+        onValue(ref(db, 'members'), (snapshot) => {
+            rawMembersData = snapshot.val() || {};
+            membersLoaded = true;
+            renderMemberProfitTable();
+        });
+
+        // লেনদেন ডাটা লোড
+        onValue(ref(db, 'transactions'), (snapshot) => {
+            const data = snapshot.val();
+            allTransactions = [];
+            if (data) {
+                Object.keys(data).forEach(key => {
+                    let d = data[key];
+                    d.id = key;
+                    allTransactions.push(d);
+                });
+            }
+            trxLoaded = true;
+            renderMemberProfitTable();
+        });
+
+        // টেবিল রেন্ডার ও ফিল্টার ফাংশন
+        window.renderMemberProfitTable = function() {
+            if (!membersLoaded || !trxLoaded) return;
+
+            const tbody = document.getElementById('memberProfitTableBody');
+            const searchVal = document.getElementById('searchInput').value.trim().toLowerCase();
+            const searchValEn = bnToEnDigits(searchVal);
+
+            tbody.innerHTML = '';
+
+            let memberKeys = Object.keys(rawMembersData);
+            if (memberKeys.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 20px;">কোনো সদস্য পাওয়া যায়নি।</td></tr>';
+                return;
+            }
+
+            // সদস্য তালিকা অনুযায়ী সিরিয়ালে সাজানো
+            memberKeys.sort((a, b) => {
+                let numA = extractSerialNumber(rawMembersData[a].memberId);
+                let numB = extractSerialNumber(rawMembersData[b].memberId);
+                if (numA !== numB) return numA - numB;
+                return String(rawMembersData[a].memberId || '').localeCompare(String(rawMembersData[b].memberId || ''));
+            });
+
+            // সার্চ ফিল্টার প্রয়োগ
+            let filteredKeys = memberKeys.filter(key => {
+                if (!searchVal) return true;
+                const m = rawMembersData[key];
+                const mIdRaw = String(m.memberId || '').toLowerCase();
+                const mIdEn = bnToEnDigits(mIdRaw);
+                const nameBn = String(m.nameBn || '').toLowerCase();
+                const nameEn = String(m.nameEn || '').toLowerCase();
+
+                return mIdRaw.includes(searchVal) || 
+                       mIdEn.includes(searchValEn) || 
+                       nameBn.includes(searchVal) || 
+                       nameEn.includes(searchVal);
+            });
+
+            if (filteredKeys.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 20px;">আপনার সার্চের সাথে মিলে এমন কোনো সদস্য পাওয়া যায়নি।</td></tr>';
+                return;
+            }
+
+            // প্রতিটি সদস্যের প্রফিট ও সর্বশেষ বণ্টনের তারিখ হিসাব করে টেবিলে দেখানো
+            filteredKeys.forEach((key, index) => {
+                const m = rawMembersData[key];
+                const mId = m.memberId || '-';
+                const mName = m.nameBn || m.nameEn || 'অজ্ঞাত';
+
+                let totalProfit = 0;
+                let lastDateStr = '';
+                let lastDateTime = 0;
+
+                allTransactions.forEach(trx => {
+                    if (trx.type === 'income' && trx.payerId === key && Array.isArray(trx.items)) {
+                        trx.items.forEach(item => {
+                            if (item.category === 'প্রফিট বণ্টন') {
+                                totalProfit += parseFloat(item.amount) || 0;
+                                if (trx.date) {
+                                    let tTime = new Date(trx.date).getTime();
+                                    if (tTime >= lastDateTime) {
+                                        lastDateTime = tTime;
+                                        lastDateStr = trx.date;
+                                    }
+                                }
+                            }
+                        });
+                    }
+                });
+
+                totalProfit = parseFloat(totalProfit.toFixed(2));
+                
+                let dateDisplay = lastDateStr 
+                    ? `<span class="en-text date-badge">${new Date(lastDateStr).toLocaleDateString('en-GB')}</span>` 
+                    : `<span class="no-date-badge">এখনো বণ্টন হয়নি</span>`;
+
+                let animDelay = (index % 15) * 0.04;
+
+                const tr = document.createElement('tr');
+                tr.style.opacity = "0";
+                tr.style.animation = `fadeUp 0.4s ease forwards ${animDelay}s`;
+                tr.innerHTML = `
+                    <td><span class="member-id-badge en-text">${mId}</span></td>
+                    <td><strong>${mName}</strong></td>
+                    <td class="en-text profit-amount">৳ ${totalProfit}</td>
+                    <td>${dateDisplay}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        };
+
+        // সার্চ ইনপুট ইভেন্ট
+        window.filterMembers = function() {
+            const val = document.getElementById('searchInput').value;
+            document.getElementById('clearSearchBtn').style.display = val.length > 0 ? 'block' : 'none';
+            window.renderMemberProfitTable();
+        };
+
+        // সার্চ ক্লিয়ার বাটন
+        window.clearSearch = function() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('clearSearchBtn').style.display = 'none';
+            window.renderMemberProfitTable();
+            document.getElementById('searchInput').focus();
+        };
+    </script>
+</body>
+</html>
