@@ -87,7 +87,8 @@
         .fund-card:nth-child(2) { animation-delay: 0.3s; }
         .fund-card:nth-child(3) { animation-delay: 0.4s; }
         .fund-card:nth-child(4) { animation-delay: 0.5s; }
-        .fund-card:nth-child(5) { animation-delay: 0.6s; }
+        .fund-card:nth-child(5) { animation-delay: 0.55s; }
+        .fund-card:nth-child(6) { animation-delay: 0.6s; }
 
         .fund-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(11, 158, 74, 0.15); border-color: var(--primary-green);}
         
@@ -253,6 +254,10 @@
             <div class="fund-card">
                 <div class="glossy-icon"><i class="fa-solid fa-chart-pie"></i></div>
                 <h3>শেয়ার ফান্ড</h3><div class="amount en-text" id="tShare">৳ 0</div>
+            </div>
+            <div class="fund-card">
+                <div class="glossy-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+                <h3>বর্তমান প্রফিট</h3><div class="amount en-text" id="tProfit">৳ 0</div>
             </div>
             <div class="fund-card total-card" style="background: linear-gradient(135deg, #eaf6ee 0%, #d1ecd9 100%); border-color: var(--dark-green);">
                 <div class="glossy-icon" style="background: white; color: var(--dark-green);"><i class="fa-solid fa-vault"></i></div>
@@ -441,7 +446,7 @@
 
             onValue(ref(db, 'transactions'), (snapshot) => {
                 const data = snapshot.val();
-                let mSum = 0, ySum = 0, sSum = 0;
+                let mSum = 0, ySum = 0, sSum = 0, pSum = 0;
                 let myTrxs = [];
 
                 if(data) {
@@ -462,6 +467,11 @@
                                 else if(item.category === 'শেয়ার') { 
                                     sSum += item.amount; validItems.push(item); personalAmount += item.amount; 
                                 }
+                                else if(item.category === 'প্রফিট বণ্টন') { 
+                                    pSum += parseFloat(item.amount) || 0; 
+                                    validItems.push(item); 
+                                    personalAmount += parseFloat(item.amount) || 0; 
+                                }
                             });
 
                             if(validItems.length > 0) {
@@ -472,11 +482,13 @@
                 }
 
                 mSumGlobal = mSum;
-                let totalSum = mSum + ySum + sSum;
+                let totalSum = mSum + ySum + sSum + pSum;
+                pSum = parseFloat(pSum.toFixed(2));
 
                 animateCounter(document.getElementById('tMonthly'), mSum, 1500);
                 animateCounter(document.getElementById('tYearly'), ySum, 1500);
                 animateCounter(document.getElementById('tShare'), sSum, 1500);
+                animateCounter(document.getElementById('tProfit'), pSum, 1500);
                 animateCounter(document.getElementById('tTotal'), totalSum, 1800);
                 
                 updateDueDisplay();
