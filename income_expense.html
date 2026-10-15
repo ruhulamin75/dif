@@ -280,6 +280,10 @@
                                 <div class="amount-input" id="inc-box-7"><input type="number" step="0.01" id="amt-7" class="inc-amt-val en-text" data-cat="জরিমানা" placeholder="পরিমাণ (৳)" oninput="restrictDecimal(this); calcTotalIncome()"></div>
                             </div>
                             <div class="category-item">
+                                <label class="checkbox-row"><input type="checkbox" id="chk-8" value="প্রফিট বণ্টন" onchange="toggleIncAmt(this, 'inc-box-8')"> প্রফিট বণ্টন</label>
+                                <div class="amount-input" id="inc-box-8"><input type="number" step="0.01" id="amt-8" class="inc-amt-val en-text" data-cat="প্রফিট বণ্টন" placeholder="পরিমাণ (৳)" oninput="restrictDecimal(this); calcTotalIncome()"></div>
+                            </div>
+                            <div class="category-item">
                                 <label class="checkbox-row"><input type="checkbox" id="chk-other" value="অন্যান্য" onchange="toggleIncAmt(this, 'inc-box-other')"> অন্যান্য</label>
                                 <div class="amount-input" id="inc-box-other">
                                     <input type="text" id="incOtherText" placeholder="খাতের নাম লিখুন" style="margin-bottom: 8px;">
@@ -483,6 +487,26 @@
             }
         }
 
+        // প্রফিট বণ্টন সিলেক্ট করলে 'অন্যান্য' অপশন লক করার ফাংশন
+        function enforceProfitMemberLock() {
+            const chkProfit = document.getElementById('chk-8');
+            const incMemSelect = document.getElementById('incMember');
+            if (!chkProfit || !incMemSelect) return;
+
+            const otherOpt = incMemSelect.querySelector('option[value="other"]');
+            if (chkProfit.checked) {
+                if (otherOpt) otherOpt.disabled = true;
+                if (incMemSelect.value === 'other') {
+                    incMemSelect.value = '';
+                    document.getElementById('incOtherMemberText').style.display = 'none';
+                    document.getElementById('incOtherMemberText').value = '';
+                    alert("প্রফিট বণ্টনের জন্য 'অন্যান্য' নির্বাচন করা যাবে না। অনুগ্রহ করে তালিকা থেকে নির্দিষ্ট সদস্য নির্বাচন করুন।");
+                }
+            } else {
+                if (otherOpt) otherOpt.disabled = false;
+            }
+        }
+
         function toggleIncAmt(chk, boxId) {
             const box = document.getElementById(boxId);
             if(chk.checked) {
@@ -493,10 +517,20 @@
                 if(boxId === 'inc-box-other') document.getElementById('incOtherText').value = '';
                 calcTotalIncome();
             }
+            if(chk.id === 'chk-8') {
+                enforceProfitMemberLock();
+            }
         }
 
         function checkOtherMember() {
             const val = document.getElementById('incMember').value;
+            const chkProfit = document.getElementById('chk-8');
+            if(val === 'other' && chkProfit && chkProfit.checked) {
+                alert("প্রফিট বণ্টনের জন্য অবশ্যই তালিকা থেকে নির্দিষ্ট সদস্য নির্বাচন করতে হবে।");
+                document.getElementById('incMember').value = '';
+                document.getElementById('incOtherMemberText').style.display = 'none';
+                return;
+            }
             document.getElementById('incOtherMemberText').style.display = (val === 'other') ? 'block' : 'none';
         }
         
@@ -513,7 +547,7 @@
 
         function calcTotalIncome() {
             let total = 0;
-            for(let i=1; i<=7; i++) {
+            for(let i=1; i<=8; i++) {
                 let chk = document.getElementById('chk-'+i);
                 let amt = document.getElementById('amt-'+i);
                 if(chk && chk.checked && amt.value) total += parseFloat(amt.value);
@@ -719,6 +753,7 @@
                     expSpSelect.appendChild(new Option(displayName, key));
                 });
             }
+            enforceProfitMemberLock();
         });
 
         // ফর্ম সাবমিট
@@ -728,7 +763,7 @@
             let items = [];
             
             if(type === 'income') {
-                for(let i=1; i<=7; i++){
+                for(let i=1; i<=8; i++){
                     let chk = document.getElementById('chk-'+i);
                     let amt = document.getElementById('amt-'+i);
                     if(chk && chk.checked && amt.value) {
@@ -744,6 +779,14 @@
 
                 if(items.length === 0) { alert("দয়া করে অন্তত একটি জমার খাত নির্বাচন করে পরিমাণ লিখুন।"); return; }
                 if(!document.getElementById('incMember').value) { alert("প্রদানকারীর নাম নির্বাচন করুন।"); return; }
+                
+                // প্রফিট বণ্টনে 'অন্যান্য' সিলেক্ট প্রতিরোধের চেক
+                const hasProfitItem = items.some(i => i.category === 'প্রফিট বণ্টন');
+                if(hasProfitItem && document.getElementById('incMember').value === 'other') {
+                    alert("প্রফিট বণ্টনের জন্য অবশ্যই তালিকা থেকে নির্দিষ্ট সদস্য নির্বাচন করতে হবে।");
+                    return;
+                }
+
                 if(!document.getElementById('incCollector').value) { alert("আদায়কারীর নাম নির্বাচন করুন।"); return; }
             } else {
                 let valid = true;
@@ -998,7 +1041,7 @@
             if(trx.type === 'income') {
                 if(trx.items) {
                     trx.items.forEach(item => {
-                        const mapping = { "ভর্তি ফি": "1", "এককালীন/বাৎসরিক জমা": "2", "মাসিক জমা": "3", "সার্ভিস চার্জ": "4", "শেয়ার": "5", "ডোনেশন": "6", "জরিমানা": "7" };
+                        const mapping = { "ভর্তি ফি": "1", "এককালীন/বাৎসরিক জমা": "2", "মাসিক জমা": "3", "সার্ভিস চার্জ": "4", "শেয়ার": "5", "ডোনেশন": "6", "জরিমানা": "7", "প্রফিট বণ্টন": "8" };
                         if(mapping[item.category]) {
                             let chk = document.getElementById('chk-' + mapping[item.category]);
                             if(chk) {
