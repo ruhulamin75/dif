@@ -26,9 +26,6 @@
         body { font-family: 'Poppins', 'Hind Siliguri', sans-serif; background-color: var(--bg-color); color: var(--text-dark); overflow-x: hidden; }
         .en-text { font-family: 'Poppins', sans-serif; }
 
-        /* =========================================
-           অ্যানিমেশন কি-ফ্রেমস (Keyframes)
-           ========================================= */
         @keyframes slideDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes fadeUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes scaleIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
@@ -52,64 +49,74 @@
         .btn-logout { color: #d32f2f; background: #ffeaea; border: none; padding: 8px 15px; border-radius: 20px; font-weight: 600; cursor: pointer; transition: all 0.3s;}
         .btn-logout:hover { background: #d32f2f; color: white; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(211, 47, 47, 0.2);}
 
-        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        .container { max-width: 1200px; margin: 25px auto; padding: 0 20px; }
         
-        /* ওয়েলকাম কার্ড অ্যানিমেশন */
-        .welcome-card { background: linear-gradient(135deg, var(--primary-green), var(--dark-green)); color: white; padding: 30px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; box-shadow: 0 10px 20px rgba(11, 158, 74, 0.2); opacity: 0; animation: scaleIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.1s;}
-        .welcome-text h1 { font-size: 28px; margin: 0 0 5px 0;}
-        .welcome-text p { margin: 0; opacity: 0.9; font-size: 16px;}
-        .welcome-avatar { width: 100px; height: 100px; border-radius: 50%; border: 3px solid white; object-fit: cover; background: white; transition: transform 0.4s; box-shadow: 0 4px 15px rgba(0,0,0,0.2);}
-        .welcome-card:hover .welcome-avatar { transform: scale(1.1); }
+        /* ওয়েলকাম কার্ড */
+        .welcome-card { background: linear-gradient(135deg, var(--primary-green), var(--dark-green)); color: white; padding: 28px 30px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; box-shadow: 0 10px 20px rgba(11, 158, 74, 0.2); opacity: 0; animation: scaleIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.1s;}
+        .welcome-text h1 { font-size: 26px; margin: 0 0 5px 0;}
+        .welcome-text p { margin: 0; opacity: 0.9; font-size: 15px;}
+        .welcome-avatar { width: 90px; height: 90px; border-radius: 50%; border: 3px solid white; object-fit: cover; background: white; transition: transform 0.4s; box-shadow: 0 4px 15px rgba(0,0,0,0.2);}
+        .welcome-card:hover .welcome-avatar { transform: scale(1.08); }
 
-        /* --- হিরো মেম্বার সেকশন (সিঙ্গেল কার্ড) --- */
-        .hero-section { background: var(--white); border-radius: 16px; padding: 25px; margin-bottom: 30px; box-shadow: var(--glossy-shadow); border: 1px solid rgba(255,255,255,0.8); opacity: 0; animation: fadeUp 0.6s forwards 0.2s;}
-        .hero-header { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; margin-bottom: 20px; gap: 8px;}
-        .hero-header h3 { color: #d35400; font-size: 20px; margin: 0; display: flex; align-items: center; gap: 8px;}
-        .hero-header p { font-size: 14px; color: var(--text-gray); margin: 0;}
+        /* কম্প্যাক্ট হিরো মেম্বার ব্যানার */
+        .hero-section { background: linear-gradient(135deg, #ffffff 0%, #fffdf9 100%); border-radius: 16px; padding: 16px 24px; margin-bottom: 25px; box-shadow: var(--glossy-shadow); border: 1px solid #fdebd0; border-left: 5px solid #f39c12; display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; opacity: 0; animation: fadeUp 0.6s forwards 0.2s;}
+        .hero-header { display: flex; align-items: center; gap: 14px; }
+        .hero-trophy-box { width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, #fff8e1, #ffecb3); color: #f39c12; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; box-shadow: 0 4px 10px rgba(243, 156, 18, 0.15);}
+        .hero-header-text h3 { color: #d35400; font-size: 18px; margin: 0 0 3px 0; font-weight: 700; }
+        .hero-header-text p { font-size: 13px; color: var(--text-gray); margin: 0; }
         
-        .hero-card { margin: 0 auto; width: 100%; max-width: 220px; background: linear-gradient(135deg, #fffdf8, #fff8f2); border: 1px solid #fdebd0; border-radius: 16px; padding: 20px 15px; text-align: center; position: relative; box-shadow: 0 8px 20px rgba(211, 84, 0, 0.1); transition: 0.3s; transform: scale(1.05);}
-        .hero-card:hover { transform: scale(1.08); box-shadow: 0 12px 25px rgba(211, 84, 0, 0.2); }
-        .hero-badge-icon { position: absolute; top: -12px; right: -12px; background: #e74c3c; color: #fff; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); border: 3px solid #fff;}
-        .hero-img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 12px; border: 3px solid #f39c12; padding: 3px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
-        .hero-name { font-size: 16px; font-weight: 700; color: var(--text-dark); margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
-        .hero-id { font-size: 13px; color: #888; margin: 0;}
-        .hero-date { font-size: 11px; color: var(--primary-green); margin-top: 8px; font-weight: bold; background: #eaf6ee; padding: 4px 10px; border-radius: 12px; display: inline-block;}
+        .hero-compact-card { display: flex; align-items: center; gap: 14px; background: linear-gradient(135deg, #fffdf8, #fff6ea); border: 1px solid #fad7a0; border-radius: 50px; padding: 8px 18px 8px 10px; box-shadow: 0 4px 12px rgba(211, 84, 0, 0.08); transition: all 0.3s ease; }
+        .hero-compact-card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(211, 84, 0, 0.15); }
+        .hero-img-wrap { position: relative; flex-shrink: 0; }
+        .hero-img { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; border: 2px solid #f39c12; padding: 2px; background: #fff; display: block; }
+        .hero-badge-icon { position: absolute; bottom: -2px; right: -2px; background: #e74c3c; color: #fff; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; border: 2px solid #fff; }
+        .hero-info { display: flex; flex-direction: column; }
+        .hero-name { font-size: 15px; font-weight: 700; color: var(--text-dark); line-height: 1.2; }
+        .hero-meta-row { display: flex; align-items: center; gap: 8px; margin-top: 4px; flex-wrap: wrap; }
+        .hero-id { font-size: 12px; color: #666; font-weight: 600; background: #fff; padding: 2px 8px; border-radius: 10px; border: 1px solid #eee; }
+        .hero-date { font-size: 11px; color: var(--dark-green); font-weight: 600; background: var(--light-green); padding: 2px 9px; border-radius: 10px; display: inline-flex; align-items: center; gap: 4px; }
 
-        /* --- গ্লসি ফান্ড কার্ডস (৬টি কার্ডের জন্য ৩x২ ব্যালেন্সড গ্রিড) --- */
+        /* গ্লসি ফান্ড কার্ডস (৩x২ গ্রিড) */
         .fund-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px;}
         .fund-card { background: linear-gradient(135deg, rgba(255,255,255,1) 0%, rgba(245,250,247,1) 100%); padding: 25px 20px; border-radius: 16px; box-shadow: var(--glossy-shadow); text-align: center; border: 1px solid rgba(11,158,74,0.1); opacity: 0; transition: all 0.3s; animation: fadeUp 0.6s forwards; position: relative; overflow: hidden;}
-        
         .fund-card::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0) 100%); transform: skewX(-25deg); transition: 0.6s; z-index: 1;}
         .fund-card:hover::before { left: 150%; }
         
-        /* স্ট্যাগার্ড ডিলে */
         .fund-card:nth-child(1) { animation-delay: 0.2s; }
         .fund-card:nth-child(2) { animation-delay: 0.3s; }
         .fund-card:nth-child(3) { animation-delay: 0.4s; }
         .fund-card:nth-child(4) { animation-delay: 0.5s; }
         .fund-card:nth-child(5) { animation-delay: 0.55s; }
         .fund-card:nth-child(6) { animation-delay: 0.6s; }
-
         .fund-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(11, 158, 74, 0.15); border-color: var(--primary-green);}
         
-        /* Glossy Icons */
         .glossy-icon { width: 50px; height: 50px; border-radius: 12px; margin: 0 auto 15px auto; display: flex; justify-content: center; align-items: center; font-size: 22px; color: var(--primary-green); background: linear-gradient(135deg, #eaf6ee 0%, #c5e8d3 100%); box-shadow: inset 0 2px 5px rgba(255,255,255,0.8), 0 4px 10px rgba(11, 158, 74, 0.2); border: 1px solid rgba(255,255,255,0.5); z-index: 2; position: relative; transition: 0.3s;}
-        
         .fund-card h3 { font-size: 15px; color: var(--text-gray); margin: 0 0 5px 0; font-weight: 600; position: relative; z-index: 2; transition: 0.3s;}
         .fund-card .amount { font-size: 28px; color: var(--dark-green); font-weight: 700; position: relative; z-index: 2; transition: 0.3s;}
 
-        /* ড্যাশবোর্ড সেকশন অ্যানিমেশন */
+        /* ড্যাশবোর্ড সেকশন */
         .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; align-items: start;}
         .section-card { background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); border-radius: 16px; padding: 25px; box-shadow: var(--glossy-shadow); border: 1px solid rgba(255,255,255,0.8); margin-bottom: 25px; opacity: 0; animation: fadeUp 0.6s forwards;}
-        
         .dashboard-grid > div:nth-child(1) .section-card:nth-child(1) { animation-delay: 0.6s; }
         .dashboard-grid > div:nth-child(1) .section-card:nth-child(2) { animation-delay: 0.7s; }
         .dashboard-grid > div:nth-child(2) .section-card:nth-child(1) { animation-delay: 0.8s; }
-
         .section-card h3 { font-size: 18px; color: var(--dark-green); margin: 0 0 20px 0; border-bottom: 2px dashed var(--light-green); padding-bottom: 10px;}
 
-        .notice-item { padding: 15px; background: linear-gradient(135deg, #f9fbf9, #ffffff); border-radius: 10px; margin-bottom: 15px; border-left: 4px solid var(--primary-green); box-shadow: 0 2px 8px rgba(0,0,0,0.02); transition: 0.3s;}
-        .notice-item:hover { transform: translateX(5px); box-shadow: 0 6px 15px rgba(11, 158, 74, 0.08); }
+        .section-header-flex { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px dashed var(--light-green); padding-bottom: 10px; margin-bottom: 20px; gap: 10px; flex-wrap: wrap;}
+        .section-header-flex h3 { border-bottom: none; padding-bottom: 0; margin: 0; }
+        .trx-filter-select { padding: 6px 12px; border: 1px solid var(--border-color); border-radius: 8px; font-family: inherit; font-size: 13px; font-weight: 600; color: var(--dark-green); background-color: var(--light-green); outline: none; cursor: pointer; transition: 0.3s;}
+        .trx-filter-select:focus { border-color: var(--primary-green); box-shadow: 0 0 0 3px rgba(11, 158, 74, 0.15);}
+
+        /* নোটিশ বোর্ড স্ক্রল */
+        .notices-scroll-box { max-height: 320px; overflow-y: auto; padding-right: 6px; }
+        .notices-scroll-box::-webkit-scrollbar { width: 6px; }
+        .notices-scroll-box::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+        .notices-scroll-box::-webkit-scrollbar-thumb { background: #c5e8d3; border-radius: 10px; }
+        .notices-scroll-box::-webkit-scrollbar-thumb:hover { background: var(--primary-green); }
+
+        .notice-item { padding: 15px; background: linear-gradient(135deg, #f9fbf9, #ffffff); border-radius: 10px; margin-bottom: 12px; border-left: 4px solid var(--primary-green); box-shadow: 0 2px 8px rgba(0,0,0,0.02); transition: 0.3s;}
+        .notice-item:last-child { margin-bottom: 0; }
+        .notice-item:hover { transform: translateX(4px); box-shadow: 0 6px 15px rgba(11, 158, 74, 0.08); }
         .notice-item h4 { margin: 0 0 5px 0; color: var(--text-dark); font-size: 16px;}
         .notice-item p { margin: 0; color: var(--text-gray); font-size: 14px; line-height: 1.6; white-space: pre-wrap; word-wrap: break-word;}
         .notice-date { font-size: 12px; color: #888; display: block; margin-top: 8px;}
@@ -130,12 +137,11 @@
         .btn-view-receipt { background: linear-gradient(135deg, #e3f2fd, #bbdefb); color: #1976d2; border: 1px solid rgba(25,118,210,0.2); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; transition: 0.3s;}
         .btn-view-receipt:hover { background: #1976d2; color: white; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(25, 118, 210, 0.2);}
 
-        /* আরও দেখুন বাটন */
         .load-more-container { text-align: center; margin-top: 15px; display: none; }
         .btn-load-more { background: var(--light-green); color: var(--dark-green); border: 1.5px solid var(--primary-green); padding: 8px 22px; border-radius: 25px; font-size: 14px; font-family: inherit; font-weight: 600; cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; gap: 6px; }
         .btn-load-more:hover { background: var(--primary-green); color: white; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(11, 158, 74, 0.2); }
 
-        /* Profile Modal & Print Styles */
+        /* মোডাল ও প্রিন্ট স্টাইল */
         .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(3px); z-index: 9999; overflow-y: auto; padding: 20px;}
         .modal-content { background: var(--white); border-radius: 16px; width: 100%; max-width: 600px; margin: 30px auto; padding: 30px; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.2); animation: scaleIn 0.4s;}
         .close-btn { position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; background: none; border: none; color: #555; transition: color 0.3s;}
@@ -147,9 +153,9 @@
         .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px;}
         .form-group input, .form-group select { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; font-family: inherit; font-size: 14px; outline: none; background: #fafafa; transition: border-color 0.3s;}
         .form-group input:focus, .form-group select:focus { border-color: var(--primary-green); background: white; box-shadow: 0 0 0 3px rgba(11, 158, 74, 0.1);}
-        .form-group input[readonly] { background: #eee; cursor: not-allowed; color: #777;}
-        
-        /* পাসওয়ার্ড শো/হাইড র‍্যাপার */
+        .form-group input[readonly], .form-group select[disabled] { background: #eeeeee; cursor: not-allowed; color: #666666; border-color: #dcdcdc; }
+        .locked-hint { font-size: 11px; color: #888; font-weight: 400; margin-left: 4px; }
+
         .password-wrapper { position: relative; width: 100%; }
         .password-wrapper input { padding-right: 42px; }
         .toggle-pass-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-gray); cursor: pointer; font-size: 16px; padding: 4px; transition: color 0.2s; }
@@ -195,24 +201,23 @@
             .sig-line { border-top: 1px solid #333; width: 150px; text-align: center; font-size: 14px; padding-top: 5px; font-weight: 600; color: #555;}
         }
 
-        /* রেসপন্সিভ গ্রিড (ট্যাবলেট ও মোবাইল) */
-        @media (max-width: 991px) {
-            .fund-grid { grid-template-columns: repeat(2, 1fr); }
-        }
+        @media (max-width: 991px) { .fund-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 768px) { 
             .dashboard-grid { grid-template-columns: 1fr; } 
             .form-grid { grid-template-columns: 1fr; } 
-            .welcome-card { flex-direction: column; text-align: center; gap: 15px; } 
-            .hero-header { flex-direction: column; text-align: center; gap: 10px;}
+            .welcome-card { flex-direction: column; text-align: center; gap: 15px; padding: 22px 20px; } 
+            .hero-section { flex-direction: column; align-items: stretch; text-align: left; padding: 15px 18px; gap: 14px; }
+            .hero-compact-card { width: 100%; justify-content: flex-start; }
         }
         @media (max-width: 576px) {
             .fund-grid { grid-template-columns: 1fr; }
+            .section-header-flex { flex-direction: column; align-items: flex-start; }
+            .trx-filter-select { width: 100%; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Security Lock (Role & Member ID Check) -->
     <script>
         if (localStorage.getItem("userRole") !== "member" || !localStorage.getItem("loggedInMemberId")) {
             alert("সিস্টেমে প্রবেশ করতে অনুগ্রহ করে আপনার নম্বর দিয়ে লগইন করুন।");
@@ -244,14 +249,17 @@
             <img id="mWelcomePic" class="welcome-avatar" src="https://via.placeholder.com/100?text=Photo" alt="Profile">
         </div>
 
-        <!-- HERO MEMBERS LIST -->
+        <!-- COMPACT HERO MEMBER BANNER -->
         <div class="hero-section">
             <div class="hero-header">
-                <h3 style="font-size: 20px;"><i class="fa-solid fa-trophy" style="color: #f39c12;"></i> টপ কন্ট্রিবিউটর</h3>
-                <p>এ মাস পর্যন্ত সবার আগে মাসিক জমা টার্গেট পূরণকারী সদস্য</p>
+                <div class="hero-trophy-box"><i class="fa-solid fa-trophy"></i></div>
+                <div class="hero-header-text">
+                    <h3>টপ কন্ট্রিবিউটর</h3>
+                    <p>এ মাস পর্যন্ত সবার আগে মাসিক জমা টার্গেট পূরণকারী সদস্য</p>
+                </div>
             </div>
-            <div id="heroMembersContainer" style="display: flex; justify-content: center; align-items: center; padding-top: 10px;">
-                <div style="color: gray; padding: 10px;">লোড হচ্ছে...</div>
+            <div id="heroMembersContainer">
+                <div style="color: gray; font-size: 14px;">লোড হচ্ছে...</div>
             </div>
         </div>
 
@@ -262,7 +270,6 @@
                 <h3>মাসিক জমা</h3><div class="amount en-text" id="tMonthly">৳ 0</div>
             </div>
 
-            <!-- মাসিক বকেয়া কার্ড -->
             <div class="fund-card" id="dueCardBox" style="transition: 0.3s;">
                 <div class="glossy-icon" id="dueCardIcon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
                 <h3 id="tMonthlyDueTitle">মাসিক বকেয়া</h3><div class="amount en-text" id="tMonthlyDue">৳ 0</div>
@@ -272,14 +279,17 @@
                 <div class="glossy-icon"><i class="fa-solid fa-layer-group"></i></div>
                 <h3>এককালীন/বাৎসরিক</h3><div class="amount en-text" id="tYearly">৳ 0</div>
             </div>
+
             <div class="fund-card">
                 <div class="glossy-icon"><i class="fa-solid fa-chart-pie"></i></div>
                 <h3>শেয়ার ফান্ড</h3><div class="amount en-text" id="tShare">৳ 0</div>
             </div>
+
             <div class="fund-card">
                 <div class="glossy-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div>
                 <h3>বর্তমান প্রফিট</h3><div class="amount en-text" id="tProfit">৳ 0</div>
             </div>
+
             <div class="fund-card total-card" style="background: linear-gradient(135deg, #eaf6ee 0%, #d1ecd9 100%); border-color: var(--dark-green);">
                 <div class="glossy-icon" style="background: white; color: var(--dark-green);"><i class="fa-solid fa-vault"></i></div>
                 <h3 style="color: var(--dark-green);">ব্যক্তিগত সর্বমোট জমা</h3>
@@ -292,7 +302,9 @@
             <div>
                 <div class="section-card">
                     <h3><i class="fa-solid fa-bullhorn"></i> নোটিশ বোর্ড</h3>
-                    <div id="noticesContainer"><div style="text-align: center; color: gray;">লোড হচ্ছে...</div></div>
+                    <div class="notices-scroll-box" id="noticesContainer">
+                        <div style="text-align: center; color: gray;">লোড হচ্ছে...</div>
+                    </div>
                 </div>
 
                 <div class="section-card">
@@ -304,7 +316,16 @@
             <!-- কলাম ২ -->
             <div>
                 <div class="section-card">
-                    <h3><i class="fa-solid fa-clock-rotate-left"></i> সাম্প্রতিক জমা (ব্যক্তিগত হিসাব)</h3>
+                    <div class="section-header-flex">
+                        <h3><i class="fa-solid fa-clock-rotate-left"></i> সাম্প্রতিক জমা (ব্যক্তিগত হিসাব)</h3>
+                        <select id="trxCatFilter" class="trx-filter-select" onchange="filterMyTrx()">
+                            <option value="all">সব খাত</option>
+                            <option value="মাসিক জমা">মাসিক জমা</option>
+                            <option value="এককালীন/বাৎসরিক জমা">এককালীন/বাৎসরিক জমা</option>
+                            <option value="শেয়ার">শেয়ার</option>
+                            <option value="প্রফিট বণ্টন">প্রফিট বণ্টন</option>
+                        </select>
+                    </div>
                     <div style="overflow-x: auto;">
                         <table>
                             <thead>
@@ -315,7 +336,6 @@
                             </tbody>
                         </table>
                     </div>
-                    <!-- আরও দেখুন বাটন -->
                     <div class="load-more-container" id="loadMoreTrxContainer">
                         <button type="button" class="btn-load-more" onclick="loadMoreMyTrx()">
                             <i class="fa-solid fa-chevron-down"></i> আরও দেখুন
@@ -340,20 +360,33 @@
                 <div style="text-align: center; margin-bottom: 20px; font-size: 12px; color: gray;">ছবি পরিবর্তন করতে ছবির উপর ক্লিক করুন</div>
 
                 <div class="form-grid">
-                    <div class="form-group"><label>নাম (বাংলা)</label><input type="text" id="pNameBn" required></div>
-                    <div class="form-group"><label>নাম (ইংরেজি)</label><input type="text" id="pNameEn" class="en-text" required></div>
+                    <div class="form-group">
+                        <label>নাম (বাংলা) <span class="locked-hint"><i class="fa-solid fa-lock"></i></span></label>
+                        <input type="text" id="pNameBn" readonly title="পরিবর্তন করতে অ্যাডমিনের সাথে যোগাযোগ করুন">
+                    </div>
+                    <div class="form-group">
+                        <label>নাম (ইংরেজি) <span class="locked-hint"><i class="fa-solid fa-lock"></i></span></label>
+                        <input type="text" id="pNameEn" class="en-text" readonly title="পরিবর্তন করতে অ্যাডমিনের সাথে যোগাযোগ করুন">
+                    </div>
                     
-                    <div class="form-group full"><label>মোবাইল নম্বর (পরিবর্তনযোগ্য নয়)</label>
+                    <div class="form-group full">
+                        <label>মোবাইল নম্বর <span class="locked-hint"><i class="fa-solid fa-lock"></i> পরিবর্তনযোগ্য নয়</span></label>
                         <input type="text" id="pPhone" class="en-text" readonly title="নম্বর পরিবর্তন করতে অ্যাডমিনের সাথে যোগাযোগ করুন">
                     </div>
 
-                    <div class="form-group"><label>পিতার নাম</label><input type="text" id="pFather"></div>
-                    <div class="form-group"><label>মাতার নাম</label><input type="text" id="pMother"></div>
+                    <div class="form-group">
+                        <label>পিতার নাম <span class="locked-hint"><i class="fa-solid fa-lock"></i></span></label>
+                        <input type="text" id="pFather" readonly title="পরিবর্তন করতে অ্যাডমিনের সাথে যোগাযোগ করুন">
+                    </div>
+                    <div class="form-group">
+                        <label>মাতার নাম <span class="locked-hint"><i class="fa-solid fa-lock"></i></span></label>
+                        <input type="text" id="pMother" readonly title="পরিবর্তন করতে অ্যাডমিনের সাথে যোগাযোগ করুন">
+                    </div>
                     <div class="form-group"><label>পেশা</label><input type="text" id="pProfession"></div>
                     
                     <div class="form-group">
-                        <label>লিঙ্গ</label>
-                        <select id="pGender">
+                        <label>লিঙ্গ <span class="locked-hint"><i class="fa-solid fa-lock"></i></span></label>
+                        <select id="pGender" disabled title="পরিবর্তন করতে অ্যাডমিনের সাথে যোগাযোগ করুন">
                             <option value="পুরুষ">পুরুষ</option>
                             <option value="নারী">নারী</option>
                         </select>
@@ -421,7 +454,6 @@
             window.location.href = "login.html";
         }
 
-        // পাসওয়ার্ড শো/হাইড টগল ফাংশন
         window.togglePasswordVisibility = function() {
             const passInput = document.getElementById('pPassword');
             const icon = document.getElementById('passToggleIcon');
@@ -434,7 +466,6 @@
             }
         };
 
-        // দশমিক সংখ্যা সাপোর্টসহ স্মুথ কাউন্টার অ্যানিমেশন
         function animateCounter(element, targetValue, duration) {
             if(!element) return;
             targetValue = parseFloat((Number(targetValue) || 0).toFixed(2));
@@ -514,7 +545,6 @@
                     Object.keys(data).forEach(k => {
                         let trx = data[k];
                         if(trx.type === 'income' && trx.payerId === loggedInUserId && trx.items) {
-                            
                             let validItems = [];
                             let personalAmount = 0;
 
@@ -600,30 +630,57 @@
             });
         }
 
-        // সাম্প্রতিক জমা টেবিল রেন্ডার ও পেজিনেশন
+        window.filterMyTrx = function() {
+            trxDisplayCount = 10;
+            renderMyTrxTable();
+        };
+
         function renderMyTrxTable() {
             const tbody = document.getElementById('trxContainer');
             const loadMoreCont = document.getElementById('loadMoreTrxContainer');
+            const selectedCat = document.getElementById('trxCatFilter') ? document.getElementById('trxCatFilter').value : 'all';
             tbody.innerHTML = '';
 
-            if(myTrxsGlobal.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">কোনো ব্যক্তিগত জমা নেই</td></tr>';
+            let filteredList = [];
+            myTrxsGlobal.forEach(trx => {
+                if (selectedCat === 'all') {
+                    filteredList.push({
+                        id: trx.id,
+                        date: trx.date,
+                        catsText: trx.items.map(i => i.category).join(', '),
+                        displayAmount: trx.personalAmount
+                    });
+                } else {
+                    let matchedItems = trx.items.filter(i => i.category === selectedCat);
+                    if (matchedItems.length > 0) {
+                        let subAmt = matchedItems.reduce((acc, cur) => acc + (parseFloat(cur.amount) || 0), 0);
+                        filteredList.push({
+                            id: trx.id,
+                            date: trx.date,
+                            catsText: matchedItems.map(i => i.category).join(', '),
+                            displayAmount: parseFloat(subAmt.toFixed(2))
+                        });
+                    }
+                }
+            });
+
+            if(filteredList.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">কোনো ব্যক্তিগত জমা পাওয়া যায়নি</td></tr>';
                 loadMoreCont.style.display = 'none';
                 return;
             }
 
-            myTrxsGlobal.slice(0, trxDisplayCount).forEach(trx => { 
+            filteredList.slice(0, trxDisplayCount).forEach(trx => { 
                 let d = new Date(trx.date).toLocaleDateString('en-GB');
-                let cats = trx.items.map(i=>i.category).join(', ');
                 tbody.innerHTML += `<tr>
                     <td class="en-text">${d}</td>
-                    <td>${cats}</td>
-                    <td class="en-text" style="text-align:right; font-weight:bold; color:var(--primary-green);">৳ ${trx.personalAmount}</td>
+                    <td>${trx.catsText}</td>
+                    <td class="en-text" style="text-align:right; font-weight:bold; color:var(--primary-green);">৳ ${trx.displayAmount}</td>
                     <td><button class="btn-view-receipt" onclick="printReceipt('${trx.id}')"><i class="fa-solid fa-download"></i></button></td>
                 </tr>`;
             });
 
-            if (trxDisplayCount >= myTrxsGlobal.length) {
+            if (trxDisplayCount >= filteredList.length) {
                 loadMoreCont.style.display = 'none';
             } else {
                 loadMoreCont.style.display = 'block';
@@ -674,16 +731,13 @@
             }
         }
 
-        // ===============================================
-        // HERO MEMBERS LOGIC (মাইলস্টোন তারিখ লক ও প্রাইভেসি সেফ)
-        // ===============================================
         async function evaluateHeroMember() {
             const container = document.getElementById('heroMembersContainer');
             if (!container) return;
 
             const targetAmount = expectedAmountGlobal;
             if (targetAmount <= 0 || !allTransactionsCache) {
-                container.innerHTML = `<div style="color:gray; width: 100%; text-align:center; padding: 10px;">নির্ধারিত টার্গেট (৳ ${targetAmount}) মোট মাসিক জমা পূরণ করে আপনিও হতে পারেন এই লিস্টের প্রথম সদস্য!</div>`;
+                container.innerHTML = `<div style="color:gray; font-size: 13px;">নির্ধারিত টার্গেট (৳ ${targetAmount}) পূরণ করে হয়ে যান প্রথম টপ কন্ট্রিবিউটর!</div>`;
                 return;
             }
 
@@ -719,7 +773,6 @@
 
             let heroes = [];
             for (let mId in memberMonthlyTrxs) {
-                // পুরনো থেকে নতুন ক্রমানুসারে সাজিয়ে দেখা হচ্ছে ঠিক কবে টার্গেট পূরণ হয়েছে
                 let trxs = memberMonthlyTrxs[mId].sort((a, b) => (a.dateTime - b.dateTime) || (a.timestamp - b.timestamp));
                 let runningTotal = 0;
                 for (let t of trxs) {
@@ -730,7 +783,7 @@
                             milestoneDate: t.dateTime,
                             milestoneTimestamp: t.timestamp
                         });
-                        break; // টার্গেট পূরণের তারিখ লক হয়ে গেল, পরবর্তী অগ্রিম জমা এই তারিখ বদলাবে না
+                        break;
                     }
                 }
             }
@@ -740,7 +793,6 @@
             if (heroes.length > 0) {
                 let topHero = heroes[0];
                 try {
-                    // সব সদস্যের ডাটা না টেনে শুধুমাত্র বিজয়ী সদস্যের ডাটা আনা হচ্ছে
                     const memSnap = await get(ref(db, 'members/' + topHero.id));
                     if (memSnap.exists()) {
                         const m = memSnap.val();
@@ -749,12 +801,18 @@
                         let dateStr = topHero.milestoneDate ? new Date(topHero.milestoneDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : '';
                         
                         container.innerHTML = `
-                            <div class="hero-card" style="transform: scale(1.1); margin: 10px auto; max-width: 180px;">
-                                <div class="hero-badge-icon" style="background: #e74c3c; width: 30px; height: 30px; font-size: 14px;"><i class="fa-solid fa-trophy"></i></div>
-                                <img class="hero-img" src="${photo}" alt="Hero" style="width: 80px; height: 80px;">
-                                <div class="hero-name" style="font-size: 15px;">${name}</div>
-                                <p class="hero-id en-text">${m.memberId || m.id || 'ID'}</p>
-                                <div class="hero-date"><i class="fa-regular fa-calendar-check"></i> ${dateStr}</div>
+                            <div class="hero-compact-card">
+                                <div class="hero-img-wrap">
+                                    <img class="hero-img" src="${photo}" alt="Hero">
+                                    <div class="hero-badge-icon"><i class="fa-solid fa-crown"></i></div>
+                                </div>
+                                <div class="hero-info">
+                                    <div class="hero-name">${name}</div>
+                                    <div class="hero-meta-row">
+                                        <span class="hero-id en-text">${m.memberId || m.id || 'ID'}</span>
+                                        <span class="hero-date en-text"><i class="fa-regular fa-calendar-check"></i> ${dateStr}</span>
+                                    </div>
+                                </div>
                             </div>
                         `;
                         return;
@@ -764,7 +822,7 @@
                 }
             }
 
-            container.innerHTML = `<div style="color:gray; width: 100%; text-align:center; padding: 10px;">নির্ধারিত টার্গেট (৳ ${targetAmount}) মোট মাসিক জমা পূরণ করে আপনিও হতে পারেন এই লিস্টের প্রথম সদস্য!</div>`;
+            container.innerHTML = `<div style="color:gray; font-size: 13px;">নির্ধারিত টার্গেট (৳ ${targetAmount}) পূরণ করে হয়ে যান প্রথম টপ কন্ট্রিবিউটর!</div>`;
         }
         
         loadDashboardData();
@@ -814,11 +872,6 @@
             const btn = document.getElementById('saveProfileBtn'); btn.innerHTML = 'সেভ হচ্ছে...'; btn.disabled = true;
             
             const updates = {
-                nameBn: document.getElementById('pNameBn').value,
-                nameEn: document.getElementById('pNameEn').value,
-                gender: document.getElementById('pGender').value,
-                fatherName: document.getElementById('pFather').value,
-                motherName: document.getElementById('pMother').value,
                 profession: document.getElementById('pProfession').value,
                 bloodGroup: document.getElementById('pBlood').value,
                 presentAddress: document.getElementById('pAddress').value,
@@ -865,7 +918,7 @@
                         <img src="1000123161.png" alt="Logo">
                         <h1 class="en-text">DARUL ITTIHAD FOUNDATION</h1>
                         <p>Nayanpur, Kasba, Brahmanbaria</p>
-                        <div class="receipt-title">আয় রিসিট (Income Receipt)</div>
+                        <div class="receipt-title">জমা রিসিট (Deposit Receipt)</div>
                     </div>
                     
                     <div class="receipt-meta">
