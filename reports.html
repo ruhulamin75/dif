@@ -417,18 +417,19 @@
                     <th class="amount-col">মাসিক জমা</th>
                     <th class="amount-col">এককালীন/বাৎসরিক</th>
                     <th class="amount-col">শেয়ার</th>
+                    <th class="amount-col">প্রফিট বণ্টন</th>
                     <th class="amount-col">সর্বমোট জমা</th>
                 `;
 
                 let membersSummary = [];
-                let totalMonthly = 0, totalYearly = 0, totalShare = 0;
+                let totalMonthly = 0, totalYearly = 0, totalShare = 0, totalProfit = 0;
 
                 Object.keys(membersData).forEach(memberKey => {
                     const m = membersData[memberKey];
                     let name = m.nameBn || m.nameEn;
                     let mId = m.memberId || '-';
                     
-                    let memberSum = { id: mId, name: name, monthly: 0, yearly: 0, share: 0, total: 0 };
+                    let memberSum = { id: mId, name: name, monthly: 0, yearly: 0, share: 0, profit: 0, total: 0 };
 
                     allTransactions.forEach(trx => {
                         let trxDate = new Date(trx.date);
@@ -437,17 +438,19 @@
                                 if (item.category === 'মাসিক জমা') memberSum.monthly += item.amount;
                                 if (item.category === 'এককালীন/বাৎসরিক জমা') memberSum.yearly += item.amount;
                                 if (item.category === 'শেয়ার') memberSum.share += item.amount;
+                                if (item.category === 'প্রফিট বণ্টন') memberSum.profit += item.amount;
                             });
                         }
                     });
 
-                    memberSum.total = memberSum.monthly + memberSum.yearly + memberSum.share;
+                    memberSum.total = memberSum.monthly + memberSum.yearly + memberSum.share + memberSum.profit;
                     
                     if (memberSum.total > 0) {
                         membersSummary.push(memberSum);
                         totalMonthly += memberSum.monthly;
                         totalYearly += memberSum.yearly;
                         totalShare += memberSum.share;
+                        totalProfit += memberSum.profit;
                         grandTotal += memberSum.total;
                     }
                 });
@@ -455,7 +458,7 @@
                 membersSummary.sort((a, b) => a.id.localeCompare(b.id));
 
                 if(membersSummary.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;">এই সময়ে কোনো ডেটা পাওয়া যায়নি।</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;">এই সময়ে কোনো ডেটা পাওয়া যায়নি।</td></tr>`;
                 } else {
                     membersSummary.forEach((mem, index) => {
                         let animDelay = (index % 15) * 0.05;
@@ -468,6 +471,7 @@
                             <td class="amount-col en-text">৳ ${mem.monthly}</td>
                             <td class="amount-col en-text">৳ ${mem.yearly}</td>
                             <td class="amount-col en-text">৳ ${mem.share}</td>
+                            <td class="amount-col en-text">৳ ${mem.profit}</td>
                             <td class="amount-col en-text" style="color:var(--dark-green);">৳ ${mem.total}</td>
                         `;
                         tbody.appendChild(tr);
@@ -482,6 +486,7 @@
                         <td class="amount-col en-text">৳ ${totalMonthly}</td>
                         <td class="amount-col en-text">৳ ${totalYearly}</td>
                         <td class="amount-col en-text">৳ ${totalShare}</td>
+                        <td class="amount-col en-text">৳ ${totalProfit}</td>
                         <td class="amount-col en-text">৳ ${grandTotal}</td>
                     `;
                     tbody.appendChild(totalTr);
@@ -514,7 +519,7 @@
                         }
 
                         if (type === 'ledger' && trx.type === 'income' && trx.payerId === document.getElementById('memberId').value && trx.items) {
-                            const allowedCats = ['এককালীন/বাৎসরিক জমা', 'মাসিক জমা', 'শেয়ার'];
+                            const allowedCats = ['এককালীন/বাৎসরিক জমা', 'মাসিক জমা', 'শেয়ার', 'প্রফিট বণ্টন'];
                             trx.items.forEach(item => {
                                 if(allowedCats.includes(item.category)) {
                                     filteredItems.push({ date: trx.date, category: item.category, amount: item.amount });
